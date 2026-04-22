@@ -5,4 +5,6 @@ mobile/
 .update-test/
 pack_addon/
 pack_update/
-server/addons/
+server/addons/*/
+server/addons/.backup/
+server/addons/*.zip

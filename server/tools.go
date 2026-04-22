@@ -68,13 +68,15 @@ func main() {
 		fmt.Println("  ║  [4] check-tpl         检查模板语法                        ║")
 		fmt.Println("  ║  [5] addon install     安装扩展                            ║")
 		fmt.Println("  ║  [6] addon uninstall   卸载扩展                            ║")
-		fmt.Println("  ║  [7] update            在线更新                            ║")
+		fmt.Println("  ║  [7] addon create      创建扩展脚手架                      ║")
+		fmt.Println("  ║  [8] addon pack        打包扩展                            ║")
+		fmt.Println("  ║  [9] update            在线更新                            ║")
 		fmt.Println("  ║  [0] exit              退出                                ║")
 		fmt.Println("  ║                                                            ║")
 		fmt.Println("  ╚════════════════════════════════════════════════════════════╝")
 		fmt.Println()
 
-		choice := gcmd.Scan("  请选择命令 [0-7]: ")
+		choice := gcmd.Scan("  请选择命令 [0-9]: ")
 		choice = strings.TrimSpace(choice)
 
 		switch choice {
@@ -99,6 +101,16 @@ func main() {
 				return
 			}
 		case "7":
+			if err := addon.Create(ctx); err != nil {
+				fmt.Printf("  错误: %v\n", err)
+			} else {
+				return
+			}
+		case "8":
+			if err := addon.Pack(ctx); err != nil {
+				fmt.Printf("  错误: %v\n", err)
+			}
+		case "9":
 			applied, _ := updater.RunUpdate(ctx)
 			if applied {
 				return
@@ -147,9 +159,17 @@ func runCommand(cmd, sub string) {
 			if err := addon.Uninstall(ctx, addonName); err != nil {
 				fmt.Printf("  错误: %v\n", err)
 			}
+		case "create":
+			if err := addon.Create(ctx); err != nil {
+				fmt.Printf("  错误: %v\n", err)
+			}
+		case "pack":
+			if err := addon.Pack(ctx); err != nil {
+				fmt.Printf("  错误: %v\n", err)
+			}
 		default:
 			fmt.Printf("  未知的 addon 子命令: %s\n", sub)
-			fmt.Println("  可用: install / uninstall")
+			fmt.Println("  可用: install / uninstall / create / pack")
 		}
 	case "update":
 		_, _ = updater.RunUpdate(ctx)

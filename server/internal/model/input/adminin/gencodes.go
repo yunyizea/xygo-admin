@@ -115,6 +115,7 @@ type GenCodesSelectsModel struct {
 	QueryType   []SelectOption    `json:"queryType"   dc:"查询方式"`
 	DesignTypes []SelectOption    `json:"designTypes" dc:"设计类型"`
 	GenPaths    map[string]string `json:"genPaths"    dc:"默认生成路径配置"`
+	AddonList   []SelectOption    `json:"addonList"   dc:"已安装扩展列表"`
 }
 
 // ==================== 数据库表选项 ====================

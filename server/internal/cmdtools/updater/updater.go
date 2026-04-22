@@ -28,6 +28,21 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
+var addonSkipPrefixes = []string{
+	"server/addons/",
+	"web/src/addons/",
+}
+
+func isAddonPath(p string) bool {
+	normalized := strings.ReplaceAll(p, "\\", "/")
+	for _, prefix := range addonSkipPrefixes {
+		if strings.HasPrefix(normalized, prefix) {
+			return true
+		}
+	}
+	return false
+}
+
 const (
 	defaultIndexURL = "https://xygoupload.xingyunwangluo.com/updates/open/update-index.json"
 	httpTimeout     = 30 * time.Second
@@ -233,6 +248,9 @@ func applyUpdate(ctx context.Context, projectRoot string, local *VersionInfo, en
 				return err
 			}
 			relPath, _ := filepath.Rel(filesDir, path)
+			if isAddonPath(relPath) {
+				return nil
+			}
 			localPath := filepath.Join(projectRoot, relPath)
 			checksumKey := filepath.ToSlash(relPath)
 
@@ -284,6 +302,9 @@ func applyUpdate(ctx context.Context, projectRoot string, local *VersionInfo, en
 				return err
 			}
 			relPath, _ := filepath.Rel(filesDir, path)
+			if isAddonPath(relPath) {
+				return nil
+			}
 			if skipMap[relPath] {
 				skipped++
 				return nil
@@ -306,6 +327,9 @@ func applyUpdate(ctx context.Context, projectRoot string, local *VersionInfo, en
 
 		// 删除文件
 		for _, f := range meta.DeletedFiles {
+			if isAddonPath(f) {
+				continue
+			}
 			localPath := filepath.Join(projectRoot, f)
 			if gfile.Exists(localPath) {
 				backupPath := filepath.Join(backupDir, f)

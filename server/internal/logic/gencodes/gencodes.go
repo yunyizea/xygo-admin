@@ -14,7 +14,7 @@ import (
 	"context"
 	"fmt"
 	"os"
-
+	"path/filepath"
 	"strings"
 	"time"
 
@@ -118,8 +118,45 @@ func (s *sGenCodes) Selects(ctx context.Context) (*adminin.GenCodesSelectsModel,
 			{Value: "remoteSelects", Label: "远程多选"},
 			{Value: "weigh", Label: "权重(拖拽排序)"},
 		},
-		GenPaths: genPaths,
+		GenPaths:  genPaths,
+		AddonList: scanInstalledAddons(),
 	}, nil
+}
+
+// scanInstalledAddons 扫描 server/addons/ 下已安装的扩展，返回选项列表
+func scanInstalledAddons() []adminin.SelectOption {
+	addonsDir := filepath.Join(gfile.Pwd(), "addons")
+	entries, err := os.ReadDir(addonsDir)
+	if err != nil {
+		return nil
+	}
+	var list []adminin.SelectOption
+	for _, entry := range entries {
+		if !entry.IsDir() || strings.HasPrefix(entry.Name(), ".") {
+			continue
+		}
+		name := entry.Name()
+		yamlPath := filepath.Join(addonsDir, name, "addon.yaml")
+		if !gfile.Exists(yamlPath) {
+			continue
+		}
+		title := name
+		data := gfile.GetContents(yamlPath)
+		for _, line := range strings.Split(data, "\n") {
+			line = strings.TrimSpace(line)
+			if strings.HasPrefix(line, "title:") {
+				t := strings.TrimPrefix(line, "title:")
+				t = strings.TrimSpace(t)
+				t = strings.Trim(t, "\"'")
+				if t != "" {
+					title = t
+				}
+				break
+			}
+		}
+		list = append(list, adminin.SelectOption{Value: name, Label: title + " (" + name + ")"})
+	}
+	return list
 }
 
 // TableSelect 获取数据库表列表

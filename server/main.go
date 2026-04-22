@@ -31,6 +31,9 @@ import (
 	// ✅ 统一导入queues（触发所有消费者注册）
 	_ "xygo/internal/queues"
 
+	// ✅ 统一导入addons（触发所有扩展模块注册）
+	_ "xygo/addons"
+
 	"github.com/gogf/gf/v2/os/gctx"
 
 	"xygo/internal/cmd"

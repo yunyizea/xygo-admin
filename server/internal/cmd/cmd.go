@@ -30,6 +30,7 @@ import (
 	"xygo/internal/library/cache"
 	"xygo/internal/library/monitor"
 	"xygo/internal/library/queue"
+	"xygo/internal/addon"
 	cronlogic "xygo/internal/logic/cron"
 	"xygo/internal/middleware"
 	"xygo/internal/websocket"
@@ -161,6 +162,7 @@ var (
 			// 	// group.Bind(openapi.NewV1())
 			// })
 
+			addon.MountAll(s)
 			s.Run()
 			return nil
 		},

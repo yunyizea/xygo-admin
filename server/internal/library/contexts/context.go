@@ -21,12 +21,21 @@ import (
 )
 
 // Context 自定义上下文结构（存储请求相关的用户信息）
+// EndpointUser 通用端点用户（扩展认证端使用）
+type EndpointUser struct {
+	Id       uint64
+	Endpoint string
+	App      string
+	Data     map[string]interface{}
+}
+
 type Context struct {
 	User       *model.AuthUser       // 当前登录管理员（后台）
 	Member     *model.MemberUser     // 当前登录会员（前台）
 	TenantUser *model.TenantAuthUser // 当前登录租户管理员（扩展预留）
 	Module     string                // 应用模块（admin/member/tenant/home等）
 	TenantId   uint64                // 当前租户ID（0=平台，>0=租户；扩展预留）
+	AddonAuth  map[string]*EndpointUser // 扩展端点认证信息
 }
 
 // Init 初始化上下文对象到请求中
@@ -207,4 +216,35 @@ func GetTenantUserId(ctx context.Context) uint64 {
 		return 0
 	}
 	return tu.Id
+}
+
+// SetEndpointUser 将扩展端点用户信息设置到上下文中
+func SetEndpointUser(ctx context.Context, endpoint string, eu *EndpointUser) {
+	c := Get(ctx)
+	if c == nil {
+		g.Log().Warning(ctx, "contexts.SetEndpointUser: context is nil")
+		return
+	}
+	if c.AddonAuth == nil {
+		c.AddonAuth = make(map[string]*EndpointUser)
+	}
+	c.AddonAuth[endpoint] = eu
+}
+
+// GetEndpointUser 获取扩展端点用户信息
+func GetEndpointUser(ctx context.Context, endpoint string) *EndpointUser {
+	c := Get(ctx)
+	if c == nil || c.AddonAuth == nil {
+		return nil
+	}
+	return c.AddonAuth[endpoint]
+}
+
+// GetEndpointUserId 获取扩展端点用户ID
+func GetEndpointUserId(ctx context.Context, endpoint string) uint64 {
+	eu := GetEndpointUser(ctx, endpoint)
+	if eu == nil {
+		return 0
+	}
+	return eu.Id
 }

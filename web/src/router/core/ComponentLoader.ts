@@ -22,10 +22,13 @@ import { h } from 'vue'
 
 export class ComponentLoader {
   private modules: Record<string, () => Promise<any>>
+  private addonModules: Record<string, () => Promise<any>>
 
   constructor() {
     // 动态导入 views 目录下所有 .vue 组件
     this.modules = import.meta.glob('../../views/**/*.vue')
+    // 动态导入 addons 目录下所有 .vue 组件
+    this.addonModules = import.meta.glob('../../addons/*/views/**/*.vue')
   }
 
   // 需要映射到 /common 目录的路径前缀
@@ -47,6 +50,11 @@ export class ComponentLoader {
     // 特殊别名：Layout
     if (componentPath === 'Layout') {
       return this.loadLayout()
+    }
+
+    // 扩展组件：@addons/ 开头
+    if (componentPath.startsWith('@addons/') || componentPath.startsWith('/addons/')) {
+      return this.loadAddonComponent(componentPath)
     }
 
     // 尝试直接加载
@@ -129,6 +137,27 @@ export class ComponentLoader {
           return h('div', {})
         }
       })
+  }
+
+  /**
+   * 加载扩展组件
+   * 路径格式: @addons/{name}/views/xxx 或 /addons/{name}/views/xxx
+   */
+  private loadAddonComponent(componentPath: string): () => Promise<any> {
+    const cleaned = componentPath.replace(/^[@/]addons\//, '')
+    const paths = [
+      `../../addons/${cleaned}.vue`,
+      `../../addons/${cleaned}/index.vue`
+    ]
+
+    for (const path of paths) {
+      if (this.addonModules[path]) {
+        return this.addonModules[path]
+      }
+    }
+
+    console.error(`[ComponentLoader] 未找到扩展组件: ${componentPath}`)
+    return this.createErrorComponent(componentPath)
   }
 
   /**

@@ -289,7 +289,7 @@
             }),
             h(ArtButtonTable, {
               type: 'delete',
-              onClick: () => handleDeleteAuth()
+              onClick: () => handleDeleteAuth(row)
             })
           ])
         }
@@ -370,37 +370,6 @@
 
       if (clonedItem.children?.length) {
         clonedItem.children = convertAuthListToChildren(clonedItem.children)
-      }
-
-      // 解析后端 perms 字段（JSON 字符串）
-      if (item.perms && item.perms.trim()) {
-        try {
-          // 只有当 perms 是 JSON 数组格式时才解析
-          if (item.perms.trim().startsWith('[')) {
-            const authList = JSON.parse(item.perms)
-            if (Array.isArray(authList) && authList.length > 0) {
-              const authChildren: any[] = authList.map(
-                (auth: { title: string; authMark: string }) => ({
-                  id: `${item.id}_auth_${auth.authMark}`,
-                  path: '',
-                  type: 3, // 按钮类型
-                  title: auth.title,
-                  name: auth.authMark,
-                  perms: '',
-                  status: item.status,
-                  parentId: item.id
-                })
-              )
-
-              clonedItem.children = clonedItem.children?.length
-                ? [...clonedItem.children, ...authChildren]
-                : authChildren
-            }
-          }
-          // 如果是简单字符串格式（如 "system:menu:add"），不做处理
-        } catch (e) {
-          // 静默忽略非 JSON 格式的 perms
-        }
       }
 
       return clonedItem
@@ -500,11 +469,13 @@
     // 转换后端数据为前端表单格式
     editData.value = {
       id: row.id,
-      parentId: parentIdValue > 0 ? parentIdValue : null,  // null=顶级，数字=上级ID
+      parentId: parentIdValue > 0 ? parentIdValue : null,
       path: row.path,
       name: row.name,
       component: row.component,
-      resource: row.resource || '',  // 保留关联数据表
+      resource: row.resource || '',
+      perms: row.perms || '',
+      sort: row.sort,
       meta: {
         title: row.title,
         icon: row.icon,
@@ -532,9 +503,15 @@
    */
   const handleEditAuth = (row: any): void => {
     dialogType.value = 'button'
+    const parentIdValue = row.parentId || row.parent_id || 0
     editData.value = {
+      id: row.id,
+      parentId: parentIdValue > 0 ? parentIdValue : null,
       title: row.title,
-      authMark: row.name
+      authMark: row.name,
+      perms: row.perms,
+      sort: row.sort,
+      keepAlive: row.keepAlive
     }
     lockMenuType.value = false
     dialogVisible.value = true
@@ -641,7 +618,7 @@
         keepAlive: formData.keepAlive ? 1 : 0,
         redirect: formData.redirect || '',
         frameSrc: formData.link || '',
-        perms: '', // 权限列表暂时留空
+        perms: formData.perms || '',
         isFrame: formData.isIframe ? 1 : 0,
         affix: formData.fixedTab ? 1 : 0,
         showBadge: formData.showBadge ? 1 : 0,
@@ -688,13 +665,14 @@
   /**
    * 删除权限按钮
    */
-  const handleDeleteAuth = async (): Promise<void> => {
+  const handleDeleteAuth = async (row: any): Promise<void> => {
     try {
       await ElMessageBox.confirm('确定要删除该权限吗？删除后无法恢复', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       })
+      await fetchDeleteMenu(row.id)
       ElMessage.success('删除成功')
       getMenuList()
     } catch (error) {

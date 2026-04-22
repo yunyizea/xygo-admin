@@ -1,12 +1,3 @@
-<!-- +----------------------------------------------------------------------
-  | XYGo Admin [ Vue3 + GoFrame 企业级中后台管理系统 ]
-  +----------------------------------------------------------------------
-  | Copyright (c) 2026 大连星韵网络科技有限公司 All rights reserved.
-  +----------------------------------------------------------------------
-  | Licensed ( https://opensource.org/licenses/MIT )
-  +----------------------------------------------------------------------
-  | Author: 喜羊羊 <751300685@qq.com>
-  +---------------------------------------------------------------------- -->
 <!-- 代码生成器 -->
 <template>
   <div class="gen-codes-page art-full-height">
@@ -104,6 +95,17 @@
                   </ElTooltip>
                 </template>
               </ElInput>
+            </ElFormItem>
+            <ElFormItem label="生成目标">
+              <ElSelect v-model="options.addonName" placeholder="主包 (默认)" clearable class="w-full">
+                <ElOption value="" label="主包 (默认)" />
+                <ElOption
+                  v-for="addon in (selectsData.addonList || [])"
+                  :key="addon.value"
+                  :value="addon.value"
+                  :label="addon.label"
+                />
+              </ElSelect>
             </ElFormItem>
             <ElFormItem label="生成类型" prop="genType">
               <ElRadioGroup v-model="formData.genType">
@@ -244,7 +246,7 @@
         <div v-else />
         <ElTooltip
           v-if="activeStep < 3"
-          :disabled="canNext"
+          :disabled="canNext" 
           :content="nextStepTip"
           placement="top"
         >
@@ -313,6 +315,19 @@
     const route = inferredRouteName.value
     const parent = parentMenuPath.value
     const modulePath = parent ? `${parent}/${route}` : route
+    const addon = options.addonName
+
+    if (addon) {
+      return {
+        apiPath: `addons/${addon}/api`,
+        controllerPath: `addons/${addon}/controller`,
+        logicPath: `addons/${addon}/logic`,
+        inputPath: `addons/${addon}/model`,
+        webApiPath: `./web/src/addons/${addon}/api/${route}`,
+        webViewsPath: `./web/src/addons/${addon}/views/${route}`,
+      }
+    }
+
     return {
       apiPath: base.apiPath || 'api/admin',
       controllerPath: base.controllerPath || 'internal/controller/admin',
@@ -347,8 +362,9 @@
     headOps: ['add', 'batchDel', 'export'] as string[],
     columnOps: ['edit', 'del', 'view', 'status', 'check'] as string[],
     autoOps: ['genMenuPermissions', 'runDao', 'runService'] as string[],
-    viewMode: 'drawer' as string, // 查看模式：drawer(抽屉) | page(新标签页)
+    viewMode: 'drawer' as string,
     apiPrefix: '',
+    addonName: '' as string,
     genPaths: {} as Record<string, string>,
     menu: { pid: 0, icon: 'ri:file-list-line', sort: 100 },
     tree: { titleColumn: 'name', pidColumn: 'parent_id' }

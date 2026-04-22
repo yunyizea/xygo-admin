@@ -132,6 +132,7 @@
       authLabel: string
       authIcon: string
       authSort: number
+      perms: string
     }
   
     interface Props {
@@ -189,7 +190,8 @@
       authName: '',
       authLabel: '',
       authIcon: '',
-      authSort: 1
+      authSort: 1,
+      perms: ''
     })
   
     const rules = reactive<FormRules>({
@@ -451,6 +453,11 @@
         form.authLabel = row.authMark || ''
         form.authIcon = row.icon || ''
         form.authSort = row.sort || 1
+        form.id = row.id || 0
+        form.parentId = row.parentId
+        form.perms = row.perms
+        form.sort = row.sort
+        form.keepAlive = row.keepAlive
       }
     }
   

@@ -191,6 +191,7 @@ type OptionsJson struct {
 	AutoOps   []string          `json:"autoOps"`
 	ApiPrefix string            `json:"apiPrefix"`
 	GenPaths  map[string]string `json:"genPaths"`
+	AddonName string            `json:"addonName"`
 	Menu      struct {
 		Pid  int    `json:"pid"`
 		Icon string `json:"icon"`
@@ -1215,6 +1216,17 @@ func getTplFiles(ctx context.Context, data *TplData, opts OptionsJson) []tplFile
 
 	// 从配置读取默认路径
 	tpl := genconfig.GetDefaultTemplate(ctx)
+
+	if opts.AddonName != "" {
+		addonName := opts.AddonName
+		tpl.ApiPath = fmt.Sprintf("addons/%s/api", addonName)
+		tpl.ControllerPath = fmt.Sprintf("addons/%s/controller", addonName)
+		tpl.LogicPath = fmt.Sprintf("addons/%s/logic", addonName)
+		tpl.InputPath = fmt.Sprintf("addons/%s/model", addonName)
+		tpl.SqlPath = fmt.Sprintf("addons/%s/install", addonName)
+		tpl.WebApiPath = fmt.Sprintf("../web/src/addons/%s/api", addonName)
+		tpl.WebViewsPath = fmt.Sprintf("../web/src/addons/%s/views", addonName)
+	}
 
 	varLower := strings.ToLower(data.VarName[:1]) + data.VarName[1:]
 	snakeName := toSnake(varLower)
