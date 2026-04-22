@@ -37,7 +37,10 @@ func isAddonPath(p string) bool {
 	normalized := strings.ReplaceAll(p, "\\", "/")
 	for _, prefix := range addonSkipPrefixes {
 		if strings.HasPrefix(normalized, prefix) {
-			return true
+			rest := normalized[len(prefix):]
+			if strings.Contains(rest, "/") {
+				return true
+			}
 		}
 	}
 	return false
