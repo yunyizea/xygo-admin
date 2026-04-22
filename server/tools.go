@@ -101,7 +101,7 @@ func main() {
 				return
 			}
 		case "7":
-			if err := addon.Create(ctx); err != nil {
+			if err := addon.Create(ctx, ""); err != nil {
 				fmt.Printf("  错误: %v\n", err)
 			} else {
 				return
@@ -160,7 +160,11 @@ func runCommand(cmd, sub string) {
 				fmt.Printf("  错误: %v\n", err)
 			}
 		case "create":
-			if err := addon.Create(ctx); err != nil {
+			addonName := ""
+			if len(os.Args) > 3 {
+				addonName = os.Args[3]
+			}
+			if err := addon.Create(ctx, addonName); err != nil {
 				fmt.Printf("  错误: %v\n", err)
 			}
 		case "pack":
