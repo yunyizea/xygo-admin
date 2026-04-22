@@ -51,7 +51,7 @@ func main() {
 		fmt.Println()
 		fmt.Println("  ╔════════════════════════════════════════════════════════════╗")
 		fmt.Println("  ║                                                            ║")
-		fmt.Println("  ║              XYGo Admin Tools v1.2.6                       ║")
+		fmt.Println("  ║              XYGo Admin Tools v1.3.1                       ║")
 		fmt.Println("  ║        Vue3 + GoFrame 企业级中后台管理系统                 ║")
 		fmt.Println("  ║                                                            ║")
 		fmt.Println("  ╠════════════════════════════════════════════════════════════╣")
