@@ -68,8 +68,8 @@ func main() {
 		fmt.Println("  ║  [4] check-tpl         检查模板语法                        ║")
 		fmt.Println("  ║  [5] addon install     安装扩展                            ║")
 		fmt.Println("  ║  [6] addon uninstall   卸载扩展                            ║")
-		fmt.Println("  ║  [7] addon create      创建扩展脚手架                      ║")
-		fmt.Println("  ║  [8] addon pack        打包扩展                            ║")
+		fmt.Println("  ║  [7] addon create      创建扩展骨架                        ║")
+		fmt.Println("  ║  [8] addon pack        打包扩展为ZIP                       ║")
 		fmt.Println("  ║  [9] update            在线更新                            ║")
 		fmt.Println("  ║  [0] exit              退出                                ║")
 		fmt.Println("  ║                                                            ║")
@@ -103,8 +103,6 @@ func main() {
 		case "7":
 			if err := addon.Create(ctx, ""); err != nil {
 				fmt.Printf("  错误: %v\n", err)
-			} else {
-				return
 			}
 		case "8":
 			if err := addon.Pack(ctx, ""); err != nil {
