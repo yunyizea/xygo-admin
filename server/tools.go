@@ -107,7 +107,7 @@ func main() {
 				return
 			}
 		case "8":
-			if err := addon.Pack(ctx); err != nil {
+			if err := addon.Pack(ctx, ""); err != nil {
 				fmt.Printf("  错误: %v\n", err)
 			}
 		case "9":
@@ -164,7 +164,11 @@ func runCommand(cmd, sub string) {
 				fmt.Printf("  错误: %v\n", err)
 			}
 		case "pack":
-			if err := addon.Pack(ctx); err != nil {
+			addonName := ""
+			if len(os.Args) > 3 {
+				addonName = os.Args[3]
+			}
+			if err := addon.Pack(ctx, addonName); err != nil {
 				fmt.Printf("  错误: %v\n", err)
 			}
 		default:
