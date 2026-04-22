@@ -21,12 +21,10 @@ import (
 )
 
 // Context 自定义上下文结构（存储请求相关的用户信息）
-// EndpointUser 通用端点用户（扩展认证端使用）
+// EndpointUser 扩展认证端点的通用用户信息
 type EndpointUser struct {
-	Id       uint64
-	Endpoint string
-	App      string
-	Data     map[string]interface{}
+	Id   uint64         `json:"id"`
+	Data map[string]any `json:"data"`
 }
 
 type Context struct {
