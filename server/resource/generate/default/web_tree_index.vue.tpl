@@ -52,7 +52,7 @@
   import ArtSvgIcon from '@/components/core/base/art-svg-icon/index.vue'
   import { useTableColumns } from '@/hooks/core/useTableColumns'
   import { formatTimestamp } from '@/utils/time'
-  import { fetch{{.VarName}}List, fetch{{.VarName}}Edit, fetch{{.VarName}}Delete } from '@/api/backend/{{.ModulePath}}'
+  import { fetch{{.VarName}}List, fetch{{.VarName}}Edit, fetch{{.VarName}}Delete } from '{{.WebApiImportPath}}'
 {{- if .QueryColumns}}
   import {{.VarName}}Search from './modules/{{.FilePrefix}}-search.vue'
 {{- end}}

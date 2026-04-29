@@ -10,7 +10,7 @@
 <template>
   <ElDialog
     v-model="visible"
-    :title="dialogType === 'add' ? '新增角色' : '编辑角色'"
+    :title="dialogTitle"
     width="30%"
     align-center
     @close="handleClose"
@@ -46,6 +46,7 @@
 
 <script setup lang="ts">
   import type { FormInstance, FormRules } from 'element-plus'
+  import { fetchSaveRole } from '@/api/backend/system/role'
 
   type RoleListItem = Api.SystemManage.RoleListItem
 
@@ -70,17 +71,17 @@
 
   const formRef = ref<FormInstance>()
 
-  /**
-   * 弹窗显示状态双向绑定
-   */
   const visible = computed({
     get: () => props.modelValue,
     set: (value) => emit('update:modelValue', value)
   })
 
-  /**
-   * 表单验证规则
-   */
+  const dialogTitle = computed(() => {
+    if (props.dialogType === 'edit') return '编辑角色'
+    if (props.roleData?.id) return '新增子角色'
+    return '新增角色'
+  })
+
   const rules = reactive<FormRules>({
     name: [
       { required: true, message: '请输入角色名称', trigger: 'blur' },
@@ -93,9 +94,6 @@
     ]
   })
 
-  /**
-   * 表单数据
-   */
   const form = reactive({
     id: 0,
     name: '',
@@ -106,31 +104,22 @@
     remark: ''
   })
 
-  /**
-   * 监听弹窗打开，初始化表单数据
-   */
   watch(
     () => props.modelValue,
     (newVal) => {
       if (newVal) initForm()
-    }
+    },
+    { flush: 'post' }
   )
 
-  /**
-   * 监听角色数据变化，更新表单
-   */
   watch(
     () => props.roleData,
     (newData) => {
       if (newData && props.modelValue) initForm()
     },
-    { deep: true }
+    { deep: true, flush: 'post' }
   )
 
-  /**
-   * 初始化表单数据
-   * 根据弹窗类型填充表单或重置表单
-   */
   const initForm = () => {
     if (props.dialogType === 'edit' && props.roleData) {
       form.id = props.roleData.id || 0
@@ -144,40 +133,41 @@
       form.id = 0
       form.name = ''
       form.key = ''
-      form.pid = 0
+      form.pid =
+        props.dialogType === 'add' && props.roleData?.id ? props.roleData.id : 0
       form.sort = 0
       form.status = 1
       form.remark = ''
     }
   }
 
-  /**
-   * 关闭弹窗并重置表单
-   */
   const handleClose = () => {
     visible.value = false
     formRef.value?.resetFields()
   }
 
-  /**
-   * 提交表单
-   * 验证通过后调用接口保存数据
-   */
   const handleSubmit = async () => {
     if (!formRef.value) return
 
     try {
       await formRef.value.validate()
-      
-      // TODO: 调用后端API保存
-      console.log('提交角色数据:', form)
-      
-      const message = props.dialogType === 'add' ? '新增成功' : '修改成功'
+    } catch {
+      return
+    }
+
+    try {
+      await fetchSaveRole({ ...form })
+      const message =
+        props.dialogType === 'edit'
+          ? '修改成功'
+          : form.pid
+            ? '新增子角色成功'
+            : '新增成功'
       ElMessage.success(message)
       emit('success')
       handleClose()
     } catch (error) {
-      console.log('表单验证失败:', error)
+      console.error('保存角色失败:', error)
     }
   }
 </script>

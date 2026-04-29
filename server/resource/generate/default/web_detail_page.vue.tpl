@@ -96,7 +96,7 @@
 <script setup lang="ts">
   import { Loading } from '@element-plus/icons-vue'
   import ArtSvgIcon from '@/components/core/base/art-svg-icon/index.vue'
-  import { fetch{{.VarName}}View } from '@/api/backend/{{.ModulePath}}'
+  import { fetch{{.VarName}}View } from '{{.WebApiImportPath}}'
   import { formatTimestamp } from '@/utils/time'
   import { useRoute, useRouter } from 'vue-router'
 

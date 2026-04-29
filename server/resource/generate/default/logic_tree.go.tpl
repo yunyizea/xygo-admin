@@ -9,8 +9,8 @@ import (
 	"github.com/gogf/gf/v2/frame/g"
 
 	"xygo/internal/dao"
-	"xygo/internal/model/input/adminin"
-	"xygo/internal/service"
+	adminin "{{.GoInputImport}}"
+	"{{.GoServiceImport}}"
 )
 
 type s{{.VarName}} struct{}

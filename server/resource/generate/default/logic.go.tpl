@@ -14,9 +14,9 @@ import (
 {{- end}}
 
 	"xygo/internal/dao"
-	"xygo/internal/model/input/adminin"
+	adminin "{{.GoInputImport}}"
 	"xygo/internal/model/input/form"
-	"xygo/internal/service"
+	"{{.GoServiceImport}}"
 )
 
 type s{{.VarName}} struct{}

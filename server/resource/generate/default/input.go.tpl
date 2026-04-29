@@ -1,4 +1,4 @@
-package adminin
+package {{.GoInputPkg}}
 
 import (
 {{- if or .NeedsGtime .NeedsGjson}}

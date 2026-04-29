@@ -57,7 +57,7 @@
   import ArtSvgIcon from '@/components/core/base/art-svg-icon/index.vue'
   import { useTable } from '@/hooks/core/useTable'
   import { formatTimestamp } from '@/utils/time'
-  import { fetch{{.VarName}}List{{if or .HasAdd .HasEdit}}, fetch{{.VarName}}Edit{{end}}{{if or .HasDel .HasBatchDel}}, fetch{{.VarName}}Delete{{end}} } from '@/api/backend/{{.ModulePath}}'
+  import { fetch{{.VarName}}List{{if or .HasAdd .HasEdit}}, fetch{{.VarName}}Edit{{end}}{{if or .HasDel .HasBatchDel}}, fetch{{.VarName}}Delete{{end}} } from '{{.WebApiImportPath}}'
   import {{.VarName}}Search from './modules/{{.FilePrefix}}-search.vue'
 {{- if or .HasAdd .HasEdit}}
   import {{.VarName}}Dialog from './modules/{{.FilePrefix}}-dialog.vue'

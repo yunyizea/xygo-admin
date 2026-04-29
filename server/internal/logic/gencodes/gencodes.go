@@ -1,13 +1,3 @@
-// +----------------------------------------------------------------------
-// | XYGo Admin [ Vue3 + GoFrame 企业级中后台管理系统 ]
-// +----------------------------------------------------------------------
-// | Copyright (c) 2026 大连星韵网络科技有限公司 All rights reserved.
-// +----------------------------------------------------------------------
-// | Licensed ( https://opensource.org/licenses/MIT )
-// +----------------------------------------------------------------------
-// | Author: 喜羊羊 <751300685@qq.com>
-// +----------------------------------------------------------------------
-
 package gencodes
 
 import (
@@ -15,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+
 	"strings"
 	"time"
 
@@ -1014,8 +1005,10 @@ func deleteGeneratedFiles(ctx context.Context, record *entity.SysGenCodes, opts 
 		}
 	}
 
-	// 清理 logic/logic.go 中的 import
-	unregisterLogicImport(ctx, pkgName)
+	// 清理 logic/logic.go 中的 import（仅主包模式）
+	if opts.AddonName == "" {
+		unregisterLogicImport(ctx, pkgName)
+	}
 
 	g.Log().Infof(ctx, "[Delete] files cleanup completed for %s", record.VarName)
 }

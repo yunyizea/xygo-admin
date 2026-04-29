@@ -15,6 +15,7 @@ import (
 	"strconv"
 
 	"github.com/gogf/gf/v2/errors/gerror"
+	"github.com/gogf/gf/v2/os/gtime"
 
 	api "xygo/api/admin"
 	"xygo/internal/consts"
@@ -144,6 +145,7 @@ func (c *ControllerV1) RoleSave(ctx context.Context, req *api.RoleSaveReq) (res 
 			}
 		}
 
+		now := gtime.Now().Timestamp()
 		data := do.AdminRole{
 			Name:        req.Name,
 			Key:         req.Key,
@@ -155,6 +157,8 @@ func (c *ControllerV1) RoleSave(ctx context.Context, req *api.RoleSaveReq) (res 
 			CustomDepts: req.CustomDepts,
 			Status:      req.Status,
 			Remark:      req.Remark,
+			CreateTime:  now,
+			UpdateTime:  now,
 		}
 
 		// 新增
@@ -177,6 +181,7 @@ func (c *ControllerV1) RoleSave(ctx context.Context, req *api.RoleSaveReq) (res 
 			CustomDepts: req.CustomDepts,
 			Status:      req.Status,
 			Remark:      req.Remark,
+			UpdateTime:  gtime.Now().Timestamp(),
 		}
 
 		_, err = dao.AdminRole.Ctx(ctx).

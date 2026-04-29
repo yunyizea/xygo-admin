@@ -1,13 +1,3 @@
-// +----------------------------------------------------------------------
-// | XYGo Admin [ Vue3 + GoFrame 企业级中后台管理系统 ]
-// +----------------------------------------------------------------------
-// | Copyright (c) 2026 大连星韵网络科技有限公司 All rights reserved.
-// +----------------------------------------------------------------------
-// | Licensed ( https://opensource.org/licenses/MIT )
-// +----------------------------------------------------------------------
-// | Author: 喜羊羊 <751300685@qq.com>
-// +----------------------------------------------------------------------
-
 package gencodes
 
 import (
@@ -100,6 +90,18 @@ type TplData struct {
 
 	// 查看模式
 	ViewMode string // drawer(抽屉) | page(新标签页)
+
+	// 扩展包模式（AddonName 非空时启用）
+	AddonName          string // 扩展名，如 "archive"
+	WebApiImportPath   string // 前端 API import 路径: "@/api/backend/xxx" 或 "@/addons/{name}/api/xxx"
+	MenuComponentPath  string // 菜单 component 前缀: "/xxx" 或 "@addons/{name}/views/xxx"
+	MenuRemark         string // 菜单 remark 标记: "" 或 "addon:{name}"
+	GoApiImport        string // Go API 包 import: "xygo/api/admin" 或 "xygo/addons/{name}/api"
+	GoApiPkg           string // Go API 包别名: "admin" 或 "api"
+	GoInputImport      string // Go Input 包 import: "xygo/internal/model/input/adminin" 或 "xygo/addons/{name}/model"
+	GoInputPkg         string // Go Input 包名: "adminin" 或 "model"
+	GoServiceImport    string // Go Service 包 import: "xygo/internal/service" 或 "xygo/addons/{name}/service"
+	GoControllerPkg    string // Go Controller 包名: "admin" 或 "controller"
 }
 
 // TplColumn 模板用的字段数据
@@ -191,7 +193,7 @@ type OptionsJson struct {
 	AutoOps   []string          `json:"autoOps"`
 	ApiPrefix string            `json:"apiPrefix"`
 	GenPaths  map[string]string `json:"genPaths"`
-	AddonName string            `json:"addonName"`
+	AddonName string            `json:"addonName"` // 非空时生成到扩展目录
 	Menu      struct {
 		Pid  int    `json:"pid"`
 		Icon string `json:"icon"`
@@ -321,13 +323,18 @@ func generateCode(ctx context.Context, in *adminin.GenCodesEditInp, writeToDisk 
 				return nil, fmt.Errorf("gf gen dao 失败: %w", err)
 			}
 		}
-		if runSvc {
+		if runSvc && opts.AddonName == "" {
 			if err := runGfGenService(ctx); err != nil {
 				return nil, fmt.Errorf("gf gen service 失败: %w", err)
 			}
 		}
-		// 自动在 logic/logic.go 中注册新包导入
-		registerLogicImport(ctx, tplData.PkgName)
+		// 插件模式下 logic 由 module.go 的 init() 注册，不写入主包的 logic.go
+		if opts.AddonName == "" {
+			registerLogicImport(ctx, tplData.PkgName)
+		} else {
+			// 插件模式：自动生成 service 接口、controller 结构体、更新 module.go 和 addons.go
+			generateAddonSupport(ctx, opts.AddonName, tplData)
+		}
 
 		// 将待发布的前端文件写入 JSON 映射文件（publishFrontend 时读取并写入正式目录）
 		if len(pendingFrontend) > 0 {
@@ -516,7 +523,7 @@ func executeMenuORM(ctx context.Context, data *TplData) error {
 			"is_full_page": 0,
 			"sort":         sort,
 			"status":       1,
-			"remark":       "",
+			"remark":       data.MenuRemark,
 			"created_by":   0,
 			"updated_by":   0,
 			"create_time":  now,
@@ -541,7 +548,7 @@ func executeMenuORM(ctx context.Context, data *TplData) error {
 
 		// 2. 创建页面菜单
 		pageMenu := baseMenu(parentId, 2, data.TableComment+"列表", data.VarName,
-			data.RouteName, "/"+data.ModulePath+"/index", "",
+			data.RouteName, data.MenuComponentPath+"/index", "",
 			fmt.Sprintf(`["GET %s/list"]`, data.ApiPrefix), 0, 1, 1)
 		pid, err := db.Ctx(ctx).Model(menuTable).Data(pageMenu).InsertAndGetId()
 		if err != nil {
@@ -553,7 +560,7 @@ func executeMenuORM(ctx context.Context, data *TplData) error {
 		parentId = int64(data.MenuPid)
 
 		pageMenu := baseMenu(parentId, 2, data.TableComment, data.VarName,
-			data.RouteName, "/"+data.ModulePath+"/index", data.MenuIcon,
+			data.RouteName, data.MenuComponentPath+"/index", data.MenuIcon,
 			fmt.Sprintf(`["GET %s/list"]`, data.ApiPrefix), 0, 1, data.MenuSort)
 		pid, err := db.Ctx(ctx).Model(menuTable).Data(pageMenu).InsertAndGetId()
 		if err != nil {
@@ -580,7 +587,7 @@ func executeMenuORM(ctx context.Context, data *TplData) error {
 				detailParentId = int64(data.MenuPid)
 			}
 			detailMenu := baseMenu(detailParentId, 2, data.TableComment+"详情", data.VarName+"Detail",
-				data.RouteName+"/detail", "/"+data.ModulePath+"/detail/index", "",
+				data.RouteName+"/detail", data.MenuComponentPath+"/detail/index", "",
 				fmt.Sprintf(`["GET %s/view"]`, data.ApiPrefix), 1, 0, 0)
 			detailMenu["active_path"] = "/" + data.RouteName
 			if _, err := db.Ctx(ctx).Model(menuTable).Data(detailMenu).Insert(); err != nil {
@@ -779,6 +786,32 @@ func buildTplData(ctx context.Context, in *adminin.GenCodesEditInp, opts Options
 		MenuSort:     opts.Menu.Sort,
 		PermPrefix:   "/admin/" + routeName,
 		ApiPrefix:    "/admin/" + routeName,
+
+		// 默认主包模式路径
+		GoApiImport:     "xygo/api/admin",
+		GoApiPkg:        "admin",
+		GoInputImport:   "xygo/internal/model/input/adminin",
+		GoInputPkg:      "adminin",
+		GoServiceImport: "xygo/internal/service",
+		GoControllerPkg: "admin",
+	}
+
+	// 扩展包模式：覆盖路径变量
+	if opts.AddonName != "" {
+		addonName := opts.AddonName
+		data.AddonName = addonName
+		data.WebApiImportPath = fmt.Sprintf("@/addons/%s/api/%s", addonName, modulePath)
+		data.MenuComponentPath = fmt.Sprintf("@addons/%s/views/%s", addonName, modulePath)
+		data.MenuRemark = "addon:" + addonName
+		data.GoApiImport = fmt.Sprintf("xygo/addons/%s/api", addonName)
+		data.GoApiPkg = "api"
+		data.GoInputImport = fmt.Sprintf("xygo/addons/%s/model", addonName)
+		data.GoInputPkg = "model"
+		data.GoServiceImport = fmt.Sprintf("xygo/addons/%s/service", addonName)
+		data.GoControllerPkg = "controller"
+	} else {
+		data.WebApiImportPath = "@/api/backend/" + modulePath
+		data.MenuComponentPath = "/" + modulePath
 	}
 
 	if data.MenuIcon == "" {
@@ -1217,6 +1250,7 @@ func getTplFiles(ctx context.Context, data *TplData, opts OptionsJson) []tplFile
 	// 从配置读取默认路径
 	tpl := genconfig.GetDefaultTemplate(ctx)
 
+	// 扩展目标：覆盖所有路径到扩展目录
 	if opts.AddonName != "" {
 		addonName := opts.AddonName
 		tpl.ApiPath = fmt.Sprintf("addons/%s/api", addonName)
@@ -1726,4 +1760,201 @@ func tableHasSoftDelete(ctx context.Context, tableName string) bool {
 		}
 	}
 	return false
+}
+
+// ==================== 插件模式自动化 ====================
+
+// generateAddonSupport 插件模式下自动生成 service 接口、controller 结构体、更新 module.go 和 addons.go
+func generateAddonSupport(ctx context.Context, addonName string, data *TplData) {
+	addonDir := filepath.Join(gfile.Pwd(), "addons", addonName)
+
+	generateAddonService(ctx, addonDir, addonName, data)
+	generateAddonControllerBase(ctx, addonDir)
+	updateAddonModule(ctx, addonDir, addonName, data)
+	updateAddonsGo(ctx, addonName)
+}
+
+// generateAddonService 自动生成插件的 service 接口文件
+func generateAddonService(ctx context.Context, addonDir, addonName string, data *TplData) {
+	svcDir := filepath.Join(addonDir, "service")
+	_ = os.MkdirAll(svcDir, 0755)
+
+	varName := data.VarName
+	varLower := strings.ToLower(varName[:1]) + varName[1:]
+	snakeName := toSnake(varLower)
+	svcFile := filepath.Join(svcDir, snakeName+".go")
+
+	if gfile.Exists(svcFile) {
+		g.Log().Infof(ctx, "[AddonSupport] service file already exists: %s", svcFile)
+		return
+	}
+
+	importPath := fmt.Sprintf("xygo/addons/%s/model", addonName)
+
+	var methods []string
+	methods = append(methods, fmt.Sprintf(
+		"\tList(ctx context.Context, in *adminin.%sListInp) (*adminin.%sListModel, error)", varName, varName))
+	if data.HasView {
+		methods = append(methods, fmt.Sprintf(
+			"\tView(ctx context.Context, id uint64) (*adminin.%sViewModel, error)", varName))
+	}
+	if data.HasAdd || data.HasEdit {
+		methods = append(methods, fmt.Sprintf(
+			"\tEdit(ctx context.Context, in *adminin.%sEditInp) error", varName))
+	}
+	if data.HasDel || data.HasBatchDel {
+		methods = append(methods, "\tDelete(ctx context.Context, id uint64) error")
+	}
+
+	content := fmt.Sprintf(`package service
+
+import (
+	"context"
+
+	adminin "%s"
+)
+
+type I%s interface {
+%s
+}
+
+var local%s I%s
+
+func %s() I%s {
+	if local%s == nil {
+		panic("service %s not registered")
+	}
+	return local%s
+}
+
+func Register%s(s I%s) {
+	local%s = s
+}
+`, importPath, varName, strings.Join(methods, "\n"),
+		varName, varName,
+		varName, varName,
+		varName, varName, varName,
+		varName, varName, varName)
+
+	if err := os.WriteFile(svcFile, []byte(content), 0644); err != nil {
+		g.Log().Warningf(ctx, "[AddonSupport] write service file error: %v", err)
+	} else {
+		g.Log().Infof(ctx, "[AddonSupport] generated service interface: %s", svcFile)
+	}
+}
+
+// generateAddonControllerBase 确保插件有 controller/controller.go（ControllerV1 + NewV1）
+func generateAddonControllerBase(ctx context.Context, addonDir string) {
+	ctrlDir := filepath.Join(addonDir, "controller")
+	baseFile := filepath.Join(ctrlDir, "controller.go")
+	if gfile.Exists(baseFile) {
+		return
+	}
+	_ = os.MkdirAll(ctrlDir, 0755)
+	content := `package controller
+
+type ControllerV1 struct{}
+
+func NewV1() *ControllerV1 {
+	return &ControllerV1{}
+}
+`
+	if err := os.WriteFile(baseFile, []byte(content), 0644); err != nil {
+		g.Log().Warningf(ctx, "[AddonSupport] write controller base error: %v", err)
+	} else {
+		g.Log().Infof(ctx, "[AddonSupport] generated controller base: %s", baseFile)
+	}
+}
+
+// updateAddonModule 更新插件的 module.go：添加 logic 包空导入、启用 controller 绑定
+func updateAddonModule(ctx context.Context, addonDir, addonName string, data *TplData) {
+	moduleFile := filepath.Join(addonDir, "module.go")
+	if !gfile.Exists(moduleFile) {
+		g.Log().Warning(ctx, "[AddonSupport] module.go not found, skip")
+		return
+	}
+
+	content := gfile.GetContents(moduleFile)
+	changed := false
+
+	// 添加 logic 包空导入
+	logicImport := fmt.Sprintf(`_ "xygo/addons/%s/logic/%s"`, addonName, data.PkgName)
+	if !strings.Contains(content, logicImport) {
+		lines := strings.Split(content, "\n")
+		var insertIdx int
+		for i, line := range lines {
+			trimmed := strings.TrimSpace(line)
+			if strings.HasPrefix(trimmed, `_ "`) {
+				insertIdx = i + 1
+			}
+		}
+		if insertIdx > 0 {
+			newLine := "\t" + logicImport
+			newLines := make([]string, 0, len(lines)+1)
+			newLines = append(newLines, lines[:insertIdx]...)
+			newLines = append(newLines, newLine)
+			newLines = append(newLines, lines[insertIdx:]...)
+			content = strings.Join(newLines, "\n")
+			changed = true
+		}
+	}
+
+	// 添加 controller 包导入
+	ctrlImport := fmt.Sprintf(`"xygo/addons/%s/controller"`, addonName)
+	if !strings.Contains(content, ctrlImport) {
+		lines := strings.Split(content, "\n")
+		for i, line := range lines {
+			if strings.TrimSpace(line) == "import (" {
+				newLine := "\t" + ctrlImport
+				newLines := make([]string, 0, len(lines)+1)
+				newLines = append(newLines, lines[:i+1]...)
+				newLines = append(newLines, newLine)
+				newLines = append(newLines, lines[i+1:]...)
+				content = strings.Join(newLines, "\n")
+				changed = true
+				break
+			}
+		}
+	}
+
+	// 启用 controller 绑定（取消注释）
+	commented := "// group.Bind(controller.NewV1())"
+	if strings.Contains(content, commented) {
+		content = strings.Replace(content, commented, "group.Bind(controller.NewV1())", 1)
+		changed = true
+	}
+
+	if changed {
+		if err := os.WriteFile(moduleFile, []byte(content), 0644); err != nil {
+			g.Log().Warningf(ctx, "[AddonSupport] write module.go error: %v", err)
+		} else {
+			g.Log().Info(ctx, "[AddonSupport] updated module.go with logic import and controller binding")
+		}
+	}
+}
+
+// updateAddonsGo 确保 addons/addons.go 包含此插件的空导入
+func updateAddonsGo(ctx context.Context, addonName string) {
+	addonsFile := filepath.Join(gfile.Pwd(), "addons", "addons.go")
+	if !gfile.Exists(addonsFile) {
+		return
+	}
+
+	importLine := fmt.Sprintf(`_ "xygo/addons/%s"`, addonName)
+	content := gfile.GetContents(addonsFile)
+	if strings.Contains(content, importLine) {
+		return
+	}
+
+	if !strings.Contains(content, "import (") {
+		content = fmt.Sprintf("// Code generated and maintained by addon installer. DO NOT EDIT.\n\npackage addons\n\nimport (\n\t%s\n)\n", importLine)
+	} else {
+		content = strings.Replace(content, "import (", "import (\n\t"+importLine, 1)
+	}
+
+	if err := os.WriteFile(addonsFile, []byte(content), 0644); err != nil {
+		g.Log().Warningf(ctx, "[AddonSupport] write addons.go error: %v", err)
+	} else {
+		g.Log().Infof(ctx, "[AddonSupport] registered addon import in addons.go: %s", addonName)
+	}
 }

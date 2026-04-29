@@ -1,10 +1,10 @@
-package admin
+package {{.GoControllerPkg}}
 
 import (
 	"context"
 
-	api "xygo/api/admin"
-	"xygo/internal/service"
+	api "{{.GoApiImport}}"
+	"{{.GoServiceImport}}"
 )
 
 // {{.VarName}}List {{.TableComment}}列表

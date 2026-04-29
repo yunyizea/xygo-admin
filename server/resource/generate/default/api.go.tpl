@@ -1,8 +1,8 @@
-package admin
+package {{.GoApiPkg}}
 
 import (
 	"github.com/gogf/gf/v2/frame/g"
-	"xygo/internal/model/input/adminin"
+	adminin "{{.GoInputImport}}"
 )
 
 // {{.VarName}}ListReq {{.TableComment}}列表请求

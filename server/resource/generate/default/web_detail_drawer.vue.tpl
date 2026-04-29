@@ -83,7 +83,7 @@
 
 <script setup lang="ts">
   import { Loading } from '@element-plus/icons-vue'
-  import { fetch{{.VarName}}View } from '@/api/backend/{{.ModulePath}}'
+  import { fetch{{.VarName}}View } from '{{.WebApiImportPath}}'
   import { formatTimestamp } from '@/utils/time'
 
   const visible = defineModel<boolean>({ default: false })
