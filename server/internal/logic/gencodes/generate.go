@@ -183,7 +183,7 @@ type RadioOption struct {
 }
 
 // Tag 颜色轮换表（对齐 Element Plus TagProps type）
-var tagTypeColors = []string{"success", "danger", "warning", "info", "primary", ""}
+var tagTypeColors = []string{"danger", "success", "warning", "info", "primary", ""}
 
 // OptionsJson options JSON 解析
 type OptionsJson struct {

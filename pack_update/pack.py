@@ -90,10 +90,20 @@ def git_show_file_hash(tag, path):
     h.update(result.stdout)
     return h.hexdigest()
 
+def parse_version(tag):
+    """Parse version tag to comparable tuple, stripping optional 'v' prefix."""
+    ver = tag.lstrip('v')
+    try:
+        return tuple(int(x) for x in ver.split('.'))
+    except ValueError:
+        return (0,)
+
 def get_git_tags():
     result = subprocess.run(['git', 'tag', '--sort=version:refname'],
                             capture_output=True, text=True, encoding='utf-8', errors='ignore')
-    return [t.strip() for t in result.stdout.strip().split('\n') if t.strip()]
+    tags = [t.strip() for t in result.stdout.strip().split('\n') if t.strip()]
+    tags.sort(key=parse_version)
+    return tags
 
 def load_index():
     if os.path.exists(INDEX_PATH):
