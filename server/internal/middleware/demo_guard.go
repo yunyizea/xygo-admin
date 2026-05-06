@@ -49,14 +49,6 @@ var demoConfig = demoGuardConfig{
 		"/member/user/checkin":         true,
 		"/member/user/notice/read":     true,
 		"/member/user/notice/read-all": true,
-		// tenant 端
-		"/tenant/auth/login":          true,
-		"/tenant/auth/logout":         true,
-		"/tenant/chat/send":           true,
-		"/tenant/chat/read":           true,
-		"/tenant/chat/session/create": true,
-		"/tenant/notice/read":         true,
-		"/tenant/notice/readAll":      true,
 		// 公共
 		"/captcha/checkClick": true,
 	},

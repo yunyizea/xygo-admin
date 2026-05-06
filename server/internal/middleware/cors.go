@@ -1,13 +1,3 @@
-// +----------------------------------------------------------------------
-// | XYGo Admin [ Vue3 + GoFrame 企业级中后台管理系统 ]
-// +----------------------------------------------------------------------
-// | Copyright (c) 2026 大连星韵网络科技有限公司 All rights reserved.
-// +----------------------------------------------------------------------
-// | Licensed ( https://opensource.org/licenses/MIT )
-// +----------------------------------------------------------------------
-// | Author: 喜羊羊 <751300685@qq.com>
-// +----------------------------------------------------------------------
-
 package middleware
 
 import (
@@ -66,7 +56,7 @@ func corsAllow(r *ghttp.Request, origin string) {
 	r.Response.CORS(ghttp.CORSOptions{
 		AllowOrigin:      origin,
 		AllowMethods:     "GET,POST,PUT,DELETE,OPTIONS,PATCH",
-		AllowHeaders:     "Origin,Content-Type,Accept,Authorization,Xy-User-Token,X-Tenant-Id,X-Requested-With",
+		AllowHeaders:     "Origin,Content-Type,Accept,Authorization,Xy-User-Token,X-Requested-With",
 		ExposeHeaders:    "Content-Length,Content-Type",
 		MaxAge:           3600,
 		AllowCredentials: "true",

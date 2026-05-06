@@ -25,12 +25,11 @@ import (
 	"xygo/internal/controller/member"
 	"xygo/internal/controller/site"
 	"xygo/internal/controller/system"
-	tenantCtrl "xygo/internal/controller/tenant"
 	"xygo/internal/controller/wm"
+	"xygo/internal/addon"
 	"xygo/internal/library/cache"
 	"xygo/internal/library/monitor"
 	"xygo/internal/library/queue"
-	"xygo/internal/addon"
 	cronlogic "xygo/internal/logic/cron"
 	"xygo/internal/middleware"
 	"xygo/internal/websocket"
@@ -60,21 +59,35 @@ var (
 
 			s := g.Server()
 
-			// 静态文件服务：前端 dist + 上传文件
+			// =============== 前台模板页面路由（GoFrame 模板渲染，SEO 友好） ===============
+			// 暂时禁用纯 HTML 模板页面，恢复 SPA 默认首页
+			// s.BindHandler("GET:/", site.PageIndex)
+			// site.RegisterNavRoutes(s)
+
+			// 静态文件服务
 			s.SetServerRoot("resource/public/dist")
+			// s.SetIndexFiles([]string{}) // 纯 HTML 模式时禁用，现已恢复 SPA 默认
 			s.AddStaticPath("/attachment", "resource/public/attachment")
 			s.AddStaticPath("/m", "resource/public/mobile")
+			s.AddStaticPath("/userweb", "resource/public/userweb")
 			s.SetIndexFolder(false)
 
-			// SPA 回退：404 时返回 index.html 让前端路由接管
+			// SPA 回退：/admin 下的子路由返回后台前端入口，让 Vue Router 接管
 			s.BindStatusHandler(http.StatusNotFound, func(r *ghttp.Request) {
-				indexPath := "resource/public/dist/index.html"
-				if gres.Contains(indexPath) {
-					r.Response.WriteStatus(http.StatusOK)
-					r.Response.Write(gres.GetContent(indexPath))
-				} else if gfile.Exists(indexPath) {
-					r.Response.WriteStatus(http.StatusOK)
-					r.Response.ServeFile(indexPath)
+				path := r.RequestURI
+				if len(path) >= 6 && path[:6] == "/admin" {
+					indexPath := "resource/public/dist/index.html"
+					r.Response.ClearBuffer()
+					r.Response.Header().Set("Content-Type", "text/html; charset=utf-8")
+					var content string
+					if gres.Contains(indexPath) {
+						content = string(gres.GetContent(indexPath))
+					} else if gfile.Exists(indexPath) {
+						content = gfile.GetContents(indexPath)
+					}
+					if content != "" {
+						r.Response.WriteStatus(http.StatusOK, content)
+					}
 				}
 			})
 
@@ -124,28 +137,10 @@ var (
 			})
 			})
 
-			// =============== 租户管理接口（扩展预埋，安装租户扩展后生效） ===============
-			s.Group("/", func(group *ghttp.RouterGroup) {
-				group.Middleware(
-					middleware.CORS,
-					middleware.ResponseHandler,
-					middleware.TenantResolve,
-					middleware.TenantAdminAuth,
-					middleware.DemoGuard,
-				)
-				group.Bind(tenantCtrl.NewV1())
-			})
-
 			// =============== WebSocket 端点 ===============
 			s.Group("/socket", func(group *ghttp.RouterGroup) {
 				group.Middleware(middleware.CORS)
 				group.Middleware(middleware.WsAuth)
-				group.GET("/", websocket.WsHandler)
-			})
-
-			// =============== 租户 WebSocket（扩展预埋） ===============
-			s.Group("/tenant-socket", func(group *ghttp.RouterGroup) {
-				group.Middleware(middleware.CORS, middleware.WsTenantAuth)
 				group.GET("/", websocket.WsHandler)
 			})
 
@@ -162,7 +157,9 @@ var (
 			// 	// group.Bind(openapi.NewV1())
 			// })
 
+			// =============== 扩展模块路由（由 addon installer 自动管理） ===============
 			addon.MountAll(s)
+
 			s.Run()
 			return nil
 		},
