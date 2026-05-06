@@ -69,7 +69,6 @@ var (
 			// s.SetIndexFiles([]string{}) // 纯 HTML 模式时禁用，现已恢复 SPA 默认
 			s.AddStaticPath("/attachment", "resource/public/attachment")
 			s.AddStaticPath("/m", "resource/public/mobile")
-			s.AddStaticPath("/userweb", "resource/public/userweb")
 			s.SetIndexFolder(false)
 
 			// SPA 回退：/admin 下的子路由返回后台前端入口，让 Vue Router 接管
