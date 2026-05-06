@@ -8,7 +8,7 @@ import (
 )
 
 // {{.VarName}}List {{.TableComment}}列表
-func (c *ControllerV1) {{.VarName}}List(ctx context.Context, req *api.{{.VarName}}ListReq) (res *api.{{.VarName}}ListRes, err error) {
+func (c *{{.ControllerReceiver}}) {{.VarName}}List(ctx context.Context, req *api.{{.VarName}}ListReq) (res *api.{{.VarName}}ListRes, err error) {
 	result, err := service.{{.VarName}}().List(ctx, &req.{{.VarName}}ListInp)
 	if err != nil {
 		return nil, err
@@ -18,7 +18,7 @@ func (c *ControllerV1) {{.VarName}}List(ctx context.Context, req *api.{{.VarName
 {{- if .HasView}}
 
 // {{.VarName}}View {{.TableComment}}详情
-func (c *ControllerV1) {{.VarName}}View(ctx context.Context, req *api.{{.VarName}}ViewReq) (res *api.{{.VarName}}ViewRes, err error) {
+func (c *{{.ControllerReceiver}}) {{.VarName}}View(ctx context.Context, req *api.{{.VarName}}ViewReq) (res *api.{{.VarName}}ViewRes, err error) {
 	result, err := service.{{.VarName}}().View(ctx, req.Id)
 	if err != nil {
 		return nil, err
@@ -29,7 +29,7 @@ func (c *ControllerV1) {{.VarName}}View(ctx context.Context, req *api.{{.VarName
 {{- if or .HasAdd .HasEdit}}
 
 // {{.VarName}}Edit 保存{{.TableComment}}
-func (c *ControllerV1) {{.VarName}}Edit(ctx context.Context, req *api.{{.VarName}}EditReq) (res *api.{{.VarName}}EditRes, err error) {
+func (c *{{.ControllerReceiver}}) {{.VarName}}Edit(ctx context.Context, req *api.{{.VarName}}EditReq) (res *api.{{.VarName}}EditRes, err error) {
 	err = service.{{.VarName}}().Edit(ctx, &req.{{.VarName}}EditInp)
 	return &api.{{.VarName}}EditRes{}, err
 }
@@ -37,7 +37,7 @@ func (c *ControllerV1) {{.VarName}}Edit(ctx context.Context, req *api.{{.VarName
 {{- if or .HasDel .HasBatchDel}}
 
 // {{.VarName}}Delete 删除{{.TableComment}}
-func (c *ControllerV1) {{.VarName}}Delete(ctx context.Context, req *api.{{.VarName}}DeleteReq) (res *api.{{.VarName}}DeleteRes, err error) {
+func (c *{{.ControllerReceiver}}) {{.VarName}}Delete(ctx context.Context, req *api.{{.VarName}}DeleteReq) (res *api.{{.VarName}}DeleteRes, err error) {
 	err = service.{{.VarName}}().Delete(ctx, req.Id)
 	return &api.{{.VarName}}DeleteRes{}, err
 }

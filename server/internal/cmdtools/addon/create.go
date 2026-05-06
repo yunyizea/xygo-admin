@@ -20,6 +20,7 @@ type scaffoldData struct {
 	Description string // 在线商城
 	TableName   string // shop_order (without xy_ prefix)
 	Entity      string // order (table name minus addon prefix)
+	HasFrontend bool   // 是否有独立前台（双控制器模式）
 
 	PascalName   string // ShopOrder
 	PascalEntity string // Order
@@ -76,11 +77,18 @@ func Create(ctx context.Context, name string) error {
 	tableName := gcmd.Scan(fmt.Sprintf("  示例表名 (如 %s_order，留空跳过): ", name))
 	tableName = strings.TrimSpace(tableName)
 
+	hasFrontend := false
+	frontendAnswer := gcmd.Scan("  是否有独立前台 (双控制器模式)？[y/N] ")
+	if strings.ToLower(strings.TrimSpace(frontendAnswer)) == "y" {
+		hasFrontend = true
+	}
+
 	d := &scaffoldData{
 		Name:        name,
 		Title:       title,
 		Author:      author,
 		Description: desc,
+		HasFrontend: hasFrontend,
 		ModulePath:  "xygo/addons/" + name,
 	}
 
@@ -145,9 +153,15 @@ func Create(ctx context.Context, name string) error {
 	if tableName != "" {
 		files = append(files,
 			struct{ path, tpl string }{filepath.Join(serverAddonDir, "api", d.TableName+".go"), tplApiGo},
+			struct{ path, tpl string }{filepath.Join(serverAddonDir, "controller", "controller.go"), tplControllerBaseGo},
 			struct{ path, tpl string }{filepath.Join(serverAddonDir, "controller", d.Entity+".go"), tplControllerGo},
 			struct{ path, tpl string }{filepath.Join(serverAddonDir, "logic", d.Entity+".go"), tplLogicGo},
 			struct{ path, tpl string }{filepath.Join(serverAddonDir, "model", d.Entity+".go"), tplModelGo},
+		)
+	}
+	if hasFrontend {
+		files = append(files,
+			struct{ path, tpl string }{filepath.Join(serverAddonDir, "middleware.go"), tplMiddlewareGo},
 		)
 	}
 
@@ -217,9 +231,16 @@ func Create(ctx context.Context, name string) error {
 	fmt.Printf("    server/addons/%s/\n", name)
 	fmt.Println("    ├── addon.yaml")
 	fmt.Println("    ├── module.go")
+	if hasFrontend {
+		fmt.Println("    ├── middleware.go          (独立前台鉴权骨架)")
+	}
 	if tableName != "" {
 		fmt.Printf("    ├── api/%s.go\n", d.TableName)
-		fmt.Printf("    ├── controller/%s.go\n", d.Entity)
+		if hasFrontend {
+			fmt.Printf("    ├── controller/%s.go       (含 AdminControllerV1 + ControllerV1)\n", d.Entity)
+		} else {
+			fmt.Printf("    ├── controller/%s.go\n", d.Entity)
+		}
 		fmt.Printf("    ├── logic/%s.go\n", d.Entity)
 		fmt.Printf("    ├── model/%s.go\n", d.Entity)
 	}
@@ -240,7 +261,14 @@ func Create(ctx context.Context, name string) error {
 	fmt.Println("    2. 执行安装 SQL 建表")
 	fmt.Println("    3. gf gen dao        (生成数据模型)")
 	fmt.Println("    4. 修改 controller/logic 实现业务逻辑")
-	fmt.Println("    5. 重启后端，访问页面验证")
+	if hasFrontend {
+		fmt.Println("    5. 完善 middleware.go 中的鉴权逻辑")
+		fmt.Printf("    6. admin_*.go 的方法 receiver 用 *AdminControllerV1\n")
+		fmt.Println("       其余文件的方法 receiver 用 *ControllerV1")
+		fmt.Println("    7. 重启后端，访问页面验证")
+	} else {
+		fmt.Println("    5. 重启后端，访问页面验证")
+	}
 	fmt.Println()
 
 	return nil
@@ -383,26 +411,61 @@ import (
 
 func init() {
 	addon.Register(addon.Module{
-		Name: "{{.Name}}",
-		Mount: func(s *ghttp.Server) {
-			s.Group("/", func(group *ghttp.RouterGroup) {
-				group.Middleware(
-					middleware.CORS,
-					middleware.ResponseHandler,
-					middleware.AdminAuth,
-					middleware.DemoGuard,
-				)
+		Name:  "{{.Name}}",
+		Mount: mountRoutes,
+	})
+}
+
+func mountRoutes(s *ghttp.Server) {
+{{- if .HasFrontend}}
+	// 路由组 1：平台管理端 — 复用核心 AdminAuth
+	s.Group("/", func(group *ghttp.RouterGroup) {
+		group.Middleware(
+			middleware.CORS,
+			middleware.ResponseHandler,
+		)
+		group.Group("/", func(ag *ghttp.RouterGroup) {
+			ag.Middleware(middleware.AdminAuth, middleware.DemoGuard, middleware.OperationLog)
 {{- if .TableName}}
-				group.Bind(controller.NewV1())
+			ag.Bind(controller.NewAdminV1())
 {{- else}}
-				// group.Bind(controller.NewV1())
+			// ag.Bind(controller.NewAdminV1())
 {{- end}}
-			})
-		},
+		})
 	})
 
-	// 如需 WebSocket 事件：
-	// websocket.RegisterEvent("{{.Name}}.someEvent", handleSomeEvent)
+	// 路由组 2：Addon 自身端 — 独立鉴权
+	s.Group("/", func(group *ghttp.RouterGroup) {
+		group.Middleware(
+			middleware.CORS,
+			middleware.ResponseHandler,
+			{{.Name}}Resolve,
+			{{.Name}}Auth,
+			middleware.DemoGuard,
+		)
+{{- if .TableName}}
+		group.Bind(controller.NewV1())
+{{- else}}
+		// group.Bind(controller.NewV1())
+{{- end}}
+	})
+{{- else}}
+	// 普通 addon — 仅平台管理端
+	s.Group("/", func(group *ghttp.RouterGroup) {
+		group.Middleware(
+			middleware.CORS,
+			middleware.ResponseHandler,
+		)
+		group.Group("/", func(ag *ghttp.RouterGroup) {
+			ag.Middleware(middleware.AdminAuth, middleware.DemoGuard, middleware.OperationLog)
+{{- if .TableName}}
+			ag.Bind(controller.NewV1())
+{{- else}}
+			// ag.Bind(controller.NewV1())
+{{- end}}
+		})
+	})
+{{- end}}
 }
 `
 
@@ -440,6 +503,24 @@ type {{.PascalName}}DeleteReq struct {
 type {{.PascalName}}DeleteRes struct{}
 `
 
+var tplControllerBaseGo = `package controller
+{{- if .HasFrontend}}
+
+type AdminControllerV1 struct{}
+
+func NewAdminV1() *AdminControllerV1 { return &AdminControllerV1{} }
+
+type ControllerV1 struct{}
+
+func NewV1() *ControllerV1 { return &ControllerV1{} }
+{{- else}}
+
+type ControllerV1 struct{}
+
+func NewV1() *ControllerV1 { return &ControllerV1{} }
+{{- end}}
+`
+
 var tplControllerGo = `package controller
 
 import (
@@ -447,10 +528,6 @@ import (
 	api "{{.ModulePath}}/api"
 	"{{.ModulePath}}/logic"
 )
-
-type ControllerV1 struct{}
-
-func NewV1() *ControllerV1 { return &ControllerV1{} }
 
 func (c *ControllerV1) {{.PascalName}}List(ctx context.Context, req *api.{{.PascalName}}ListReq) (res *api.{{.PascalName}}ListRes, err error) {
 	return logic.{{.PascalEntity}}List(ctx, req)
@@ -916,5 +993,58 @@ func (t *ExampleTask) GetName() string {
 
 func (t *ExampleTask) Execute(ctx context.Context, params []string) (string, error) {
 	return "example task executed", nil
+}
+`
+
+// ==================== 中间件模板（含独立前台时生成） ====================
+
+var tplMiddlewareGo = `package {{.Name}}
+
+import (
+	"strings"
+
+	"github.com/gogf/gf/v2/errors/gerror"
+	"github.com/gogf/gf/v2/net/ghttp"
+
+	"xygo/internal/consts"
+	"xygo/internal/library/contexts"
+	"xygo/internal/library/token"
+)
+
+// {{.Name}}Resolve 识别中间件（从请求中解析上下文信息并注入 context）
+func {{.Name}}Resolve(r *ghttp.Request) {
+	// TODO: 根据业务需求从请求头/域名/token 中解析上下文
+	r.Middleware.Next()
+}
+
+// {{.Name}}Auth 鉴权中间件
+func {{.Name}}Auth(r *ghttp.Request) {
+	customCtx := &contexts.Context{Module: "{{.Name}}"}
+	contexts.Init(r, customCtx)
+
+	// 跳过登录接口
+	path := r.URL.Path
+	if path == "/{{.Name}}/auth/login" {
+		r.Middleware.Next()
+		return
+	}
+
+	authHeader := r.Header.Get("Authorization")
+	if authHeader == "" {
+		r.SetError(gerror.NewCode(consts.CodeNotAuthorized, "未登录"))
+		return
+	}
+
+	tokenStr := strings.TrimPrefix(authHeader, "Bearer ")
+	if tokenStr == "" {
+		r.SetError(gerror.NewCode(consts.CodeNotAuthorized, "未登录"))
+		return
+	}
+
+	// TODO: 使用 token.Endpoint 解析令牌并注入用户信息到 context
+	_ = token.ErrTokenKicked // 示例：可处理踢出场景
+	_ = tokenStr
+
+	r.Middleware.Next()
 }
 `

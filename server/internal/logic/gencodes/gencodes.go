@@ -1035,13 +1035,18 @@ func deleteGeneratedFilesFallback(ctx context.Context, record *entity.SysGenCode
 		modulePath = apiPath
 	}
 
+	ctrlFile := fmt.Sprintf("%s/%s.go", tpl.ControllerPath, snakeName)
+	if opts.AddonName != "" && isAddonDualController(opts.AddonName) {
+		ctrlFile = fmt.Sprintf("%s/admin_%s.go", tpl.ControllerPath, snakeName)
+	}
+
 	files := []struct {
 		path     string
 		isServer bool
 	}{
 		{fmt.Sprintf("%s/admin_%s.go", tpl.ApiPath, snakeName), true},
 		{fmt.Sprintf("%s/%s.go", tpl.InputPath, snakeName), true},
-		{fmt.Sprintf("%s/%s.go", tpl.ControllerPath, snakeName), true},
+		{ctrlFile, true},
 		{fmt.Sprintf("%s/%s/%s.go", tpl.LogicPath, pkgName, snakeName), true},
 		{fmt.Sprintf("%s/menu_%s.sql", tpl.SqlPath, snakeName), true},
 		{fmt.Sprintf("%s/%s.ts", tpl.WebApiPath, modulePath), false},

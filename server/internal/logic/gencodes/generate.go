@@ -102,6 +102,7 @@ type TplData struct {
 	GoInputPkg         string // Go Input 包名: "adminin" 或 "model"
 	GoServiceImport    string // Go Service 包 import: "xygo/internal/service" 或 "xygo/addons/{name}/service"
 	GoControllerPkg    string // Go Controller 包名: "admin" 或 "controller"
+	ControllerReceiver string // Controller receiver: "ControllerV1" 或 "AdminControllerV1"（双控制器模式）
 }
 
 // TplColumn 模板用的字段数据
@@ -792,8 +793,9 @@ func buildTplData(ctx context.Context, in *adminin.GenCodesEditInp, opts Options
 		GoApiPkg:        "admin",
 		GoInputImport:   "xygo/internal/model/input/adminin",
 		GoInputPkg:      "adminin",
-		GoServiceImport: "xygo/internal/service",
-		GoControllerPkg: "admin",
+		GoServiceImport:    "xygo/internal/service",
+		GoControllerPkg:    "admin",
+		ControllerReceiver: "ControllerV1",
 	}
 
 	// 扩展包模式：覆盖路径变量
@@ -809,6 +811,10 @@ func buildTplData(ctx context.Context, in *adminin.GenCodesEditInp, opts Options
 		data.GoInputPkg = "model"
 		data.GoServiceImport = fmt.Sprintf("xygo/addons/%s/service", addonName)
 		data.GoControllerPkg = "controller"
+		data.ControllerReceiver = "ControllerV1"
+		if isAddonDualController(addonName) {
+			data.ControllerReceiver = "AdminControllerV1"
+		}
 	} else {
 		data.WebApiImportPath = "@/api/backend/" + modulePath
 		data.MenuComponentPath = "/" + modulePath
@@ -1266,10 +1272,16 @@ func getTplFiles(ctx context.Context, data *TplData, opts OptionsJson) []tplFile
 	snakeName := toSnake(varLower)
 	pkgName := data.PkgName
 
+	// controller 文件名：双控制器模式下加 admin_ 前缀
+	ctrlFileName := fmt.Sprintf("%s/%s.go", tpl.ControllerPath, snakeName)
+	if opts.AddonName != "" && isAddonDualController(opts.AddonName) {
+		ctrlFileName = fmt.Sprintf("%s/admin_%s.go", tpl.ControllerPath, snakeName)
+	}
+
 	// 公共模板（API + Controller + 前端API + 菜单SQL）
 	files := []tplFile{
 		{TplName: "api.go.tpl", OutPath: fmt.Sprintf("%s/admin_%s.go", tpl.ApiPath, snakeName), Lang: "go", IsServer: true},
-		{TplName: "controller.go.tpl", OutPath: fmt.Sprintf("%s/%s.go", tpl.ControllerPath, snakeName), Lang: "go", IsServer: true},
+		{TplName: "controller.go.tpl", OutPath: ctrlFileName, Lang: "go", IsServer: true},
 		{TplName: "web_api.ts.tpl", OutPath: fmt.Sprintf("%s/%s.ts", tpl.WebApiPath, data.ModulePath), Lang: "typescript", IsServer: false},
 		{TplName: "menu.sql.tpl", OutPath: fmt.Sprintf("%s/menu_%s.sql", tpl.SqlPath, snakeName), Lang: "sql", IsServer: true},
 	}
@@ -1764,6 +1776,15 @@ func tableHasSoftDelete(ctx context.Context, tableName string) bool {
 
 // ==================== 插件模式自动化 ====================
 
+// isAddonDualController 检测插件是否采用双控制器模式（含 AdminControllerV1）
+func isAddonDualController(addonName string) bool {
+	baseFile := filepath.Join(gfile.Pwd(), "addons", addonName, "controller", "controller.go")
+	if !gfile.Exists(baseFile) {
+		return false
+	}
+	return strings.Contains(gfile.GetContents(baseFile), "AdminControllerV1")
+}
+
 // generateAddonSupport 插件模式下自动生成 service 接口、controller 结构体、更新 module.go 和 addons.go
 func generateAddonSupport(ctx context.Context, addonName string, data *TplData) {
 	addonDir := filepath.Join(gfile.Pwd(), "addons", addonName)
@@ -1843,7 +1864,9 @@ func Register%s(s I%s) {
 	}
 }
 
-// generateAddonControllerBase 确保插件有 controller/controller.go（ControllerV1 + NewV1）
+// generateAddonControllerBase 确保插件有 controller/controller.go
+// 普通 addon: ControllerV1 + NewV1
+// 双控制器 addon: 还包含 AdminControllerV1 + NewAdminV1
 func generateAddonControllerBase(ctx context.Context, addonDir string) {
 	ctrlDir := filepath.Join(addonDir, "controller")
 	baseFile := filepath.Join(ctrlDir, "controller.go")
@@ -1851,7 +1874,22 @@ func generateAddonControllerBase(ctx context.Context, addonDir string) {
 		return
 	}
 	_ = os.MkdirAll(ctrlDir, 0755)
-	content := `package controller
+
+	hasMw := gfile.Exists(filepath.Join(addonDir, "middleware.go"))
+	var content string
+	if hasMw {
+		content = `package controller
+
+type AdminControllerV1 struct{}
+
+func NewAdminV1() *AdminControllerV1 { return &AdminControllerV1{} }
+
+type ControllerV1 struct{}
+
+func NewV1() *ControllerV1 { return &ControllerV1{} }
+`
+	} else {
+		content = `package controller
 
 type ControllerV1 struct{}
 
@@ -1859,6 +1897,7 @@ func NewV1() *ControllerV1 {
 	return &ControllerV1{}
 }
 `
+	}
 	if err := os.WriteFile(baseFile, []byte(content), 0644); err != nil {
 		g.Log().Warningf(ctx, "[AddonSupport] write controller base error: %v", err)
 	} else {
@@ -1918,9 +1957,14 @@ func updateAddonModule(ctx context.Context, addonDir, addonName string, data *Tp
 	}
 
 	// 启用 controller 绑定（取消注释）
-	commented := "// group.Bind(controller.NewV1())"
-	if strings.Contains(content, commented) {
-		content = strings.Replace(content, commented, "group.Bind(controller.NewV1())", 1)
+	commentedV1 := "// group.Bind(controller.NewV1())"
+	if strings.Contains(content, commentedV1) {
+		content = strings.Replace(content, commentedV1, "group.Bind(controller.NewV1())", 1)
+		changed = true
+	}
+	commentedAdmin := "// ag.Bind(controller.NewAdminV1())"
+	if strings.Contains(content, commentedAdmin) {
+		content = strings.Replace(content, commentedAdmin, "ag.Bind(controller.NewAdminV1())", 1)
 		changed = true
 	}
 
