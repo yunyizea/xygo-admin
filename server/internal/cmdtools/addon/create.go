@@ -110,11 +110,11 @@ func Create(ctx context.Context, name string) error {
 	fmt.Print("  [1/5] 创建后端目录结构 ... ")
 	serverDirs := []string{
 		serverAddonDir,
+		filepath.Join(serverAddonDir, "controller"),
 	}
 	if tableName != "" {
 		serverDirs = append(serverDirs,
 			filepath.Join(serverAddonDir, "api"),
-			filepath.Join(serverAddonDir, "controller"),
 			filepath.Join(serverAddonDir, "logic"),
 			filepath.Join(serverAddonDir, "model"),
 		)
@@ -149,11 +149,11 @@ func Create(ctx context.Context, name string) error {
 		{filepath.Join(serverAddonDir, "upgrade", "mysql.sql"), tplUpgradeMysql},
 		{filepath.Join(serverAddonDir, "queues", "example.go"), tplQueuesExample},
 		{filepath.Join(serverAddonDir, "crons", "example.go"), tplCronsExample},
+		{filepath.Join(serverAddonDir, "controller", "controller.go"), tplControllerBaseGo},
 	}
 	if tableName != "" {
 		files = append(files,
 			struct{ path, tpl string }{filepath.Join(serverAddonDir, "api", d.TableName+".go"), tplApiGo},
-			struct{ path, tpl string }{filepath.Join(serverAddonDir, "controller", "controller.go"), tplControllerBaseGo},
 			struct{ path, tpl string }{filepath.Join(serverAddonDir, "controller", d.Entity+".go"), tplControllerGo},
 			struct{ path, tpl string }{filepath.Join(serverAddonDir, "logic", d.Entity+".go"), tplLogicGo},
 			struct{ path, tpl string }{filepath.Join(serverAddonDir, "model", d.Entity+".go"), tplModelGo},
@@ -231,6 +231,7 @@ func Create(ctx context.Context, name string) error {
 	fmt.Printf("    server/addons/%s/\n", name)
 	fmt.Println("    ├── addon.yaml")
 	fmt.Println("    ├── module.go")
+	fmt.Println("    ├── controller/controller.go")
 	if hasFrontend {
 		fmt.Println("    ├── middleware.go          (独立前台鉴权骨架)")
 	}
@@ -396,11 +397,9 @@ menus:
 var tplModuleGo = `package {{.Name}}
 
 import (
+	"{{.ModulePath}}/controller"
 	"xygo/internal/addon"
 	"xygo/internal/middleware"
-{{- if .TableName}}
-	"{{.ModulePath}}/controller"
-{{- end}}
 
 	// 空导入：触发 queues、crons 子包的 init() 注册
 	_ "{{.ModulePath}}/queues"
@@ -426,11 +425,7 @@ func mountRoutes(s *ghttp.Server) {
 		)
 		group.Group("/", func(ag *ghttp.RouterGroup) {
 			ag.Middleware(middleware.AdminAuth, middleware.DemoGuard, middleware.OperationLog)
-{{- if .TableName}}
 			ag.Bind(controller.NewAdminV1())
-{{- else}}
-			// ag.Bind(controller.NewAdminV1())
-{{- end}}
 		})
 	})
 
@@ -443,11 +438,7 @@ func mountRoutes(s *ghttp.Server) {
 			{{.Name}}Auth,
 			middleware.DemoGuard,
 		)
-{{- if .TableName}}
 		group.Bind(controller.NewV1())
-{{- else}}
-		// group.Bind(controller.NewV1())
-{{- end}}
 	})
 {{- else}}
 	// 普通 addon — 仅平台管理端
@@ -458,11 +449,7 @@ func mountRoutes(s *ghttp.Server) {
 		)
 		group.Group("/", func(ag *ghttp.RouterGroup) {
 			ag.Middleware(middleware.AdminAuth, middleware.DemoGuard, middleware.OperationLog)
-{{- if .TableName}}
 			ag.Bind(controller.NewV1())
-{{- else}}
-			// ag.Bind(controller.NewV1())
-{{- end}}
 		})
 	})
 {{- end}}

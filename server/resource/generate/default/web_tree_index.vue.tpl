@@ -71,6 +71,7 @@
   const dialogVisible = ref(false)
   const dialogType = ref<'add' | 'edit'>('add')
   const currentRow = ref<any>({})
+  const currentSearchParams = ref<Record<string, any>>({})
 
 {{- if .QueryColumns}}
   const searchForm = ref({
@@ -252,12 +253,11 @@
     })
   }
 
-  const fetchData = async (params?: Record<string, any>) => {
+  const fetchData = async () => {
     loading.value = true
     try {
-      const res = await fetch{{.VarName}}List(params || {})
+      const res = await fetch{{.VarName}}List(currentSearchParams.value)
       tableData.value = buildTree(res.list || [], '{{.PkTsName}}', '{{.TreePidTsColumn}}')
-      // 数据加载后保持当前展开/收起状态
       applyExpandState()
     } finally {
       loading.value = false
@@ -307,14 +307,17 @@
 
 {{- if .QueryColumns}}
   const handleSearch = (params: Record<string, any>) => {
-    // 过滤空值
     const clean: Record<string, any> = {}
     for (const [k, v] of Object.entries(params)) {
       if (v !== undefined && v !== null && v !== '') clean[k] = v
     }
-    fetchData(Object.keys(clean).length ? clean : undefined)
+    currentSearchParams.value = clean
+    fetchData()
   }
-  const handleReset = () => fetchData()
+  const handleReset = () => {
+    currentSearchParams.value = {}
+    fetchData()
+  }
 {{- end}}
 
   onMounted(() => fetchData())

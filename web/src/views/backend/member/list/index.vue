@@ -108,10 +108,10 @@
           width: 80,
           formatter: (row: MemberItem) => h(ElAvatar, { size: 40, src: row.avatar }, () => row.nickname?.charAt(0) || 'U')
         },
-        { prop: 'username', label: '用户名', width: 120 },
-        { prop: 'nickname', label: '昵称', width: 120 },
-        { prop: 'mobile', label: '手机号', width: 130 },
-        { prop: 'email', label: '邮箱', width: 180 },
+        { prop: 'username', label: '用户名', minWidth: 120 },
+        { prop: 'nickname', label: '昵称', minWidth: 120 },
+        { prop: 'mobile', label: '手机号', minWidth: 130 },
+        { prop: 'email', label: '邮箱', minWidth: 180 },
         {
           prop: 'gender',
           label: '性别',

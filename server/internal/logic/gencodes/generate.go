@@ -184,7 +184,8 @@ type RadioOption struct {
 }
 
 // Tag 颜色轮换表（对齐 Element Plus TagProps type）
-var tagTypeColors = []string{"danger", "success", "warning", "info", "primary", ""}
+// 第一项 success 对应常见场景：状态字段第一个选项通常是正向值（启用/正常）
+var tagTypeColors = []string{"success", "danger", "warning", "info", "primary", ""}
 
 // OptionsJson options JSON 解析
 type OptionsJson struct {
@@ -1956,16 +1957,18 @@ func updateAddonModule(ctx context.Context, addonDir, addonName string, data *Tp
 		}
 	}
 
-	// 启用 controller 绑定（取消注释）
-	commentedV1 := "// group.Bind(controller.NewV1())"
-	if strings.Contains(content, commentedV1) {
-		content = strings.Replace(content, commentedV1, "group.Bind(controller.NewV1())", 1)
-		changed = true
+	// 启用 controller 绑定（取消注释，兼容 group/ag 两种变量名）
+	bindPatterns := [][2]string{
+		{"// group.Bind(controller.NewV1())", "group.Bind(controller.NewV1())"},
+		{"// ag.Bind(controller.NewV1())", "ag.Bind(controller.NewV1())"},
+		{"// group.Bind(controller.NewAdminV1())", "group.Bind(controller.NewAdminV1())"},
+		{"// ag.Bind(controller.NewAdminV1())", "ag.Bind(controller.NewAdminV1())"},
 	}
-	commentedAdmin := "// ag.Bind(controller.NewAdminV1())"
-	if strings.Contains(content, commentedAdmin) {
-		content = strings.Replace(content, commentedAdmin, "ag.Bind(controller.NewAdminV1())", 1)
-		changed = true
+	for _, p := range bindPatterns {
+		if strings.Contains(content, p[0]) {
+			content = strings.Replace(content, p[0], p[1], 1)
+			changed = true
+		}
 	}
 
 	if changed {

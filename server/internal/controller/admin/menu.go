@@ -1,13 +1,3 @@
-// +----------------------------------------------------------------------
-// | XYGo Admin [ Vue3 + GoFrame 企业级中后台管理系统 ]
-// +----------------------------------------------------------------------
-// | Copyright (c) 2026 大连星韵网络科技有限公司 All rights reserved.
-// +----------------------------------------------------------------------
-// | Licensed ( https://opensource.org/licenses/MIT )
-// +----------------------------------------------------------------------
-// | Author: 喜羊羊 <751300685@qq.com>
-// +----------------------------------------------------------------------
-
 package admin
 
 import (
@@ -149,21 +139,39 @@ func (c *ControllerV1) MenuRoutes(ctx context.Context, req *api.MenuRoutesReq) (
 		WhereIn("type", []int{1, 2, 3}). // 目录/菜单/按钮
 		Where("status", 1)               // 仅启用
 
-	// 非超管按菜单ID过滤
-	if !isSuper {
-		ids := make([]uint, 0, len(allowedMenuIds))
-		for id := range allowedMenuIds {
-			ids = append(ids, id)
-		}
-		builder = builder.WhereIn("id", ids)
-	}
-
 	var list []adminin.MenuTreeItem
 	err = builder.
 		OrderAsc("sort,id").
 		Scan(&list)
 	if err != nil {
 		return nil, err
+	}
+
+	// 非超管：过滤菜单，自动补全父级链路（解决角色半选时父级不显示的问题）
+	if !isSuper {
+		// 建立 id → parentId 索引
+		parentMap := make(map[uint]uint, len(list))
+		for _, item := range list {
+			parentMap[uint(item.Id)] = uint(item.ParentId)
+		}
+		// 从每个已授权菜单向上追溯，把整条父级链路都加入
+		visibleIds := make(map[uint]struct{})
+		for id := range allowedMenuIds {
+			for cur := id; cur > 0; cur = parentMap[cur] {
+				if _, exists := visibleIds[cur]; exists {
+					break
+				}
+				visibleIds[cur] = struct{}{}
+			}
+		}
+		// 过滤：只保留可见菜单
+		filtered := make([]adminin.MenuTreeItem, 0, len(visibleIds))
+		for _, item := range list {
+			if _, ok := visibleIds[uint(item.Id)]; ok {
+				filtered = append(filtered, item)
+			}
+		}
+		list = filtered
 	}
 
 	nodes := make([]*adminin.MenuTreeItem, 0, len(list))
