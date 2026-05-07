@@ -1,12 +1,3 @@
-<!-- +----------------------------------------------------------------------
-  | XYGo Admin [ Vue3 + GoFrame 企业级中后台管理系统 ]
-  +----------------------------------------------------------------------
-  | Copyright (c) 2026 大连星韵网络科技有限公司 All rights reserved.
-  +----------------------------------------------------------------------
-  | Licensed ( https://opensource.org/licenses/MIT )
-  +----------------------------------------------------------------------
-  | Author: 喜羊羊 <751300685@qq.com>
-  +---------------------------------------------------------------------- -->
 <!-- 登录日志管理页面 -->
 <template>
   <div class="art-full-height">
@@ -31,6 +22,7 @@
         <template #left>
           <ElSpace wrap>
             <ElButton
+              v-auth="'batchDel'"
               type="danger"
               :disabled="selectedIds.length === 0"
               @click="handleBatchDelete"
@@ -38,7 +30,7 @@
             >
               批量删除
             </ElButton>
-            <ElButton type="warning" @click="handleClear" v-ripple>清空日志</ElButton>
+            <ElButton v-auth="'clear'" type="warning" @click="handleClear" v-ripple>清空日志</ElButton>
           </ElSpace>
         </template>
       </ArtTableHeader>
@@ -62,6 +54,7 @@
 
 <script setup lang="ts">
   import { useTable } from '@/hooks/core/useTable'
+  import { useAuth } from '@/hooks/core/useAuth'
   import {
     getLoginLogList,
     deleteLoginLog,
@@ -72,6 +65,7 @@
   import { ElTag, ElMessageBox } from 'element-plus'
 
   defineOptions({ name: 'LoginLog' })
+  const { hasAuth } = useAuth()
 
   const searchForm = ref({
     username: undefined,

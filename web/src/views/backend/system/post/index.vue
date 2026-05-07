@@ -1,12 +1,3 @@
-<!-- +----------------------------------------------------------------------
-  | XYGo Admin [ Vue3 + GoFrame 企业级中后台管理系统 ]
-  +----------------------------------------------------------------------
-  | Copyright (c) 2026 大连星韵网络科技有限公司 All rights reserved.
-  +----------------------------------------------------------------------
-  | Licensed ( https://opensource.org/licenses/MIT )
-  +----------------------------------------------------------------------
-  | Author: 喜羊羊 <751300685@qq.com>
-  +---------------------------------------------------------------------- -->
 <!-- 岗位管理页面 -->
 <template>
   <div class="post-page art-full-height">
@@ -17,7 +8,7 @@
       <!-- 表格头部 -->
       <ArtTableHeader v-model:columns="columnChecks" :loading="loading" @refresh="refreshData">
         <template #left>
-          <ElButton @click="showDialog('add')" v-ripple>新增岗位</ElButton>
+          <ElButton v-auth="'add'" @click="showDialog('add')" v-ripple>新增岗位</ElButton>
         </template>
       </ArtTableHeader>
 
@@ -45,6 +36,7 @@
 <script setup lang="ts">
   import ArtButtonTable from '@/components/core/forms/art-button-table/index.vue'
   import { useTable } from '@/hooks/core/useTable'
+  import { useAuth } from '@/hooks/core/useAuth'
   import { fetchGetPostList, fetchSavePost, fetchDeletePost } from '@/api/backend/system'
   import PostSearch from './modules/post-search.vue'
   import PostDialog from './modules/post-dialog.vue'
@@ -53,6 +45,7 @@
   import { formatTimestamp } from '@/utils/time'
 
   defineOptions({ name: 'Post' })
+  const { hasAuth } = useAuth()
 
   interface PostListItem {
     id: number
@@ -152,16 +145,16 @@
           width: 120,
           fixed: 'right',
           formatter: (row: PostListItem) =>
-            h('div', [
-              h(ArtButtonTable, {
+            h('div', { class: 'flex items-center gap-1' }, [
+              hasAuth('edit') ? h(ArtButtonTable, {
                 type: 'edit',
                 onClick: () => showDialog('edit', row)
-              }),
-              h(ArtButtonTable, {
+              }) : null,
+              hasAuth('delete') ? h(ArtButtonTable, {
                 type: 'delete',
                 onClick: () => deletePost(row)
-              })
-            ])
+              }) : null,
+            ].filter(Boolean))
         }
       ]
     }

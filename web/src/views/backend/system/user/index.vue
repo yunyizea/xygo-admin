@@ -13,7 +13,7 @@
       <ArtTableHeader v-model:columns="columnChecks" :loading="loading" @refresh="refreshData">
         <template #left>
           <ElSpace wrap>
-            <ElButton @click="showDialog('add')" v-ripple>新增用户</ElButton>
+            <ElButton v-auth="'add'" @click="showDialog('add')" v-ripple>新增用户</ElButton>
           </ElSpace>
         </template>
       </ArtTableHeader>
@@ -45,6 +45,7 @@
   import ArtButtonTable from '@/components/core/forms/art-button-table/index.vue'
   import { ACCOUNT_TABLE_DATA } from '@/mock/temp/formData'
   import { useTable } from '@/hooks/core/useTable'
+  import { useAuth } from '@/hooks/core/useAuth'
   import { fetchGetUserList, fetchSaveUser, fetchDeleteUser, fetchKickUser } from '@/api/backend/system'
   import UserSearch from './modules/user-search.vue'
   import UserDialog from './modules/user-dialog.vue'
@@ -53,6 +54,7 @@
   import { formatTimestamp } from '@/utils/time'
 
   defineOptions({ name: 'User' })
+  const { hasAuth } = useAuth()
 
   type UserListItem = Api.SystemManage.UserListItem
 
@@ -181,21 +183,21 @@
           fixed: 'right', // 固定列
           formatter: (row: UserListItem) =>
             h('div', { class: 'flex items-center gap-1' }, [
-              h(ArtButtonTable, {
+              hasAuth('edit') ? h(ArtButtonTable, {
                 type: 'edit',
                 onClick: () => showDialog('edit', row)
-              }),
-              h(ArtButtonTable, {
+              }) : null,
+              hasAuth('delete') ? h(ArtButtonTable, {
                 type: 'delete',
                 onClick: () => deleteUser(row)
-              }),
-              h(ElButton, {
+              }) : null,
+              hasAuth('kick') ? h(ElButton, {
                 type: 'warning',
                 size: 'small',
                 link: true,
                 onClick: () => kickUser(row)
-              }, () => '下线')
-            ])
+              }, () => '下线') : null,
+            ].filter(Boolean))
         }
       ]
     }

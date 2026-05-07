@@ -1,12 +1,3 @@
-<!-- +----------------------------------------------------------------------
-  | XYGo Admin [ Vue3 + GoFrame 企业级中后台管理系统 ]
-  +----------------------------------------------------------------------
-  | Copyright (c) 2026 大连星韵网络科技有限公司 All rights reserved.
-  +----------------------------------------------------------------------
-  | Licensed ( https://opensource.org/licenses/MIT )
-  +----------------------------------------------------------------------
-  | Author: 喜羊羊 <751300685@qq.com>
-  +---------------------------------------------------------------------- -->
 <!-- 角色管理页面 -->
 <template>
   <div class="art-full-height">
@@ -30,7 +21,7 @@
       >
         <template #left>
           <ElSpace wrap>
-            <ElButton @click="showDialog('add')" v-ripple>新增角色</ElButton>
+            <ElButton v-auth="'add'" @click="showDialog('add')" v-ripple>新增角色</ElButton>
             <ElButton @click="toggleExpand" v-ripple type="primary">
               {{ isExpanded ? '收起' : '展开' }}
             </ElButton>
@@ -89,6 +80,7 @@
 <script setup lang="ts">
   import { ButtonMoreItem } from '@/components/core/forms/art-button-more/index.vue'
   import { useTable } from '@/hooks/core/useTable'
+  import { useAuth } from '@/hooks/core/useAuth'
   import { fetchGetRoleList } from '@/api/backend/system'
   import ArtButtonTable from '@/components/core/forms/art-button-table/index.vue'
   import ArtButtonMore from '@/components/core/forms/art-button-more/index.vue'
@@ -100,6 +92,7 @@
   import { ElTag, ElMessageBox } from 'element-plus'
 
   defineOptions({ name: 'Role' })
+  const { hasAuth } = useAuth()
 
   type RoleListItem = Api.SystemManage.RoleListItem
 
@@ -113,7 +106,7 @@
   })
 
   const showSearchBar = ref(false)
-  const isExpanded = ref(true)
+  const isExpanded = ref(true)  // ✅ 默认展开，所以初始状态也是true
   const tableRef = ref()
 
   const dialogVisible = ref(false)
@@ -142,6 +135,7 @@
         current: 1,
         size: 20
       },
+      // 排除 apiParams 中的属性
       excludeParams: ['daterange'],
       columnsFactory: () => [
         {
@@ -194,6 +188,7 @@
             const isSuperAdmin = row.key === 'super_admin'
             const menuList: any[] = []
             
+            // 非超管才显示权限配置按钮
             if (!isSuperAdmin) {
               menuList.push(
                 {
@@ -214,12 +209,14 @@
               )
             }
             
+            // 编辑按钮（所有角色都有）
             menuList.push({
               key: 'edit',
               label: '编辑角色',
               icon: 'ri:edit-2-line'
             })
             
+            // 删除按钮（超管不允许删除）
             if (!isSuperAdmin) {
               menuList.push({
                 key: 'delete',
@@ -229,17 +226,18 @@
               })
             }
             
+            const filteredMenuList = menuList.filter((m: any) => hasAuth(m.key))
             return h('div', { class: 'flex items-center justify-end' }, [
-              h(ArtButtonTable, {
+              hasAuth('add') ? h(ArtButtonTable, {
                 type: 'add',
                 title: '添加子角色',
                 onClick: () => showAddChildRole(row)
-              }),
-              h(ArtButtonMore, {
-                list: menuList,
+              }) : null,
+              filteredMenuList.length ? h(ArtButtonMore, {
+                list: filteredMenuList,
                 onClick: (item: ButtonMoreItem) => buttonMoreClick(item, row)
-              })
-            ])
+              }) : null,
+            ].filter(Boolean))
           }
         }
       ]
@@ -254,14 +252,21 @@
     dialogVisible.value = true
   }
 
+  /** 在指定角色下新增子角色（与部门管理「添加子部门」一致） */
   const showAddChildRole = (parent: RoleListItem) => {
     showDialog('add', parent)
   }
 
+  /**
+   * 搜索处理
+   * @param params 搜索参数
+   */
   const handleSearch = (params: Record<string, any>) => {
+    // 处理日期区间参数，把 daterange 转换为 startTime 和 endTime
     const { daterange, ...filtersParams } = params
     const [startTime, endTime] = Array.isArray(daterange) ? daterange : [null, null]
 
+    // 搜索参数赋值
     Object.assign(searchParams, { ...filtersParams, startTime, endTime })
     getData()
   }
@@ -317,6 +322,9 @@
       })
   }
 
+  /**
+   * 切换展开/收起
+   */
   const toggleExpand = (): void => {
     isExpanded.value = !isExpanded.value
     nextTick(() => {

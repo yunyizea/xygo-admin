@@ -1,12 +1,3 @@
-<!-- +----------------------------------------------------------------------
-  | XYGo Admin [ Vue3 + GoFrame 企业级中后台管理系统 ]
-  +----------------------------------------------------------------------
-  | Copyright (c) 2026 大连星韵网络科技有限公司 All rights reserved.
-  +----------------------------------------------------------------------
-  | Licensed ( https://opensource.org/licenses/MIT )
-  +----------------------------------------------------------------------
-  | Author: 喜羊羊 <751300685@qq.com>
-  +---------------------------------------------------------------------- -->
 <!-- 部门管理页面 -->
 <template>
   <div class="dept-page art-full-height">
@@ -17,7 +8,7 @@
       <!-- 表格头部 -->
       <ArtTableHeader :showZebra="false" :loading="loading" v-model:columns="columnChecks" @refresh="getDeptList">
         <template #left>
-          <ElButton @click="handleAddDept" v-ripple>添加部门</ElButton>
+          <ElButton v-auth="'add'" @click="handleAddDept" v-ripple>添加部门</ElButton>
           <ElButton @click="toggleExpand" v-ripple type="primary">
             {{ isExpanded ? '收起' : '展开' }}
           </ElButton>
@@ -50,6 +41,7 @@
 <script setup lang="ts">
   import ArtButtonTable from '@/components/core/forms/art-button-table/index.vue'
   import { useTableColumns } from '@/hooks/core/useTableColumns'
+  import { useAuth } from '@/hooks/core/useAuth'
   import DeptSearch from './modules/dept-search.vue'
   import DeptDialog from './modules/dept-dialog.vue'
   import { fetchGetDeptList, fetchSaveDept, fetchDeleteDept } from '@/api/backend/system'
@@ -58,6 +50,7 @@
   import { formatTimestamp } from '@/utils/time'
 
   defineOptions({ name: 'Dept' })
+  const { hasAuth } = useAuth()
 
   interface DeptListItem {
     id: number
@@ -171,20 +164,20 @@
       align: 'right',
       formatter: (row: DeptListItem) =>
         h('div', { style: 'text-align: right' }, [
-          h(ArtButtonTable, {
+          hasAuth('add') ? h(ArtButtonTable, {
             type: 'add',
             onClick: () => handleAddSubDept(row),
             title: '添加子部门'
-          }),
-          h(ArtButtonTable, {
+          }) : null,
+          hasAuth('edit') ? h(ArtButtonTable, {
             type: 'edit',
             onClick: () => handleEditDept(row)
-          }),
-          h(ArtButtonTable, {
+          }) : null,
+          hasAuth('delete') ? h(ArtButtonTable, {
             type: 'delete',
             onClick: () => handleDeleteDept(row)
-          })
-        ])
+          }) : null,
+        ].filter(Boolean))
     }
   ])
 

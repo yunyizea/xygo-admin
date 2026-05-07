@@ -1,13 +1,3 @@
-// +----------------------------------------------------------------------
-// | XYGo Admin [ Vue3 + GoFrame 企业级中后台管理系统 ]
-// +----------------------------------------------------------------------
-// | Copyright (c) 2026 大连星韵网络科技有限公司 All rights reserved.
-// +----------------------------------------------------------------------
-// | Licensed ( https://opensource.org/licenses/MIT )
-// +----------------------------------------------------------------------
-// | Author: 喜羊羊 <751300685@qq.com>
-// +----------------------------------------------------------------------
-
 /**
  * v-auth 权限指令
  *
@@ -43,6 +33,7 @@
  */
 
 import { router } from '@/router'
+import { useUserStore } from '@/store/modules/user'
 import { App, Directive, DirectiveBinding } from 'vue'
 
 interface AuthBinding extends DirectiveBinding {
@@ -50,8 +41,15 @@ interface AuthBinding extends DirectiveBinding {
 }
 
 function checkAuthPermission(el: HTMLElement, binding: AuthBinding): void {
+  // 超级管理员直接放行
+  const userStore = useUserStore()
+  if (userStore.info?.isSuper) return
+
   // 获取当前路由的权限列表
   const authList = (router.currentRoute.value.meta.authList as Array<{ authMark: string }>) || []
+
+  // 未配置按钮权限时不做限制（菜单未添加 type=3 按钮子项）
+  if (!authList.length) return
 
   // 检查是否有对应的权限标识
   const hasPermission = authList.some((item) => item.authMark === binding.value)

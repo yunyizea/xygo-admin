@@ -1,12 +1,3 @@
-<!-- +----------------------------------------------------------------------
-  | XYGo Admin [ Vue3 + GoFrame 企业级中后台管理系统 ]
-  +----------------------------------------------------------------------
-  | Copyright (c) 2026 大连星韵网络科技有限公司 All rights reserved.
-  +----------------------------------------------------------------------
-  | Licensed ( https://opensource.org/licenses/MIT )
-  +----------------------------------------------------------------------
-  | Author: 喜羊羊 <751300685@qq.com>
-  +---------------------------------------------------------------------- -->
 <!-- 定时任务管理页面 -->
 <template>
   <div class="cron-page art-full-height">
@@ -38,7 +29,7 @@
       <!-- 工具栏 -->
       <div class="mb-4 flex-cb">
         <div class="flex-c gap-2">
-          <ElButton type="primary" @click="handleAdd">新增任务</ElButton>
+          <ElButton v-auth="'add'" type="primary" @click="handleAdd">新增任务</ElButton>
           <ElButton @click="showGroupDialog = true">分组管理</ElButton>
           <ElButton @click="showLogDialog = true">执行日志</ElButton>
         </div>
@@ -79,10 +70,10 @@
         <ElTableColumn label="操作" width="200" align="right" fixed="right">
           <template #default="{ row }">
             <div class="flex flex-nowrap items-center justify-end">
-              <ArtButtonTable icon="ri:play-line" icon-color="#67c23a" button-bg-color="rgba(103,194,58,0.12)" title="立即执行" @click="handleExec(row)" />
-              <ArtButtonTable type="view" title="执行日志" @click="handleViewLog(row)" />
-              <ArtButtonTable type="edit" title="编辑" @click="handleEdit(row)" />
-              <ArtButtonTable type="delete" title="删除" @click="handleDelete(row)" />
+              <ArtButtonTable v-if="hasAuth('exec')" icon="ri:play-line" icon-color="#67c23a" button-bg-color="rgba(103,194,58,0.12)" title="立即执行" @click="handleExec(row)" />
+              <ArtButtonTable v-if="hasAuth('view')" type="view" title="执行日志" @click="handleViewLog(row)" />
+              <ArtButtonTable v-if="hasAuth('edit')" type="edit" title="编辑" @click="handleEdit(row)" />
+              <ArtButtonTable v-if="hasAuth('delete')" type="delete" title="删除" @click="handleDelete(row)" />
             </div>
           </template>
         </ElTableColumn>
@@ -120,6 +111,7 @@
 <script setup lang="ts">
   import { Refresh } from '@element-plus/icons-vue'
   import { ElMessage, ElMessageBox } from 'element-plus'
+  import { useAuth } from '@/hooks/core/useAuth'
   import ArtButtonTable from '@/components/core/forms/art-button-table/index.vue'
   import {
     fetchCronList,
@@ -134,6 +126,7 @@
   import CronLogDialog from './modules/cron-log-dialog.vue'
 
   defineOptions({ name: 'CronManage' })
+  const { hasAuth } = useAuth()
 
   const loading = ref(false)
   const tableData = ref<CronItem[]>([])

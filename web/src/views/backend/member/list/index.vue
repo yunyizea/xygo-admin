@@ -9,8 +9,8 @@
       <ArtTableHeader v-model:columns="columnChecks" :loading="loading" @refresh="refreshData">
         <template #left>
           <ElSpace wrap>
-            <ElButton @click="showDialog('add')" v-ripple>新增会员</ElButton>
-            <ElButton type="danger" :disabled="selectedRows.length === 0" @click="handleBatchDelete">批量删除</ElButton>
+            <ElButton v-auth="'add'" @click="showDialog('add')" v-ripple>新增会员</ElButton>
+            <ElButton v-auth="'batchDel'" type="danger" :disabled="selectedRows.length === 0" @click="handleBatchDelete">批量删除</ElButton>
           </ElSpace>
         </template>
       </ArtTableHeader>
@@ -41,6 +41,7 @@
 <script setup lang="ts">
   import ArtButtonTable from '@/components/core/forms/art-button-table/index.vue'
   import { useTable } from '@/hooks/core/useTable'
+  import { useAuth } from '@/hooks/core/useAuth'
   import {
     getMemberList,
     deleteMember,
@@ -53,6 +54,7 @@
   import { DialogType } from '@/types'
 
   defineOptions({ name: 'MemberManage' })
+  const { hasAuth } = useAuth()
 
   // 弹窗相关
   const dialogType = ref<DialogType>('add')
@@ -144,15 +146,15 @@
           fixed: 'right',
           formatter: (row: MemberItem) =>
             h('div', { class: 'table-actions' }, [
-              h(ArtButtonTable, {
+              hasAuth('edit') ? h(ArtButtonTable, {
                 type: 'edit',
                 onClick: () => showDialog('edit', row)
-              }),
-              h(ArtButtonTable, {
+              }) : null,
+              hasAuth('delete') ? h(ArtButtonTable, {
                 type: 'delete',
                 onClick: () => handleDelete(row)
-              })
-            ])
+              }) : null,
+            ].filter(Boolean))
         }
       ]
     }

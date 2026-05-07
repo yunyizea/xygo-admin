@@ -9,9 +9,9 @@
       <ArtTableHeader v-model:columns="columnChecks" :loading="loading" @refresh="refreshData">
         <template #left>
           <ElSpace wrap>
-            <ElButton @click="showDialog('add')" v-ripple>新增</ElButton>
-            <ElButton type="danger" :disabled="selectedRows.length === 0" @click="handleBatchDelete" v-ripple>批量删除</ElButton>
-            <ElButton @click="handleExport" v-ripple>导出</ElButton>
+            <ElButton v-auth="'add'" @click="showDialog('add')" v-ripple>新增</ElButton>
+            <ElButton v-auth="'batchDel'" type="danger" :disabled="selectedRows.length === 0" @click="handleBatchDelete" v-ripple>批量删除</ElButton>
+            <ElButton v-auth="'export'" @click="handleExport" v-ripple>导出</ElButton>
           </ElSpace>
         </template>
       </ArtTableHeader>
@@ -43,6 +43,7 @@
   import ArtButtonTable from '@/components/core/forms/art-button-table/index.vue'
   import ArtSvgIcon from '@/components/core/base/art-svg-icon/index.vue'
   import { useTable } from '@/hooks/core/useTable'
+  import { useAuth } from '@/hooks/core/useAuth'
   import { fetchMemberScoreLogList, fetchMemberScoreLogEdit, fetchMemberScoreLogDelete } from '@/api/backend/member/member-score-log'
   import MemberScoreLogSearch from './modules/member-score-log-search.vue'
   import MemberScoreLogDialog from './modules/member-score-log-dialog.vue'
@@ -52,6 +53,7 @@
   import { formatTimestamp } from '@/utils/time'
 
   defineOptions({ name: 'MemberScoreLog' })
+  const { hasAuth } = useAuth()
   const dialogType = ref<DialogType>('add')
   const dialogVisible = ref(false)
   const currentRow = ref<any>({})
@@ -142,10 +144,10 @@
           fixed: 'right',
           formatter: (row: any) =>
             h('div', { class: 'flex items-center gap-1' }, [
-              h(ArtButtonTable, { type: 'view', onClick: () => handleView(row) }),
-              h(ArtButtonTable, { type: 'edit', onClick: () => showDialog('edit', row) }),
-              h(ArtButtonTable, { type: 'delete', onClick: () => handleDelete(row) })
-            ])
+              hasAuth('view') ? h(ArtButtonTable, { type: 'view', onClick: () => handleView(row) }) : null,
+              hasAuth('edit') ? h(ArtButtonTable, { type: 'edit', onClick: () => showDialog('edit', row) }) : null,
+              hasAuth('delete') ? h(ArtButtonTable, { type: 'delete', onClick: () => handleDelete(row) }) : null,
+            ].filter(Boolean))
         }
       ]
     }

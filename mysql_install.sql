@@ -336,10 +336,10 @@ INSERT INTO `xy_admin_menu` (`id`, `parent_id`, `type`, `title`, `name`, `path`,
 (80, 0, 1, '内容管理', 'Cms', '/cms', '/index/index', '', 'ri:article-line', 0, 0, '', '', '', 0, 0, 0, '', '', 0, 0, 85, 1, '内容管理根', 0, 0, 1768549363, 1768549363),
 (81, 80, 2, '文档分类', 'CmsDocCategory', 'doc-category', '/cms/doc-category', '', 'ri:folder-line', 0, 1, '', '', '', 0, 0, 0, '', '', 0, 0, 1, 1, '文档分类管理', 0, 0, 1768549363, 1768549363),
 (82, 80, 2, '文档管理', 'CmsDoc', 'doc', '/cms/doc', '', 'ri:file-text-line', 0, 1, '', '', '', 0, 0, 0, '', '', 0, 0, 2, 1, '文档内容管理', 0, 0, 1768549363, 1768549363),
-(83, 82, 3, '新增/编辑', 'CmsDocSave', '', '', '', '', 0, 0, '', '', '/admin/cms/doc/save', 0, 0, 0, '', '', 0, 0, 1, 1, '新增或编辑文档', 0, 0, 1768549363, 1768549363),
-(84, 82, 3, '删除', 'CmsDocDelete', '', '', '', '', 0, 0, '', '', '/admin/cms/doc/delete', 0, 0, 0, '', '', 0, 0, 2, 1, '删除文档', 0, 0, 1768549363, 1768549363),
-(85, 81, 3, '新增/编辑', 'CmsDocCategorySave', '', '', '', '', 0, 0, '', '', '/admin/cms/docCategory/save', 0, 0, 0, '', '', 0, 0, 1, 1, '新增或编辑分类', 0, 0, 1768549363, 1768549363),
-(86, 81, 3, '删除', 'CmsDocCategoryDelete', '', '', '', '', 0, 0, '', '', '/admin/cms/docCategory/delete', 0, 0, 0, '', '', 0, 0, 2, 1, '删除分类', 0, 0, 1768549363, 1768549363),
+(83, 82, 3, '新增/编辑', 'edit', '', '', '', '', 0, 0, '', '', '/admin/cms/doc/save', 0, 0, 0, '', '', 0, 0, 1, 1, '新增或编辑文档', 0, 0, 1768549363, 1768549363),
+(84, 82, 3, '删除', 'delete', '', '', '', '', 0, 0, '', '', '/admin/cms/doc/delete', 0, 0, 0, '', '', 0, 0, 2, 1, '删除文档', 0, 0, 1768549363, 1768549363),
+(85, 81, 3, '新增/编辑', 'edit', '', '', '', '', 0, 0, '', '', '/admin/cms/docCategory/save', 0, 0, 0, '', '', 0, 0, 1, 1, '新增或编辑分类', 0, 0, 1768549363, 1768549363),
+(86, 81, 3, '删除', 'delete', '', '', '', '', 0, 0, '', '', '/admin/cms/docCategory/delete', 0, 0, 0, '', '', 0, 0, 2, 1, '删除分类', 0, 0, 1768549363, 1768549363),
 (90, 0, 1, '结果页', 'Result', '/result', '/index/index', '', 'ri:checkbox-circle-line', 0, 0, '', '', '', 0, 0, 0, '', '', 0, 0, 100, 1, '结果根', 0, 0, 1768549363, 1768549363),
 (91, 90, 2, '成功页', 'ResultSuccess', 'success', '/result/success', '', 'ri:checkbox-circle-line', 0, 0, '', '', '', 0, 0, 0, '', '', 0, 0, 101, 1, '结果-成功', 0, 0, 1768549363, 1768549363),
 (92, 90, 2, '失败页', 'ResultFail', 'fail', '/result/fail', '', 'ri:close-circle-line', 0, 0, '', '', '', 0, 0, 0, '', '', 0, 0, 102, 1, '结果-失败', 0, 0, 1768549363, 1768549363),
@@ -349,10 +349,11 @@ INSERT INTO `xy_admin_menu` (`id`, `parent_id`, `type`, `title`, `name`, `path`,
 (103, 100, 2, '500', 'Exception500', '500', '/exception/500', '', '', 0, 0, '', '', '', 0, 0, 0, '', '', 0, 0, 113, 1, '异常-500', 0, 0, 1768549363, 1768549363),
 (110, 0, 1, '运维管理', 'Safeguard', '/safeguard', '/index/index', '', 'ri:shield-check-line', 0, 0, '', '', '', 0, 0, 0, '', '', 0, 0, 120, 1, '运维根', 0, 0, 1768549363, 1768549363),
 (111, 110, 2, '服务器监控', 'SafeguardServer', 'server', '/safeguard/server', '', 'ri:hard-drive-3-line', 0, 1, '', '', '[\"GET /admin/monitor/server\"]', 0, 0, 0, '', '', 0, 0, 121, 1, '运维-服务器', 0, 0, 1768549363, 1770644180),
+(121, 0, 2, '更新日志', 'ChangeLog', '/change/log', '/change/log', '', 'ri:gamepad-line', 0, 0, '', '', '', 0, 0, 1, 'v3.0.1', '1', 0, 0, 999, 1, '', 0, 0, 1768549363, 1768549363),
 (122, 60, 2, '附件管理', 'system/attachment', 'system/attachment', '/system/attachment/index', 'sys_attachment', 'ep:folder-opened', 0, 1, '', '', NULL, 0, 0, 0, '', '', 0, 0, 3, 1, '附件中心与文件管理', 0, 0, 1768549363, 1768549363),
-(123, 122, 3, '查看', 'system/attachment/index', '', '', '', '', 0, 0, '', '', 'system:attachment:list', 0, 0, 0, '', '', 0, 0, 1, 1, '', 0, 0, 1768549363, 1768549363),
-(124, 122, 3, '编辑', 'system/attachment/edit', '', '', '', '', 0, 0, '', '', 'system:attachment:edit', 0, 0, 0, '', '', 0, 0, 2, 1, '', 0, 0, 1768549363, 1768549363),
-(125, 122, 3, '删除', 'system/attachment/del', '', '', '', '', 0, 0, '', '', 'system:attachment:del', 0, 0, 0, '', '', 0, 0, 3, 1, '', 0, 0, 1768549363, 1768549363),
+(123, 122, 3, '查看', 'view', '', '', '', '', 0, 0, '', '', 'system:attachment:list', 0, 0, 0, '', '', 0, 0, 1, 1, '', 0, 0, 1768549363, 1768549363),
+(124, 122, 3, '编辑', 'edit', '', '', '', '', 0, 0, '', '', 'system:attachment:edit', 0, 0, 0, '', '', 0, 0, 2, 1, '', 0, 0, 1768549363, 1768549363),
+(125, 122, 3, '删除', 'delete', '', '', '', '', 0, 0, '', '', 'system:attachment:del', 0, 0, 0, '', '', 0, 0, 3, 1, '', 0, 0, 1768549363, 1768549363),
 (126, 20, 2, '图标选择器', 'IconSelector', 'icon-selector', '/widgets/icon-selector', '', 'ri:palette-line', 0, 1, '', '', '', 0, 0, 0, '', '', 0, 0, 33, 1, '图标选择器组件', 0, 0, 1768549363, 1768549363),
 (127, 20, 2, '颜色选择器', 'ColorPicker', 'color-picker', '/widgets/color-picker', '', 'ri:palette-fill', 0, 1, '', '', '', 0, 0, 0, '', '', 0, 0, 34, 1, '颜色选择器组件', 0, 0, 1768549363, 1768549363),
 (128, 20, 2, '图片上传', 'ImageUpload', 'image-upload', '/widgets/image-upload', '', 'ri:image-2-line', 0, 1, '', '', '', 0, 0, 0, '', '', 0, 0, 35, 1, '图片上传组件', 0, 0, 1768549363, 1768549363),
@@ -363,57 +364,91 @@ INSERT INTO `xy_admin_menu` (`id`, `parent_id`, `type`, `title`, `name`, `path`,
 (142, 140, 2, '岗位管理', 'Post', 'post', '/system/post', 'admin_post', 'ri:briefcase-line', 0, 1, '', '', '', 0, 0, 0, '', '', 0, 0, 2, 1, '岗位管理（职位字典）', 0, 0, 1768549363, 1768549363),
 (143, 0, 1, '会员管理', 'Member', '/member', '', '', 'ri:user-star-line', 0, 0, '', '', NULL, 0, 0, 0, '', '', 0, 0, 50, 1, '', 0, 0, 1768748969, 1768748969),
 (144, 143, 2, '会员列表', 'MemberList', 'list', '/member/list/index', '', 'ri:team-line', 0, 0, '', '', NULL, 0, 0, 0, '', '', 0, 0, 10, 1, '', 0, 0, 1768748969, 1768748969),
-(145, 143, 3, '添加会员', 'MemberAdd', '', '', '', '', 0, 0, '', '', NULL, 0, 0, 0, '', '', 0, 0, 1, 1, '', 0, 0, 1768748969, 1768748969),
-(146, 143, 3, '编辑会员', 'MemberEdit', '', '', '', '', 0, 0, '', '', NULL, 0, 0, 0, '', '', 0, 0, 2, 1, '', 0, 0, 1768748969, 1768748969),
-(147, 143, 3, '删除会员', 'MemberDelete', '', '', '', '', 0, 0, '', '', NULL, 0, 0, 0, '', '', 0, 0, 3, 1, '', 0, 0, 1768748969, 1768748969),
-(148, 143, 3, '重置密码', 'MemberResetPassword', '', '', '', '', 0, 0, '', '', NULL, 0, 0, 0, '', '', 0, 0, 4, 1, '', 0, 0, 1768748969, 1768748969),
+(145, 144, 3, '添加会员', 'add', '', '', '', '', 0, 0, '', '', NULL, 0, 0, 0, '', '', 0, 0, 1, 1, '', 0, 0, 1768748969, 1768748969),
+(146, 144, 3, '编辑会员', 'edit', '', '', '', '', 0, 0, '', '', NULL, 0, 0, 0, '', '', 0, 0, 2, 1, '', 0, 0, 1768748969, 1768748969),
+(147, 144, 3, '删除会员', 'delete', '', '', '', '', 0, 0, '', '', NULL, 0, 0, 0, '', '', 0, 0, 3, 1, '', 0, 0, 1768748969, 1768748969),
+(148, 144, 3, '重置密码', 'resetPwd', '', '', '', '', 0, 0, '', '', NULL, 0, 0, 0, '', '', 0, 0, 4, 1, '', 0, 0, 1768748969, 1768748969),
 (149, 143, 2, '会员分组', 'MemberGroup', 'group', '/member/group/index', 'member_group', 'ri:group-line', 0, 1, '', '', '[\"POST /admin/member/group/list\"]', 0, 0, 0, '', '', 0, 0, 20, 1, '会员分组管理', 0, 0, 1768791091, 1768791091),
-(150, 149, 3, '新增分组', 'MemberGroupAdd', '', '', 'member_group', '', 0, 0, '', '', '[\"POST /admin/member/group/save\"]', 0, 0, 0, '', '', 0, 0, 1, 1, '新增会员分组', 0, 0, 1768791091, 1768791091),
-(151, 149, 3, '编辑分组', 'MemberGroupEdit', '', '', 'member_group', '', 0, 0, '', '', '[\"POST /admin/member/group/save\"]', 0, 0, 0, '', '', 0, 0, 2, 1, '编辑会员分组', 0, 0, 1768791091, 1768791091),
-(152, 149, 3, '删除分组', 'MemberGroupDelete', '', '', 'member_group', '', 0, 0, '', '', '[\"POST /admin/member/group/delete\"]', 0, 0, 0, '', '', 0, 0, 3, 1, '删除会员分组', 0, 0, 1768791091, 1768791091),
+(150, 149, 3, '新增分组', 'add', '', '', 'member_group', '', 0, 0, '', '', '[\"POST /admin/member/group/save\"]', 0, 0, 0, '', '', 0, 0, 1, 1, '新增会员分组', 0, 0, 1768791091, 1768791091),
+(151, 149, 3, '编辑分组', 'edit', '', '', 'member_group', '', 0, 0, '', '', '[\"POST /admin/member/group/save\"]', 0, 0, 0, '', '', 0, 0, 2, 1, '编辑会员分组', 0, 0, 1768791091, 1768791091),
+(152, 149, 3, '删除分组', 'delete', '', '', 'member_group', '', 0, 0, '', '', '[\"POST /admin/member/group/delete\"]', 0, 0, 0, '', '', 0, 0, 3, 1, '删除会员分组', 0, 0, 1768791091, 1768791091),
 (153, 143, 2, '会员菜单', 'MemberMenu', 'menu', '/member/menu/index', 'member_menu', 'ri:menu-line', 0, 1, '', '', '[\"GET /admin/member/menu/tree\"]', 0, 0, 0, '', '', 0, 0, 30, 1, '会员前台菜单管理', 0, 0, 1768791091, 1768791091),
-(154, 153, 3, '新增菜单', 'MemberMenuAdd', '', '', 'member_menu', '', 0, 0, '', '', '[\"POST /admin/member/menu/save\"]', 0, 0, 0, '', '', 0, 0, 1, 1, '新增会员菜单', 0, 0, 1768791091, 1768791091),
-(155, 153, 3, '编辑菜单', 'MemberMenuEdit', '', '', 'member_menu', '', 0, 0, '', '', '[\"POST /admin/member/menu/save\"]', 0, 0, 0, '', '', 0, 0, 2, 1, '编辑会员菜单', 0, 0, 1768791091, 1768791091),
-(156, 153, 3, '删除菜单', 'MemberMenuDelete', '', '', 'member_menu', '', 0, 0, '', '', '[\"POST /admin/member/menu/delete\"]', 0, 0, 0, '', '', 0, 0, 3, 1, '删除会员菜单', 0, 0, 1768791091, 1768791091),
+(154, 153, 3, '新增菜单', 'add', '', '', 'member_menu', '', 0, 0, '', '', '[\"POST /admin/member/menu/save\"]', 0, 0, 0, '', '', 0, 0, 1, 1, '新增会员菜单', 0, 0, 1768791091, 1768791091),
+(155, 153, 3, '编辑菜单', 'edit', '', '', 'member_menu', '', 0, 0, '', '', '[\"POST /admin/member/menu/save\"]', 0, 0, 0, '', '', 0, 0, 2, 1, '编辑会员菜单', 0, 0, 1768791091, 1768791091),
+(156, 153, 3, '删除菜单', 'delete', '', '', 'member_menu', '', 0, 0, '', '', '[\"POST /admin/member/menu/delete\"]', 0, 0, 0, '', '', 0, 0, 3, 1, '删除会员菜单', 0, 0, 1768791091, 1768791091),
 (157, 110, 2, '登录日志', 'LoginLog', 'login-log', '/safeguard/login-log', 'admin_login_log', 'ri:login-box-line', 0, 1, '', '', '[\"POST /admin/log/login/list\"]', 0, 0, 0, '', '', 0, 0, 122, 1, '管理员登录日志', 0, 0, 1770615724, 1770615724),
-(158, 157, 3, '删除日志', 'LoginLogDelete', '', '', 'admin_login_log', '', 0, 0, '', '', '[\"POST /admin/log/login/delete\"]', 0, 0, 0, '', '', 0, 0, 1, 1, '删除登录日志', 0, 0, 1770615724, 1770615724),
-(159, 157, 3, '清空日志', 'LoginLogClear', '', '', 'admin_login_log', '', 0, 0, '', '', '[\"POST /admin/log/login/clear\"]', 0, 0, 0, '', '', 0, 0, 2, 1, '清空登录日志', 0, 0, 1770615724, 1770615724),
+(158, 157, 3, '删除日志', 'batchDel', '', '', 'admin_login_log', '', 0, 0, '', '', '[\"POST /admin/log/login/delete\"]', 0, 0, 0, '', '', 0, 0, 1, 1, '删除登录日志', 0, 0, 1770615724, 1770615724),
+(159, 157, 3, '清空日志', 'clear', '', '', 'admin_login_log', '', 0, 0, '', '', '[\"POST /admin/log/login/clear\"]', 0, 0, 0, '', '', 0, 0, 2, 1, '清空登录日志', 0, 0, 1770615724, 1770615724),
 (160, 110, 2, '操作日志', 'OperationLog', 'operation-log', '/safeguard/operation-log', 'admin_operation_log', 'ri:file-text-line', 0, 1, '', '', '[\"POST /admin/log/operation/list\"]', 0, 0, 0, '', '', 0, 0, 123, 1, '管理员操作日志', 0, 0, 1770615724, 1770615724),
-(161, 160, 3, '查看详情', 'OperationLogDetail', '', '', 'admin_operation_log', '', 0, 0, '', '', '[\"GET /admin/log/operation/detail\"]', 0, 0, 0, '', '', 0, 0, 1, 1, '查看操作日志详情', 0, 0, 1770615724, 1770615724),
-(162, 160, 3, '删除日志', 'OperationLogDelete', '', '', 'admin_operation_log', '', 0, 0, '', '', '[\"POST /admin/log/operation/delete\"]', 0, 0, 0, '', '', 0, 0, 2, 1, '删除操作日志', 0, 0, 1770615724, 1770615724),
-(163, 160, 3, '清空日志', 'OperationLogClear', '', '', 'admin_operation_log', '', 0, 0, '', '', '[\"POST /admin/log/operation/clear\"]', 0, 0, 0, '', '', 0, 0, 3, 1, '清空操作日志', 0, 0, 1770615724, 1770615724),
+(161, 160, 3, '查看详情', 'detail', '', '', 'admin_operation_log', '', 0, 0, '', '', '[\"GET /admin/log/operation/detail\"]', 0, 0, 0, '', '', 0, 0, 1, 1, '查看操作日志详情', 0, 0, 1770615724, 1770615724),
+(162, 160, 3, '删除日志', 'delete', '', '', 'admin_operation_log', '', 0, 0, '', '', '[\"POST /admin/log/operation/delete\"]', 0, 0, 0, '', '', 0, 0, 2, 1, '删除操作日志', 0, 0, 1770615724, 1770615724),
+(163, 160, 3, '清空日志', 'clear', '', '', 'admin_operation_log', '', 0, 0, '', '', '[\"POST /admin/log/operation/clear\"]', 0, 0, 0, '', '', 0, 0, 3, 1, '清空操作日志', 0, 0, 1770615724, 1770615724),
 (164, 110, 2, '性能分析', 'SafeguardPerformance', 'performance', '/safeguard/performance', 'admin_operation_log', 'ri:line-chart-line', 0, 0, '', '', '', 0, 0, 0, '', '', 0, 0, 124, 1, '', 0, 0, 1770644179, 1770644179),
 (165, 0, 1, '开发工具', 'Develop', '/develop', '/index/index', '', 'ri:code-box-line', 0, 0, '', '', '', 0, 0, 0, '', '', 0, 0, 125, 1, '开发工具目录', 0, 0, 1770648637, 1770648637),
 (166, 165, 2, '代码生成器', 'GenCodes', 'gen-codes', '/develop/gen-codes/index', 'sys_gen_codes', 'ri:magic-line', 0, 1, '', '', '[\"GET /admin/genCodes/selects\",\"GET /admin/genCodes/tableSelect\",\"GET /admin/genCodes/columnList\",\"GET /admin/genCodes/list\",\"GET /admin/genCodes/view\",\"POST /admin/genCodes/edit\",\"POST /admin/genCodes/delete\",\"POST /admin/genCodes/preview\",\"POST /admin/genCodes/build\",\"POST /admin/genCodes/createTable\"]', 0, 0, 0, '', '', 0, 0, 1, 1, '代码生成器', 0, 0, 1770648637, 1770648637),
 (202, 110, 2, '函数分析', 'PprofAnalysis', 'pprof', '/safeguard/pprof/index', '', 'ri:code-s-slash-line', 0, 1, '', '', '[\"GET /admin/monitor/pprof-top\"]', 0, 0, 0, '', '', 0, 0, 125, 1, '函数级CPU/内存热点分析(pprof)', 0, 0, 1770702712, 1770702712),
 (220, 60, 2, '通知管理', 'Notice', 'notice', '/system/notice/index', 'admin_notice', 'ri:notification-3-line', 0, 1, '', '', '[\"POST /admin/notice/list\"]', 0, 0, 0, '', '', 0, 0, 4, 1, '通知消息管理', 0, 0, 1770700000, 1770700000),
-(221, 220, 3, '查看', 'NoticeView', '', '', 'admin_notice', '', 0, 0, '', '', '[\"POST /admin/notice/list\"]', 0, 0, 0, '', '', 0, 0, 1, 1, '查看通知列表', 0, 0, 1770700000, 1770700000),
-(222, 220, 3, '发布/编辑', 'NoticeEdit', '', '', 'admin_notice', '', 0, 0, '', '', '[\"POST /admin/notice/edit\"]', 0, 0, 0, '', '', 0, 0, 2, 1, '发布或编辑通知', 0, 0, 1770700000, 1770700000),
-(223, 220, 3, '删除', 'NoticeDelete', '', '', 'admin_notice', '', 0, 0, '', '', '[\"POST /admin/notice/delete\"]', 0, 0, 0, '', '', 0, 0, 3, 1, '删除通知', 0, 0, 1770700000, 1770700000),
+(221, 220, 3, '查看', 'view', '', '', 'admin_notice', '', 0, 0, '', '', '[\"POST /admin/notice/list\"]', 0, 0, 0, '', '', 0, 0, 1, 1, '查看通知列表', 0, 0, 1770700000, 1770700000),
+(222, 220, 3, '发布/编辑', 'edit', '', '', 'admin_notice', '', 0, 0, '', '', '[\"POST /admin/notice/edit\"]', 0, 0, 0, '', '', 0, 0, 2, 1, '发布或编辑通知', 0, 0, 1770700000, 1770700000),
+(223, 220, 3, '删除', 'delete', '', '', 'admin_notice', '', 0, 0, '', '', '[\"POST /admin/notice/delete\"]', 0, 0, 0, '', '', 0, 0, 3, 1, '删除通知', 0, 0, 1770700000, 1770700000),
 (240, 60, 2, '定时任务', 'CronManage', 'cron', '/system/cron/index', 'sys_cron', 'ri:timer-line', 0, 1, '', '', '', 0, 0, 0, '', '', 0, 0, 80, 1, '定时任务管理', 0, 0, 1770717535, 1770717535),
-(241, 240, 3, '查看', 'CronView', '', '', '', '', 0, 0, '', '', 'GET /admin/cron/list', 0, 0, 0, '', '', 0, 0, 0, 1, '', 0, 0, 1770717535, 1770717535),
-(242, 240, 3, '新增/编辑', 'CronEdit', '', '', '', '', 0, 0, '', '', 'POST /admin/cron/save', 0, 0, 0, '', '', 0, 0, 0, 1, '', 0, 0, 1770717535, 1770717535),
-(243, 240, 3, '删除', 'CronDelete', '', '', '', '', 0, 0, '', '', 'POST /admin/cron/delete', 0, 0, 0, '', '', 0, 0, 0, 1, '', 0, 0, 1770717535, 1770717535),
-(244, 240, 3, '在线执行', 'CronOnlineExec', '', '', '', '', 0, 0, '', '', 'POST /admin/cron/onlineExec', 0, 0, 0, '', '', 0, 0, 0, 1, '', 0, 0, 1770717535, 1770717535),
+(241, 240, 3, '查看', 'view', '', '', '', '', 0, 0, '', '', 'GET /admin/cron/list', 0, 0, 0, '', '', 0, 0, 0, 1, '', 0, 0, 1770717535, 1770717535),
+(242, 240, 3, '新增/编辑', 'edit', '', '', '', '', 0, 0, '', '', 'POST /admin/cron/save', 0, 0, 0, '', '', 0, 0, 0, 1, '', 0, 0, 1770717535, 1770717535),
+(243, 240, 3, '删除', 'delete', '', '', '', '', 0, 0, '', '', 'POST /admin/cron/delete', 0, 0, 0, '', '', 0, 0, 0, 1, '', 0, 0, 1770717535, 1770717535),
+(244, 240, 3, '在线执行', 'exec', '', '', '', '', 0, 0, '', '', 'POST /admin/cron/onlineExec', 0, 0, 0, '', '', 0, 0, 0, 1, '', 0, 0, 1770717535, 1770717535),
 (250, 60, 2, '消息队列', 'QueueManage', 'queue', '/system/queue/index', '', 'ri:stack-line', 0, 1, '', '', '', 0, 0, 0, '', '', 0, 0, 85, 1, '消息队列管理', 0, 0, 1770719034, 1770719034),
 (418, 143, 2, '登录日志', 'MemberLoginLog', 'member-login-log', '/member/member-login-log/index', '', 'ri:file-list-line', 0, 1, '', '', '[\"GET /admin/member-login-log/list\"]', 0, 0, 0, '', '', 0, 0, 100, 1, '', 0, 0, 1770873777, 1770873777),
-(419, 418, 3, '查看登录日志', 'MemberLoginLogView', '', '', '', '', 0, 0, '', '', '[\"GET /admin/member-login-log/view\"]', 0, 0, 0, '', '', 0, 0, 1, 1, '', 0, 0, 1770873777, 1770873777),
+(419, 418, 3, '查看登录日志', 'view', '', '', '', '', 0, 0, '', '', '[\"GET /admin/member-login-log/view\"]', 0, 0, 0, '', '', 0, 0, 1, 1, '', 0, 0, 1770873777, 1770873777),
 (420, 143, 2, '登录日志详情', 'MemberLoginLogDetail', 'member-login-log/detail', '/member/member-login-log/detail/index', '', '', 1, 0, '', '', '[\"GET /admin/member-login-log/view\"]', 0, 0, 0, '', '/member-login-log', 0, 0, 0, 1, '', 0, 0, 1770873777, 1770873777),
-(421, 418, 3, '删除登录日志', 'MemberLoginLogDelete', '', '', '', '', 0, 0, '', '', '[\"POST /admin/member-login-log/delete\"]', 0, 0, 0, '', '', 0, 0, 4, 1, '', 0, 0, 1770873777, 1770873777),
-(422, 418, 3, '导出登录日志', 'MemberLoginLogExport', '', '', '', '', 0, 0, '', '', '[\"GET /admin/member-login-log/export\"]', 0, 0, 0, '', '', 0, 0, 5, 1, '', 0, 0, 1770873777, 1770873777),
+(421, 418, 3, '删除登录日志', 'delete', '', '', '', '', 0, 0, '', '', '[\"POST /admin/member-login-log/delete\"]', 0, 0, 0, '', '', 0, 0, 4, 1, '', 0, 0, 1770873777, 1770873777),
+(422, 418, 3, '导出登录日志', 'export', '', '', '', '', 0, 0, '', '', '[\"GET /admin/member-login-log/export\"]', 0, 0, 0, '', '', 0, 0, 5, 1, '', 0, 0, 1770873777, 1770873777),
 (511, 143, 2, '余额变动日志', 'MemberMoneyLog', 'member-money-log', '/member/member-money-log/index', '', 'ri:file-list-line', 0, 1, '', '', '[\"GET /admin/member-money-log/list\"]', 0, 0, 0, '', '', 0, 0, 100, 1, '', 0, 0, 1770881561, 1770881561),
-(512, 511, 3, '查看余额变动日志', 'MemberMoneyLogView', '', '', '', '', 0, 0, '', '', '[\"GET /admin/member-money-log/view\"]', 0, 0, 0, '', '', 0, 0, 1, 1, '', 0, 0, 1770881561, 1770881561),
-(513, 511, 3, '新增余额变动日志', 'MemberMoneyLogAdd', '', '', '', '', 0, 0, '', '', '[\"POST /admin/member-money-log/edit\"]', 0, 0, 0, '', '', 0, 0, 2, 1, '', 0, 0, 1770881561, 1770881561),
-(514, 511, 3, '编辑余额变动日志', 'MemberMoneyLogEdit', '', '', '', '', 0, 0, '', '', '[\"POST /admin/member-money-log/edit\",\"GET /admin/member-money-log/view\"]', 0, 0, 0, '', '', 0, 0, 3, 1, '', 0, 0, 1770881561, 1770881561),
-(515, 511, 3, '删除余额变动日志', 'MemberMoneyLogDelete', '', '', '', '', 0, 0, '', '', '[\"POST /admin/member-money-log/delete\"]', 0, 0, 0, '', '', 0, 0, 4, 1, '', 0, 0, 1770881561, 1770881561),
-(516, 511, 3, '导出余额变动日志', 'MemberMoneyLogExport', '', '', '', '', 0, 0, '', '', '[\"GET /admin/member-money-log/export\"]', 0, 0, 0, '', '', 0, 0, 5, 1, '', 0, 0, 1770881561, 1770881561),
+(512, 511, 3, '查看余额变动日志', 'view', '', '', '', '', 0, 0, '', '', '[\"GET /admin/member-money-log/view\"]', 0, 0, 0, '', '', 0, 0, 1, 1, '', 0, 0, 1770881561, 1770881561),
+(513, 511, 3, '新增余额变动日志', 'add', '', '', '', '', 0, 0, '', '', '[\"POST /admin/member-money-log/edit\"]', 0, 0, 0, '', '', 0, 0, 2, 1, '', 0, 0, 1770881561, 1770881561),
+(514, 511, 3, '编辑余额变动日志', 'edit', '', '', '', '', 0, 0, '', '', '[\"POST /admin/member-money-log/edit\",\"GET /admin/member-money-log/view\"]', 0, 0, 0, '', '', 0, 0, 3, 1, '', 0, 0, 1770881561, 1770881561),
+(515, 511, 3, '删除余额变动日志', 'delete', '', '', '', '', 0, 0, '', '', '[\"POST /admin/member-money-log/delete\"]', 0, 0, 0, '', '', 0, 0, 4, 1, '', 0, 0, 1770881561, 1770881561),
+(516, 511, 3, '导出余额变动日志', 'export', '', '', '', '', 0, 0, '', '', '[\"GET /admin/member-money-log/export\"]', 0, 0, 0, '', '', 0, 0, 5, 1, '', 0, 0, 1770881561, 1770881561),
 (517, 143, 2, '积分变动日志', 'MemberScoreLog', 'member-score-log', '/member/member-score-log/index', '', 'ri:file-list-line', 0, 1, '', '', '[\"GET /admin/member-score-log/list\"]', 0, 0, 0, '', '', 0, 0, 100, 1, '', 0, 0, 1770881700, 1770881700),
 (617, 143, 2, '会员通知', 'MemberNotice', 'member-notice', '/member/member-notice/index', '', 'ri:notification-line', 0, 1, '', '', '[\"GET /admin/member-notice/list\"]', 0, 0, 0, '', '', 0, 0, 100, 1, '', 0, 0, 1770904531, 1770904531),
-(618, 617, 3, '查看会员通知', 'MemberNoticeView', '', '', '', '', 0, 0, '', '', '[\"GET /admin/member-notice/view\"]', 0, 0, 0, '', '', 0, 0, 1, 1, '', 0, 0, 1770904531, 1770904531),
-(619, 617, 3, '新增会员通知', 'MemberNoticeAdd', '', '', '', '', 0, 0, '', '', '[\"POST /admin/member-notice/edit\"]', 0, 0, 0, '', '', 0, 0, 2, 1, '', 0, 0, 1770904531, 1770904531),
-(620, 617, 3, '编辑会员通知', 'MemberNoticeEdit', '', '', '', '', 0, 0, '', '', '[\"POST /admin/member-notice/edit\",\"GET /admin/member-notice/view\"]', 0, 0, 0, '', '', 0, 0, 3, 1, '', 0, 0, 1770904531, 1770904531),
-(621, 617, 3, '删除会员通知', 'MemberNoticeDelete', '', '', '', '', 0, 0, '', '', '[\"POST /admin/member-notice/delete\"]', 0, 0, 0, '', '', 0, 0, 4, 1, '', 0, 0, 1770904531, 1770904531),
-(622, 617, 3, '导出会员通知', 'MemberNoticeExport', '', '', '', '', 0, 0, '', '', '[\"GET /admin/member-notice/export\"]', 0, 0, 0, '', '', 0, 0, 5, 1, '', 0, 0, 1770904531, 1770904531);
+(618, 617, 3, '查看会员通知', 'view', '', '', '', '', 0, 0, '', '', '[\"GET /admin/member-notice/view\"]', 0, 0, 0, '', '', 0, 0, 1, 1, '', 0, 0, 1770904531, 1770904531),
+(619, 617, 3, '新增会员通知', 'add', '', '', '', '', 0, 0, '', '', '[\"POST /admin/member-notice/edit\"]', 0, 0, 0, '', '', 0, 0, 2, 1, '', 0, 0, 1770904531, 1770904531),
+(620, 617, 3, '编辑会员通知', 'edit', '', '', '', '', 0, 0, '', '', '[\"POST /admin/member-notice/edit\",\"GET /admin/member-notice/view\"]', 0, 0, 0, '', '', 0, 0, 3, 1, '', 0, 0, 1770904531, 1770904531),
+(621, 617, 3, '删除会员通知', 'delete', '', '', '', '', 0, 0, '', '', '[\"POST /admin/member-notice/delete\"]', 0, 0, 0, '', '', 0, 0, 4, 1, '', 0, 0, 1770904531, 1770904531),
+(622, 617, 3, '导出会员通知', 'export', '', '', '', '', 0, 0, '', '', '[\"GET /admin/member-notice/export\"]', 0, 0, 0, '', '', 0, 0, 5, 1, '', 0, 0, 1770904531, 1770904531),
+(700, 0, 1, '租户管理', 'Tenant', '/tenant', '', '', 'ri:building-2-line', 0, 0, '', '', '', 0, 0, 0, '', '', 0, 0, 55, 1, '租户管理目录', 0, 0, 0, 0),
+(701, 700, 2, '套餐管理', 'TenantGroup', 'group', '/tenant/group/index', '', 'ri:gift-2-line', 0, 0, '', '', '', 0, 0, 0, '', '', 0, 0, 1, 1, '租户套餐管理', 0, 0, 0, 0),
+(702, 700, 2, '租户列表', 'TenantList', 'list', '/tenant/list/index', '', 'ri:home-office-line', 0, 0, '', '', '', 0, 0, 0, '', '', 0, 0, 2, 1, '租户列表管理', 0, 0, 0, 0),
+(750, 61, 3, '新增用户', 'add', '', '', 'admin_user', '', 0, 0, '', '', '', 0, 0, 0, '', '', 0, 0, 1, 1, '', 0, 0, 1746835200, 1746835200),
+(751, 61, 3, '编辑用户', 'edit', '', '', 'admin_user', '', 0, 0, '', '', '', 0, 0, 0, '', '', 0, 0, 2, 1, '', 0, 0, 1746835200, 1746835200),
+(752, 61, 3, '删除用户', 'delete', '', '', 'admin_user', '', 0, 0, '', '', '', 0, 0, 0, '', '', 0, 0, 3, 1, '', 0, 0, 1746835200, 1746835200),
+(753, 61, 3, '强制下线', 'kick', '', '', 'admin_user', '', 0, 0, '', '', '', 0, 0, 0, '', '', 0, 0, 4, 1, '', 0, 0, 1746835200, 1746835200),
+(755, 62, 3, '新增角色', 'add', '', '', 'admin_role', '', 0, 0, '', '', '', 0, 0, 0, '', '', 0, 0, 1, 1, '', 0, 0, 1746835200, 1746835200),
+(756, 62, 3, '编辑角色', 'edit', '', '', 'admin_role', '', 0, 0, '', '', '', 0, 0, 0, '', '', 0, 0, 2, 1, '', 0, 0, 1746835200, 1746835200),
+(757, 62, 3, '删除角色', 'delete', '', '', 'admin_role', '', 0, 0, '', '', '', 0, 0, 0, '', '', 0, 0, 3, 1, '', 0, 0, 1746835200, 1746835200),
+(758, 62, 3, '菜单权限', 'permission', '', '', 'admin_role', '', 0, 0, '', '', '', 0, 0, 0, '', '', 0, 0, 4, 1, '', 0, 0, 1746835200, 1746835200),
+(759, 62, 3, '数据权限', 'dataScope', '', '', 'admin_role', '', 0, 0, '', '', '', 0, 0, 0, '', '', 0, 0, 5, 1, '', 0, 0, 1746835200, 1746835200),
+(760, 62, 3, '字段权限', 'fieldPerm', '', '', 'admin_role', '', 0, 0, '', '', '', 0, 0, 0, '', '', 0, 0, 6, 1, '', 0, 0, 1746835200, 1746835200),
+(765, 141, 3, '添加部门', 'add', '', '', 'admin_dept', '', 0, 0, '', '', '', 0, 0, 0, '', '', 0, 0, 1, 1, '', 0, 0, 1746835200, 1746835200),
+(766, 141, 3, '编辑部门', 'edit', '', '', 'admin_dept', '', 0, 0, '', '', '', 0, 0, 0, '', '', 0, 0, 2, 1, '', 0, 0, 1746835200, 1746835200),
+(767, 141, 3, '删除部门', 'delete', '', '', 'admin_dept', '', 0, 0, '', '', '', 0, 0, 0, '', '', 0, 0, 3, 1, '', 0, 0, 1746835200, 1746835200),
+(770, 142, 3, '新增岗位', 'add', '', '', 'admin_post', '', 0, 0, '', '', '', 0, 0, 0, '', '', 0, 0, 1, 1, '', 0, 0, 1746835200, 1746835200),
+(771, 142, 3, '编辑岗位', 'edit', '', '', 'admin_post', '', 0, 0, '', '', '', 0, 0, 0, '', '', 0, 0, 2, 1, '', 0, 0, 1746835200, 1746835200),
+(772, 142, 3, '删除岗位', 'delete', '', '', 'admin_post', '', 0, 0, '', '', '', 0, 0, 0, '', '', 0, 0, 3, 1, '', 0, 0, 1746835200, 1746835200),
+(775, 122, 3, '上传文件', 'add', '', '', 'sys_attachment', '', 0, 0, '', '', '', 0, 0, 0, '', '', 0, 0, 0, 1, '', 0, 0, 1746835200, 1746835200),
+(776, 122, 3, '批量删除', 'batchDel', '', '', 'sys_attachment', '', 0, 0, '', '', '', 0, 0, 0, '', '', 0, 0, 4, 1, '', 0, 0, 1746835200, 1746835200),
+(780, 220, 3, '发布通知', 'add', '', '', 'admin_notice', '', 0, 0, '', '', '', 0, 0, 0, '', '', 0, 0, 0, 1, '', 0, 0, 1746835200, 1746835200),
+(785, 240, 3, '新增任务', 'add', '', '', 'sys_cron', '', 0, 0, '', '', '', 0, 0, 0, '', '', 0, 0, 0, 1, '', 0, 0, 1746835200, 1746835200),
+(790, 144, 3, '批量删除', 'batchDel', '', '', '', '', 0, 0, '', '', '', 0, 0, 0, '', '', 0, 0, 5, 1, '', 0, 0, 1746835200, 1746835200),
+(795, 160, 3, '批量删除', 'batchDel', '', '', 'admin_operation_log', '', 0, 0, '', '', '', 0, 0, 0, '', '', 0, 0, 0, 1, '', 0, 0, 1746835200, 1746835200),
+(800, 418, 3, '批量删除', 'batchDel', '', '', '', '', 0, 0, '', '', '', 0, 0, 0, '', '', 0, 0, 2, 1, '', 0, 0, 1746835200, 1746835200),
+(805, 517, 3, '新增', 'add', '', '', '', '', 0, 0, '', '', '', 0, 0, 0, '', '', 0, 0, 1, 1, '', 0, 0, 1746835200, 1746835200),
+(806, 517, 3, '查看', 'view', '', '', '', '', 0, 0, '', '', '', 0, 0, 0, '', '', 0, 0, 2, 1, '', 0, 0, 1746835200, 1746835200),
+(807, 517, 3, '编辑', 'edit', '', '', '', '', 0, 0, '', '', '', 0, 0, 0, '', '', 0, 0, 3, 1, '', 0, 0, 1746835200, 1746835200),
+(808, 517, 3, '删除', 'delete', '', '', '', '', 0, 0, '', '', '', 0, 0, 0, '', '', 0, 0, 4, 1, '', 0, 0, 1746835200, 1746835200),
+(809, 517, 3, '批量删除', 'batchDel', '', '', '', '', 0, 0, '', '', '', 0, 0, 0, '', '', 0, 0, 5, 1, '', 0, 0, 1746835200, 1746835200),
+(810, 517, 3, '导出', 'export', '', '', '', '', 0, 0, '', '', '', 0, 0, 0, '', '', 0, 0, 6, 1, '', 0, 0, 1746835200, 1746835200),
+(815, 511, 3, '批量删除', 'batchDel', '', '', '', '', 0, 0, '', '', '', 0, 0, 0, '', '', 0, 0, 6, 1, '', 0, 0, 1746835200, 1746835200),
+(820, 617, 3, '批量删除', 'batchDel', '', '', '', '', 0, 0, '', '', '', 0, 0, 0, '', '', 0, 0, 6, 1, '', 0, 0, 1746835200, 1746835200);
 
 -- --------------------------------------------------------
 
@@ -1027,6 +1062,13 @@ CREATE TABLE `xy_member_menu` (
 
 INSERT INTO `xy_member_menu` (`id`, `pid`, `title`, `name`, `path`, `component`, `icon`, `menu_type`, `url`, `no_login_valid`, `extend`, `remark`, `type`, `nav_show_children`, `permission`, `sort`, `status`, `created_at`, `updated_at`) VALUES
 (1, 0, '文档', 'docs', '/docs', 'docs/index', 'ri:book-open-line', 'tab', '', 1, 'none', '', 'nav', 0, '', 10, 1, NULL, NULL),
+(2, 0, '案例', 'cases', '/cases', 'cases/index', 'ri:slideshow-line', 'tab', '', 1, 'none', '', 'nav', 0, '', 20, 1, NULL, NULL),
+(3, 0, '社区', 'community', '/community', 'community/index', 'ri:discuss-line', 'tab', '', 1, 'none', '', 'nav', 0, '', 30, 1, NULL, NULL),
+(16, 0, '更新日志', 'changelog', '/changelog', '', 'ri:file-list-3-line', 'tab', '', 1, 'none', '', 'nav', 0, '', 40, 1, NULL, NULL),
+(12, 3, '帖子详情', 'community-detail', '/community/:id', 'community/detail', '', 'route', '', 1, 'add_rules_only', '', 'route', 0, '', 0, 1, NULL, NULL),
+(13, 3, '发布提问', 'community-publish', '/community-publish', 'community/publish', '', 'route', '', 0, 'add_rules_only', '', 'route', 0, '', 0, 1, NULL, NULL),
+(14, 3, '搜索结果', 'community-search', '/community-search', 'community/search', '', 'route', '', 1, 'add_rules_only', '', 'route', 0, '', 0, 1, NULL, NULL),
+(15, 0, '我的社区', 'my-community', '/user/community', '', 'ri:discuss-line', 'tab', '', 0, 'none', '', 'menu', 0, '', 108, 1, NULL, NULL),
 (4, 0, '我的账户', 'account', '/user', '', 'ri:user-line', 'tab', '', 0, 'none', '', 'menu_dir', 0, '', 100, 1, NULL, NULL),
 (5, 4, '账户概览', 'overview', '/user/overview', 'member/center', 'ri:home-4-line', 'tab', '', 0, 'none', '', 'menu', 0, '', 101, 1, NULL, NULL),
 (6, 4, '每日签到', 'checkin', '/user/checkin', 'member/center', 'ri:calendar-check-line', 'tab', '', 0, 'none', '', 'menu', 0, '', 102, 1, NULL, NULL),
@@ -1918,7 +1960,7 @@ ALTER TABLE `xy_admin_login_log`
 -- 使用表AUTO_INCREMENT `xy_admin_menu`
 --
 ALTER TABLE `xy_admin_menu`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '菜单ID', AUTO_INCREMENT=630;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '菜单ID', AUTO_INCREMENT=703;
 
 --
 -- 使用表AUTO_INCREMENT `xy_admin_notice`
@@ -2002,7 +2044,7 @@ ALTER TABLE `xy_member_login_log`
 -- 使用表AUTO_INCREMENT `xy_member_menu`
 --
 ALTER TABLE `xy_member_menu`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '菜单ID', AUTO_INCREMENT=12;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '菜单ID', AUTO_INCREMENT=16;
 
 --
 -- 使用表AUTO_INCREMENT `xy_member_money_log`
@@ -2169,37 +2211,345 @@ ALTER TABLE `xy_cms_doc_category`
 ALTER TABLE `xy_cms_doc`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '文档ID';
 
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `xy_cms_changelog`
+--
+
+CREATE TABLE `xy_cms_changelog` (
+  `id` bigint(20) UNSIGNED NOT NULL COMMENT '日志ID',
+  `version` varchar(32) COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '版本号(如v3.0.1)',
+  `title` varchar(255) COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '更新标题',
+  `content` longtext COLLATE utf8mb4_general_ci COMMENT '更新内容(JSON数组)',
+  `remark` varchar(500) COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '备注',
+  `require_re_login` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否需要重新登录:0=否,1=是',
+  `release_date` varchar(20) COLLATE utf8mb4_general_ci NOT NULL DEFAULT '' COMMENT '发布日期(如2025-11-15)',
+  `status` tinyint(1) NOT NULL DEFAULT '1' COMMENT '状态:1=已发布,2=草稿',
+  `sort` int(10) NOT NULL DEFAULT '0' COMMENT '排序(越大越靠前)',
+  `created_by` bigint(20) UNSIGNED NOT NULL DEFAULT '0' COMMENT '创建人ID',
+  `updated_by` bigint(20) UNSIGNED NOT NULL DEFAULT '0' COMMENT '更新人ID',
+  `created_at` bigint(20) UNSIGNED NOT NULL DEFAULT '0' COMMENT '创建时间',
+  `updated_at` bigint(20) UNSIGNED NOT NULL DEFAULT '0' COMMENT '更新时间',
+  `deleted_at` bigint(20) UNSIGNED NOT NULL DEFAULT '0' COMMENT '删除时间(软删除)'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='更新日志表';
+
+--
+-- 索引 `xy_cms_changelog`
+--
+ALTER TABLE `xy_cms_changelog`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_version` (`version`),
+  ADD KEY `idx_status` (`status`),
+  ADD KEY `idx_sort` (`sort`),
+  ADD KEY `idx_release_date` (`release_date`),
+  ADD KEY `idx_deleted` (`deleted_at`);
+
+--
+-- 使用表AUTO_INCREMENT `xy_cms_changelog`
+--
+ALTER TABLE `xy_cms_changelog`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '日志ID';
+
+-- --------------------------------------------------------
+-- 租户套餐表
+-- --------------------------------------------------------
+
+CREATE TABLE `xy_tenant_group` (
+  `id` bigint(20) UNSIGNED NOT NULL COMMENT '套餐ID',
+  `group_name` varchar(100) NOT NULL DEFAULT '' COMMENT '套餐名称',
+  `remark` varchar(255) DEFAULT '' COMMENT '描述',
+  `content` text COMMENT '套餐详情（富文本或JSON）',
+  `sort` int(11) NOT NULL DEFAULT '0' COMMENT '排序',
+  `status` tinyint(4) NOT NULL DEFAULT '1' COMMENT '状态:0停用,1启用',
+  `created_by` bigint(20) UNSIGNED NOT NULL DEFAULT '0' COMMENT '创建人ID',
+  `updated_by` bigint(20) UNSIGNED NOT NULL DEFAULT '0' COMMENT '更新人ID',
+  `create_time` int(10) UNSIGNED DEFAULT NULL COMMENT '创建时间',
+  `update_time` int(10) UNSIGNED DEFAULT NULL COMMENT '更新时间',
+  `delete_time` int(10) UNSIGNED DEFAULT '0' COMMENT '删除时间(软删除)'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='租户套餐表';
+
+INSERT INTO `xy_tenant_group` (`id`, `group_name`, `remark`, `sort`, `status`, `created_by`, `updated_by`, `create_time`, `update_time`, `delete_time`) VALUES
+(1, '基础版', '基础功能套餐', 1, 1, 1, 1, UNIX_TIMESTAMP(), UNIX_TIMESTAMP(), 0),
+(2, '专业版', '包含全部功能', 2, 1, 1, 1, UNIX_TIMESTAMP(), UNIX_TIMESTAMP(), 0);
+
+ALTER TABLE `xy_tenant_group`
+  ADD PRIMARY KEY (`id`);
+
+ALTER TABLE `xy_tenant_group`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '套餐ID', AUTO_INCREMENT=3;
+
+-- --------------------------------------------------------
+-- 套餐与菜单关联表
+-- --------------------------------------------------------
+
+CREATE TABLE `xy_tenant_group_menu` (
+  `id` bigint(20) UNSIGNED NOT NULL COMMENT '主键',
+  `group_id` bigint(20) UNSIGNED NOT NULL COMMENT '套餐ID',
+  `menu_id` bigint(20) UNSIGNED NOT NULL COMMENT '菜单ID（关联 xy_admin_menu）'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='租户套餐与菜单关联表';
+
+ALTER TABLE `xy_tenant_group_menu`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_group_id` (`group_id`),
+  ADD KEY `idx_menu_id` (`menu_id`);
+
+ALTER TABLE `xy_tenant_group_menu`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键';
+
+-- --------------------------------------------------------
+-- 租户信息表
+-- --------------------------------------------------------
+
+CREATE TABLE `xy_tenant` (
+  `id` bigint(20) UNSIGNED NOT NULL COMMENT '租户ID',
+  `group_id` bigint(20) UNSIGNED DEFAULT NULL COMMENT '套餐ID',
+  `title` varchar(100) DEFAULT '' COMMENT '租户简称',
+  `logo` varchar(255) DEFAULT '' COMMENT '租户Logo',
+  `tenant_name` varchar(255) DEFAULT '' COMMENT '租户全称',
+  `domain` varchar(100) DEFAULT NULL COMMENT '绑定域名',
+  `sms_type` tinyint(4) NOT NULL DEFAULT '1' COMMENT '短信配置:1跟随平台,2独立配置',
+  `storage_type` tinyint(4) NOT NULL DEFAULT '1' COMMENT '存储配置:1跟随平台,2独立配置',
+  `contact_name` varchar(50) DEFAULT '' COMMENT '联系人',
+  `contact_phone` varchar(50) DEFAULT '' COMMENT '联系电话',
+  `contact_email` varchar(100) DEFAULT '' COMMENT '联系邮箱',
+  `status` tinyint(4) NOT NULL DEFAULT '1' COMMENT '状态:0停用,1启用',
+  `remark` varchar(255) DEFAULT '' COMMENT '备注',
+  `is_init` tinyint(4) NOT NULL DEFAULT '0' COMMENT '是否已初始化:0否,1是',
+  `money` decimal(10,2) NOT NULL DEFAULT '0.00' COMMENT '站内余额',
+  `expire_time` int(10) UNSIGNED DEFAULT NULL COMMENT '到期时间(时间戳)',
+  `created_by` bigint(20) UNSIGNED NOT NULL DEFAULT '0' COMMENT '创建人ID',
+  `updated_by` bigint(20) UNSIGNED NOT NULL DEFAULT '0' COMMENT '更新人ID',
+  `create_time` int(10) UNSIGNED DEFAULT NULL COMMENT '创建时间',
+  `update_time` int(10) UNSIGNED DEFAULT NULL COMMENT '更新时间',
+  `delete_time` int(10) UNSIGNED DEFAULT '0' COMMENT '删除时间(软删除)',
+  `admin_username` varchar(50) NOT NULL DEFAULT '' COMMENT '租户管理员账号',
+  `admin_password` varchar(100) NOT NULL DEFAULT '' COMMENT '租户管理员密码(加密)',
+  `salt` varchar(10) NOT NULL DEFAULT '' COMMENT '密码盐值'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='租户信息表';
+
+INSERT INTO `xy_tenant` (`id`, `group_id`, `title`, `tenant_name`, `status`, `is_init`, `admin_username`, `created_by`, `updated_by`, `create_time`, `update_time`, `delete_time`) VALUES
+(1, 2, '默认租户', '系统默认租户（平台自用）', 1, 1, 'admin', 1, 1, UNIX_TIMESTAMP(), UNIX_TIMESTAMP(), 0);
+
+ALTER TABLE `xy_tenant`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_group_id` (`group_id`),
+  ADD UNIQUE KEY `uk_domain` (`domain`);
+
+ALTER TABLE `xy_tenant`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '租户ID', AUTO_INCREMENT=2;
+
+-- --------------------------------------------------------
+-- 租户账户流水表
+-- --------------------------------------------------------
+
+CREATE TABLE `xy_tenant_account_log` (
+  `id` bigint(20) UNSIGNED NOT NULL COMMENT '流水ID',
+  `tenant_id` bigint(20) UNSIGNED NOT NULL COMMENT '租户ID',
+  `sn` varchar(32) NOT NULL DEFAULT '' COMMENT '流水号',
+  `change_object` tinyint(4) NOT NULL DEFAULT '1' COMMENT '变动对象:1余额',
+  `change_type` int(11) NOT NULL DEFAULT '0' COMMENT '变动类型',
+  `action` tinyint(4) NOT NULL DEFAULT '1' COMMENT '动作:1增加,2扣减',
+  `change_amount` decimal(10,2) NOT NULL DEFAULT '0.00' COMMENT '变动金额',
+  `left_amount` decimal(10,2) NOT NULL DEFAULT '0.00' COMMENT '变动后余额',
+  `association_sn` varchar(255) DEFAULT '' COMMENT '关联单号',
+  `remark` varchar(255) DEFAULT '' COMMENT '备注',
+  `admin_id` bigint(20) UNSIGNED DEFAULT '0' COMMENT '操作管理员ID',
+  `create_time` int(10) UNSIGNED DEFAULT NULL COMMENT '创建时间',
+  `update_time` int(10) UNSIGNED DEFAULT NULL COMMENT '更新时间',
+  `delete_time` int(10) UNSIGNED DEFAULT '0' COMMENT '删除时间(软删除)'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='租户账户流水表';
+
+ALTER TABLE `xy_tenant_account_log`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_tenant_id` (`tenant_id`),
+  ADD KEY `idx_sn` (`sn`),
+  ADD KEY `idx_create_time` (`create_time`);
+
+ALTER TABLE `xy_tenant_account_log`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '流水ID';
+
+-- ============================================================
+-- 租户核心镜像表（Phase 3: RBAC + 配置）
+-- ============================================================
+
+CREATE TABLE `xy_tenant_admin` (
+  `id` bigint(20) UNSIGNED NOT NULL COMMENT '管理员ID',
+  `tenant_id` bigint(20) UNSIGNED NOT NULL COMMENT '所属租户ID',
+  `username` varchar(50) NOT NULL COMMENT '登录账号',
+  `nickname` varchar(50) NOT NULL DEFAULT '' COMMENT '昵称',
+  `real_name` varchar(50) DEFAULT NULL COMMENT '真实姓名',
+  `password` varchar(255) NOT NULL COMMENT '密码哈希',
+  `gender` tinyint(1) NOT NULL DEFAULT '0' COMMENT '性别0保密 1男 2女',
+  `salt` varchar(50) NOT NULL DEFAULT '' COMMENT '密码盐',
+  `mobile` varchar(20) NOT NULL DEFAULT '' COMMENT '手机号',
+  `email` varchar(100) NOT NULL DEFAULT '' COMMENT '邮箱',
+  `avatar` varchar(255) NOT NULL DEFAULT '' COMMENT '头像',
+  `dept_id` bigint(20) UNSIGNED NOT NULL DEFAULT '0' COMMENT '部门ID',
+  `is_super` tinyint(4) NOT NULL DEFAULT '0' COMMENT '是否租户超管:0=否,1=是',
+  `status` tinyint(4) NOT NULL DEFAULT '1' COMMENT '状态:0=禁用,1=启用',
+  `last_login_at` bigint(20) UNSIGNED DEFAULT NULL COMMENT '最后登录时间',
+  `last_login_ip` varchar(50) NOT NULL DEFAULT '' COMMENT '最后登录IP',
+  `remark` varchar(500) DEFAULT NULL COMMENT '备注',
+  `created_by` bigint(20) UNSIGNED NOT NULL DEFAULT '0' COMMENT '创建人ID',
+  `updated_by` bigint(20) UNSIGNED NOT NULL DEFAULT '0' COMMENT '更新人ID',
+  `create_time` int(10) UNSIGNED DEFAULT NULL COMMENT '创建时间',
+  `update_time` int(10) UNSIGNED DEFAULT NULL COMMENT '更新时间'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='租户管理员表';
+
+ALTER TABLE `xy_tenant_admin`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_tenant_id` (`tenant_id`),
+  ADD UNIQUE KEY `uk_tenant_username` (`tenant_id`, `username`);
+
+ALTER TABLE `xy_tenant_admin`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '管理员ID';
+
+CREATE TABLE `xy_tenant_role` (
+  `id` bigint(20) UNSIGNED NOT NULL COMMENT '角色ID',
+  `tenant_id` bigint(20) UNSIGNED NOT NULL COMMENT '所属租户ID',
+  `name` varchar(50) NOT NULL COMMENT '角色名称',
+  `key` varchar(50) NOT NULL COMMENT '角色标识(英文)',
+  `data_scope` tinyint(4) NOT NULL DEFAULT '0' COMMENT '数据范围:0=全部,1=本部门,2=本部门及子,3=仅本人,4=自定义部门',
+  `custom_depts` text COMMENT '自定义数据范围部门ID列表(JSON数组)',
+  `pid` bigint(20) UNSIGNED NOT NULL DEFAULT '0' COMMENT '上级角色ID',
+  `level` bigint(20) NOT NULL DEFAULT '1' COMMENT '关系树等级',
+  `tree` varchar(255) NOT NULL DEFAULT '0' COMMENT '关系树路径',
+  `sort` int(11) NOT NULL DEFAULT '0' COMMENT '排序',
+  `status` tinyint(4) NOT NULL DEFAULT '1' COMMENT '状态:0=禁用,1=启用',
+  `remark` varchar(255) NOT NULL DEFAULT '' COMMENT '备注',
+  `created_by` bigint(20) UNSIGNED NOT NULL DEFAULT '0' COMMENT '创建人ID',
+  `updated_by` bigint(20) UNSIGNED NOT NULL DEFAULT '0' COMMENT '更新人ID',
+  `create_time` int(10) UNSIGNED NOT NULL COMMENT '创建时间',
+  `update_time` int(10) UNSIGNED NOT NULL COMMENT '更新时间'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='租户角色表';
+
+ALTER TABLE `xy_tenant_role`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_tenant_id` (`tenant_id`),
+  ADD UNIQUE KEY `uk_tenant_role_key` (`tenant_id`, `key`);
+
+ALTER TABLE `xy_tenant_role`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '角色ID';
+
+CREATE TABLE `xy_tenant_menu` (
+  `id` bigint(20) UNSIGNED NOT NULL COMMENT '菜单ID',
+  `tenant_id` bigint(20) UNSIGNED NOT NULL COMMENT '所属租户ID',
+  `source_menu_id` bigint(20) UNSIGNED NOT NULL DEFAULT '0' COMMENT '来源平台菜单ID',
+  `parent_id` bigint(20) UNSIGNED NOT NULL DEFAULT '0' COMMENT '上级菜单ID',
+  `type` tinyint(4) NOT NULL DEFAULT '1' COMMENT '类型:1=目录,2=菜单,3=按钮',
+  `title` varchar(50) NOT NULL COMMENT '标题',
+  `name` varchar(50) NOT NULL DEFAULT '' COMMENT '前端路由name',
+  `path` varchar(100) NOT NULL DEFAULT '' COMMENT '路由路径',
+  `component` varchar(100) NOT NULL DEFAULT '' COMMENT '前端组件路径',
+  `icon` varchar(50) NOT NULL DEFAULT '' COMMENT '图标',
+  `hidden` tinyint(4) NOT NULL DEFAULT '0' COMMENT '是否隐藏:0=否,1=是',
+  `keep_alive` tinyint(4) NOT NULL DEFAULT '0' COMMENT '是否缓存:0=否,1=是',
+  `redirect` varchar(100) NOT NULL DEFAULT '' COMMENT '重定向地址',
+  `frame_src` varchar(255) NOT NULL DEFAULT '' COMMENT '内嵌iframe地址',
+  `perms` text COMMENT '权限点列表(JSON数组)',
+  `is_frame` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否内嵌:0=否,1=是',
+  `sort` int(11) NOT NULL DEFAULT '0' COMMENT '排序',
+  `status` tinyint(4) NOT NULL DEFAULT '1' COMMENT '状态:0=禁用,1=启用',
+  `create_time` int(11) NOT NULL COMMENT '创建时间',
+  `update_time` int(11) NOT NULL COMMENT '更新时间'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='租户菜单表';
+
+ALTER TABLE `xy_tenant_menu`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_tenant_id` (`tenant_id`),
+  ADD KEY `idx_source_menu_id` (`source_menu_id`);
+
+ALTER TABLE `xy_tenant_menu`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '菜单ID';
+
+CREATE TABLE `xy_tenant_role_menu` (
+  `role_id` bigint(20) UNSIGNED NOT NULL COMMENT '角色ID',
+  `menu_id` bigint(20) UNSIGNED NOT NULL COMMENT '菜单ID'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='租户角色-菜单关联表';
+
+ALTER TABLE `xy_tenant_role_menu`
+  ADD PRIMARY KEY (`role_id`, `menu_id`);
+
+CREATE TABLE `xy_tenant_admin_role` (
+  `admin_id` bigint(20) UNSIGNED NOT NULL COMMENT '管理员ID',
+  `role_id` bigint(20) UNSIGNED NOT NULL COMMENT '角色ID'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='租户管理员-角色关联表';
+
+ALTER TABLE `xy_tenant_admin_role`
+  ADD PRIMARY KEY (`admin_id`, `role_id`);
+
+CREATE TABLE `xy_tenant_dept` (
+  `id` bigint(20) UNSIGNED NOT NULL COMMENT '部门ID',
+  `tenant_id` bigint(20) UNSIGNED NOT NULL COMMENT '所属租户ID',
+  `parent_id` bigint(20) UNSIGNED NOT NULL DEFAULT '0' COMMENT '上级部门ID',
+  `name` varchar(50) NOT NULL COMMENT '部门名称',
+  `sort` int(11) NOT NULL DEFAULT '0' COMMENT '排序',
+  `status` tinyint(4) NOT NULL DEFAULT '1' COMMENT '状态:0禁用,1启用',
+  `remark` varchar(500) DEFAULT NULL COMMENT '备注',
+  `create_by` bigint(20) UNSIGNED DEFAULT '0' COMMENT '创建人',
+  `create_time` int(10) UNSIGNED DEFAULT NULL COMMENT '创建时间',
+  `update_time` int(10) UNSIGNED DEFAULT NULL COMMENT '更新时间'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='租户部门表';
+
+ALTER TABLE `xy_tenant_dept`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_tenant_id` (`tenant_id`);
+
+ALTER TABLE `xy_tenant_dept`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '部门ID';
+
+CREATE TABLE `xy_tenant_post` (
+  `id` bigint(20) UNSIGNED NOT NULL COMMENT '岗位ID',
+  `tenant_id` bigint(20) UNSIGNED NOT NULL COMMENT '所属租户ID',
+  `code` varchar(64) NOT NULL COMMENT '岗位编码',
+  `name` varchar(50) NOT NULL COMMENT '岗位名称',
+  `sort` int(11) NOT NULL DEFAULT '0' COMMENT '排序',
+  `status` tinyint(4) NOT NULL DEFAULT '1' COMMENT '状态:0=禁用,1=启用',
+  `remark` varchar(500) DEFAULT '' COMMENT '备注',
+  `created_by` bigint(20) UNSIGNED DEFAULT '0' COMMENT '创建人ID',
+  `updated_by` bigint(20) UNSIGNED DEFAULT '0' COMMENT '更新人ID',
+  `create_time` int(10) UNSIGNED DEFAULT '0' COMMENT '创建时间',
+  `update_time` int(10) UNSIGNED DEFAULT '0' COMMENT '更新时间'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='租户岗位表';
+
+ALTER TABLE `xy_tenant_post`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_tenant_id` (`tenant_id`),
+  ADD UNIQUE KEY `uk_tenant_post_code` (`tenant_id`, `code`);
+
+ALTER TABLE `xy_tenant_post`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '岗位ID';
+
+CREATE TABLE `xy_tenant_config` (
+  `id` bigint(20) UNSIGNED NOT NULL COMMENT '主键',
+  `tenant_id` bigint(20) UNSIGNED NOT NULL COMMENT '所属租户ID',
+  `group` varchar(64) NOT NULL DEFAULT '' COMMENT '分组标识',
+  `group_name` varchar(64) NOT NULL DEFAULT '' COMMENT '分组名称',
+  `name` varchar(128) NOT NULL DEFAULT '' COMMENT '配置项显示名',
+  `key` varchar(128) NOT NULL DEFAULT '' COMMENT '配置键',
+  `value` text COMMENT '配置值',
+  `type` varchar(32) NOT NULL DEFAULT 'text' COMMENT '控件类型',
+  `options` json DEFAULT NULL COMMENT '组件参数/选项 JSON',
+  `rules` json DEFAULT NULL COMMENT '校验规则 JSON',
+  `sort` int(11) NOT NULL DEFAULT '0' COMMENT '排序',
+  `remark` varchar(255) NOT NULL DEFAULT '' COMMENT '备注',
+  `allow_del` tinyint(1) NOT NULL DEFAULT '0' COMMENT '允许删除:0=否,1=是',
+  `created_by` bigint(20) UNSIGNED DEFAULT NULL COMMENT '创建人',
+  `updated_by` bigint(20) UNSIGNED DEFAULT NULL COMMENT '更新人',
+  `create_time` int(10) UNSIGNED NOT NULL COMMENT '创建时间',
+  `update_time` int(10) UNSIGNED NOT NULL COMMENT '更新时间'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='租户配置表';
+
+ALTER TABLE `xy_tenant_config`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_tenant_id` (`tenant_id`),
+  ADD UNIQUE KEY `uk_tenant_config_key` (`tenant_id`, `key`);
+
+ALTER TABLE `xy_tenant_config`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键';
+
 COMMIT;
-
--- ============================================================
--- xy_migration: 数据库迁移版本记录
--- ============================================================
-CREATE TABLE IF NOT EXISTS `xy_migration` (
-  `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT,
-  `version` varchar(32) NOT NULL,
-  `name` varchar(128) NOT NULL DEFAULT '',
-  `executed_at` bigint NOT NULL DEFAULT 0,
-  `checksum` varchar(64) NOT NULL DEFAULT '',
-  `success` tinyint NOT NULL DEFAULT 1,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `uk_version` (`version`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='数据库迁移记录';
-
--- ============================================================
--- xy_addon: 扩展安装记录
--- ============================================================
-CREATE TABLE IF NOT EXISTS `xy_addon` (
-  `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT,
-  `name` varchar(64) NOT NULL,
-  `version` varchar(32) NOT NULL DEFAULT '',
-  `title` varchar(128) NOT NULL DEFAULT '',
-  `status` tinyint NOT NULL DEFAULT 1,
-  `installed_at` bigint NOT NULL DEFAULT 0,
-  `uninstalled_at` bigint NOT NULL DEFAULT 0,
-  `file_list` text,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `uk_name` (`name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='扩展安装记录';
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

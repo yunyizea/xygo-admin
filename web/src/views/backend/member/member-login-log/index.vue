@@ -9,8 +9,8 @@
       <ArtTableHeader v-model:columns="columnChecks" :loading="loading" @refresh="refreshData">
         <template #left>
           <ElSpace wrap>
-            <ElButton type="danger" :disabled="selectedRows.length === 0" @click="handleBatchDelete" v-ripple>批量删除</ElButton>
-            <ElButton @click="handleExport" v-ripple>导出</ElButton>
+            <ElButton v-auth="'batchDel'" type="danger" :disabled="selectedRows.length === 0" @click="handleBatchDelete" v-ripple>批量删除</ElButton>
+            <ElButton v-auth="'export'" @click="handleExport" v-ripple>导出</ElButton>
           </ElSpace>
         </template>
       </ArtTableHeader>
@@ -33,6 +33,7 @@
   import ArtButtonTable from '@/components/core/forms/art-button-table/index.vue'
   import ArtSvgIcon from '@/components/core/base/art-svg-icon/index.vue'
   import { useTable } from '@/hooks/core/useTable'
+  import { useAuth } from '@/hooks/core/useAuth'
   import { fetchMemberLoginLogList, fetchMemberLoginLogDelete } from '@/api/backend/member/member-login-log'
   import MemberLoginLogSearch from './modules/member-login-log-search.vue'
   import { ElTag, ElImage, ElMessageBox } from 'element-plus'
@@ -40,6 +41,7 @@
   import { formatTimestamp } from '@/utils/time'
 
   defineOptions({ name: 'MemberLoginLog' })
+  const { hasAuth } = useAuth()
   const router = useRouter()
   const selectedRows = ref<any[]>([])
 
@@ -125,9 +127,9 @@
           fixed: 'right',
           formatter: (row: any) =>
             h('div', { class: 'flex items-center gap-1' }, [
-              h(ArtButtonTable, { type: 'view', onClick: () => handleView(row) }),
-              h(ArtButtonTable, { type: 'delete', onClick: () => handleDelete(row) })
-            ])
+              hasAuth('view') ? h(ArtButtonTable, { type: 'view', onClick: () => handleView(row) }) : null,
+              hasAuth('delete') ? h(ArtButtonTable, { type: 'delete', onClick: () => handleDelete(row) }) : null,
+            ].filter(Boolean))
         }
       ]
     }

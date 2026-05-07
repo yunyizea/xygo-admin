@@ -1,13 +1,3 @@
-// +----------------------------------------------------------------------
-// | XYGo Admin [ Vue3 + GoFrame 企业级中后台管理系统 ]
-// +----------------------------------------------------------------------
-// | Copyright (c) 2026 大连星韵网络科技有限公司 All rights reserved.
-// +----------------------------------------------------------------------
-// | Licensed ( https://opensource.org/licenses/MIT )
-// +----------------------------------------------------------------------
-// | Author: 喜羊羊 <751300685@qq.com>
-// +----------------------------------------------------------------------
-
 /**
  * 菜单处理器
  *
@@ -76,34 +66,46 @@ export class MenuProcessor {
    * 将后端返回的菜单结构转换为前端路由结构
    */
   private transformBackendMenu(list: any[], depth = 0): AppRouteRecord[] {
-    return (list || []).map((item) => {
-      const children = item.children ? this.transformBackendMenu(item.children, depth + 1) : []
-      const isDir = item.type === 1 // 目录
+    return (list || [])
+      .filter((item) => item.type !== 3)
+      .map((item) => {
+        const rawChildren = item.children || []
+        const buttons = rawChildren.filter((c: any) => c.type === 3)
+        const routeChildren = rawChildren.filter((c: any) => c.type !== 3)
+        const children = routeChildren.length
+          ? this.transformBackendMenu(routeChildren, depth + 1)
+          : []
+        const isDir = item.type === 1
 
-      const route: AppRouteRecord = {
-        path: item.path || '',
-        name: item.name || item.title || item.path,
-        component: isDir && depth === 0 ? 'Layout' : isDir ? '' : item.component || '',
-        redirect: item.redirect || undefined,
-        meta: {
-          title: item.title || item.name || '',
-          icon: item.icon || '',
-          hidden: !!item.hidden,
-          isHide: !!item.hidden, // 侧边栏过滤用 isHide
-          keepAlive: !!item.keepAlive,
-          affix: !!item.affix,
-          frameSrc: item.frameSrc,
-          link: item.isFrame ? '' : item.frameSrc || '',
-          isIframe: !!item.isFrame,
-          showBadge: !!item.showBadge || !!item.badgeText,
-          showTextBadge: item.badgeText || '',
-          activePath: item.activePath || '' // 详情页高亮列表页
-        },
-        children
-      }
+        const authList = buttons.length
+          ? buttons.map((b: any) => ({ title: b.title || '', authMark: b.name || '' }))
+          : undefined
 
-      return route
-    })
+        const route: AppRouteRecord = {
+          path: item.path || '',
+          name: item.name || item.title || item.path,
+          component: isDir && depth === 0 ? 'Layout' : isDir ? '' : item.component || '',
+          redirect: item.redirect || undefined,
+          meta: {
+            title: item.title || item.name || '',
+            icon: item.icon || '',
+            hidden: !!item.hidden,
+            isHide: !!item.hidden,
+            keepAlive: !!item.keepAlive,
+            affix: !!item.affix,
+            frameSrc: item.frameSrc,
+            link: item.isFrame ? '' : item.frameSrc || '',
+            isIframe: !!item.isFrame,
+            showBadge: !!item.showBadge || !!item.badgeText,
+            showTextBadge: item.badgeText || '',
+            activePath: item.activePath || '',
+            ...(authList ? { authList } : {})
+          },
+          children
+        }
+
+        return route
+      })
   }
 
   /**

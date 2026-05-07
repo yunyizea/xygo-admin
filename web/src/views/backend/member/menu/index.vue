@@ -19,7 +19,7 @@
         @refresh="handleRefresh"
       >
         <template #left>
-          <ElButton @click="handleAdd" v-ripple>添加菜单</ElButton>
+          <ElButton v-auth="'add'" @click="handleAdd" v-ripple>添加菜单</ElButton>
           <ElButton @click="toggleExpand" v-ripple type="primary">
             {{ isExpanded ? '收起' : '展开' }}
           </ElButton>
@@ -53,6 +53,7 @@
   import { formatMenuTitle } from '@/utils/router'
   import ArtButtonTable from '@/components/core/forms/art-button-table/index.vue'
   import { useTableColumns } from '@/hooks/core/useTableColumns'
+  import { useAuth } from '@/hooks/core/useAuth'
   import MenuDialog from './modules/menu-dialog.vue'
   import {
     getMemberMenuTree,
@@ -65,6 +66,7 @@
   import ArtSvgIcon from '@/components/core/base/art-svg-icon/index.vue'
 
   defineOptions({ name: 'MemberMenu' })
+  const { hasAuth } = useAuth()
 
   // 类型标签配色
   const typeTagMap: Record<string, { text: string; type: 'primary' | 'success' | 'warning' | 'danger' | 'info' }> = {
@@ -193,23 +195,26 @@
       width: 160,
       align: 'right',
       formatter: (row: any) => {
-        const btns = []
-        // 非 button 类型可以添加子级
-        if (row.type !== 'button') {
+        const btns: any[] = []
+        if (row.type !== 'button' && hasAuth('add')) {
           btns.push(h(ArtButtonTable, {
             type: 'add',
             onClick: () => handleAddChild(row),
             title: '添加子级'
           }))
         }
-        btns.push(h(ArtButtonTable, {
-          type: 'edit',
-          onClick: () => handleEdit(row)
-        }))
-        btns.push(h(ArtButtonTable, {
-          type: 'delete',
-          onClick: () => handleDelete(row)
-        }))
+        if (hasAuth('edit')) {
+          btns.push(h(ArtButtonTable, {
+            type: 'edit',
+            onClick: () => handleEdit(row)
+          }))
+        }
+        if (hasAuth('delete')) {
+          btns.push(h(ArtButtonTable, {
+            type: 'delete',
+            onClick: () => handleDelete(row)
+          }))
+        }
         return h('div', { style: 'text-align: right' }, btns)
       }
     }

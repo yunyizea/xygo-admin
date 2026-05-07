@@ -1,13 +1,3 @@
-// +----------------------------------------------------------------------
-// | XYGo Admin [ Vue3 + GoFrame 企业级中后台管理系统 ]
-// +----------------------------------------------------------------------
-// | Copyright (c) 2026 大连星韵网络科技有限公司 All rights reserved.
-// +----------------------------------------------------------------------
-// | Licensed ( https://opensource.org/licenses/MIT )
-// +----------------------------------------------------------------------
-// | Author: 喜羊羊 <751300685@qq.com>
-// +----------------------------------------------------------------------
-
 /**
  * useAuth - 权限验证管理
  *
@@ -65,16 +55,21 @@ export const useAuth = () => {
 
   /**
    * 检查是否拥有某权限标识（前后端模式通用）
+   * 超级管理员直接放行，非超管严格按权限列表检查
    * @param auth 权限标识
    * @returns 是否有权限
    */
   const hasAuth = (auth: string): boolean => {
+    // 超级管理员直接放行
+    if (info.value?.isSuper) return true
+
     // 前端模式
     if (isFrontendMode.value) {
       return frontendAuthList.includes(auth)
     }
 
-    // 后端模式
+    // 后端模式：authList 为空表示该菜单未配置按钮权限，不做限制
+    if (!backendAuthList.length) return true
     return backendAuthList.some((item) => item?.authMark === auth)
   }
 

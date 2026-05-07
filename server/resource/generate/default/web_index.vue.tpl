@@ -10,13 +10,13 @@
         <template #left>
           <ElSpace wrap>
 {{- if .HasAdd}}
-            <ElButton @click="showDialog('add')" v-ripple>新增</ElButton>
+            <ElButton v-auth="'add'" @click="showDialog('add')" v-ripple>新增</ElButton>
 {{- end}}
 {{- if .HasBatchDel}}
-            <ElButton type="danger" :disabled="selectedRows.length === 0" @click="handleBatchDelete" v-ripple>批量删除</ElButton>
+            <ElButton v-auth="'batchDel'" type="danger" :disabled="selectedRows.length === 0" @click="handleBatchDelete" v-ripple>批量删除</ElButton>
 {{- end}}
 {{- if .HasExport}}
-            <ElButton @click="handleExport" v-ripple>导出</ElButton>
+            <ElButton v-auth="'export'" @click="handleExport" v-ripple>导出</ElButton>
 {{- end}}
           </ElSpace>
         </template>
@@ -56,6 +56,7 @@
   import ArtButtonTable from '@/components/core/forms/art-button-table/index.vue'
   import ArtSvgIcon from '@/components/core/base/art-svg-icon/index.vue'
   import { useTable } from '@/hooks/core/useTable'
+  import { useAuth } from '@/hooks/core/useAuth'
   import { formatTimestamp } from '@/utils/time'
   import { fetch{{.VarName}}List{{if or .HasAdd .HasEdit}}, fetch{{.VarName}}Edit{{end}}{{if or .HasDel .HasBatchDel}}, fetch{{.VarName}}Delete{{end}} } from '{{.WebApiImportPath}}'
   import {{.VarName}}Search from './modules/{{.FilePrefix}}-search.vue'
@@ -74,6 +75,7 @@
 {{- end}}
 
   defineOptions({ name: '{{.VarName}}' })
+  const { hasAuth } = useAuth()
 {{- if and .HasView (eq .ViewMode "page")}}
   const router = useRouter()
 {{- end}}
@@ -347,15 +349,15 @@
           formatter: (row: any) =>
             h('div', { class: 'flex items-center gap-1' }, [
 {{- if .HasView}}
-              h(ArtButtonTable, { type: 'view', onClick: () => handleView(row) }),
+              hasAuth('view') ? h(ArtButtonTable, { type: 'view', onClick: () => handleView(row) }) : null,
 {{- end}}
 {{- if .HasEdit}}
-              h(ArtButtonTable, { type: 'edit', onClick: () => showDialog('edit', row) }),
+              hasAuth('edit') ? h(ArtButtonTable, { type: 'edit', onClick: () => showDialog('edit', row) }) : null,
 {{- end}}
 {{- if .HasDel}}
-              h(ArtButtonTable, { type: 'delete', onClick: () => handleDelete(row) })
+              hasAuth('delete') ? h(ArtButtonTable, { type: 'delete', onClick: () => handleDelete(row) }) : null,
 {{- end}}
-            ])
+            ].filter(Boolean))
         }
 {{- end}}
       ]

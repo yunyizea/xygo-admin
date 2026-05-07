@@ -1,12 +1,3 @@
-<!-- +----------------------------------------------------------------------
-  | XYGo Admin [ Vue3 + GoFrame 企业级中后台管理系统 ]
-  +----------------------------------------------------------------------
-  | Copyright (c) 2026 大连星韵网络科技有限公司 All rights reserved.
-  +----------------------------------------------------------------------
-  | Licensed ( https://opensource.org/licenses/MIT )
-  +----------------------------------------------------------------------
-  | Author: 喜羊羊 <751300685@qq.com>
-  +---------------------------------------------------------------------- -->
 <!-- 通知管理页面 -->
 <template>
   <div class="notice-page art-full-height">
@@ -16,7 +7,7 @@
     <ElCard class="art-table-card" shadow="never">
       <ArtTableHeader v-model:columns="columnChecks" :loading="loading" @refresh="refreshData">
         <template #left>
-          <ElButton type="primary" @click="showDialog('add')" v-ripple>
+          <ElButton v-auth="'add'" type="primary" @click="showDialog('add')" v-ripple>
             <ArtSvgIcon icon="ri:add-line" class="text-sm mr-1" />
             发布通知
           </ElButton>
@@ -74,6 +65,7 @@
 
 <script setup lang="ts">
   import { useTable } from '@/hooks/core/useTable'
+  import { useAuth } from '@/hooks/core/useAuth'
   import { fetchNoticeList, fetchNoticeEdit, fetchNoticeDelete } from '@/api/backend/system/notice'
   import ArtButtonTable from '@/components/core/forms/art-button-table/index.vue'
   import ArtSvgIcon from '@/components/core/base/art-svg-icon/index.vue'
@@ -82,6 +74,7 @@
   import { formatTimestamp } from '@/utils/time'
 
   defineOptions({ name: 'NoticeManage' })
+  const { hasAuth } = useAuth()
 
   const searchForm = ref({ type: undefined, status: undefined })
 
@@ -135,9 +128,9 @@
         {
           prop: 'operation', label: '操作', width: 140, fixed: 'right',
           formatter: (row: any) => h('div', { class: 'flex items-center gap-1' }, [
-            h(ArtButtonTable, { type: 'edit', onClick: () => showDialog('edit', row) }),
-            h(ArtButtonTable, { type: 'delete', onClick: () => handleDelete(row) })
-          ])
+            hasAuth('edit') ? h(ArtButtonTable, { type: 'edit', onClick: () => showDialog('edit', row) }) : null,
+            hasAuth('delete') ? h(ArtButtonTable, { type: 'delete', onClick: () => handleDelete(row) }) : null,
+          ].filter(Boolean))
         }
       ]
     }

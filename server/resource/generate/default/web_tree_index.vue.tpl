@@ -16,7 +16,7 @@
       >
         <template #left>
           <ElSpace wrap>
-            <ElButton @click="showDialog('add')" v-ripple>新增</ElButton>
+            <ElButton v-auth="'add'" @click="showDialog('add')" v-ripple>新增</ElButton>
             <ElButton @click="toggleExpand" v-ripple type="info" plain>
               {{"{{ isExpanded ? '全部收起' : '全部展开' }}"}}
             </ElButton>
@@ -51,6 +51,7 @@
   import ArtButtonTable from '@/components/core/forms/art-button-table/index.vue'
   import ArtSvgIcon from '@/components/core/base/art-svg-icon/index.vue'
   import { useTableColumns } from '@/hooks/core/useTableColumns'
+  import { useAuth } from '@/hooks/core/useAuth'
   import { formatTimestamp } from '@/utils/time'
   import { fetch{{.VarName}}List, fetch{{.VarName}}Edit, fetch{{.VarName}}Delete } from '{{.WebApiImportPath}}'
 {{- if .QueryColumns}}
@@ -60,6 +61,7 @@
   import { ElTag, ElImage, ElButton, ElMessageBox } from 'element-plus'
 
   defineOptions({ name: '{{.VarName}}' })
+  const { hasAuth } = useAuth()
 
   const loading = ref(false)
   const isExpanded = ref(false)
@@ -222,13 +224,13 @@
       fixed: 'right',
       formatter: (row: any) =>
         h('div', { class: 'flex items-center gap-1' }, [
-          h(ArtButtonTable, { type: 'edit', onClick: () => showDialog('edit', row) }),
-          h(ArtButtonTable, { type: 'delete', onClick: () => handleDelete(row) }),
-          h(ElButton, {
+          hasAuth('edit') ? h(ArtButtonTable, { type: 'edit', onClick: () => showDialog('edit', row) }) : null,
+          hasAuth('delete') ? h(ArtButtonTable, { type: 'delete', onClick: () => handleDelete(row) }) : null,
+          hasAuth('add') ? h(ElButton, {
             size: 'small', link: true, type: 'primary',
             onClick: () => showDialog('add', { {{.TreePidTsColumn}}: row.{{.PkTsName}} })
-          }, () => '添加子项')
-        ])
+          }, () => '添加子项') : null,
+        ].filter(Boolean))
     }
   ])
 

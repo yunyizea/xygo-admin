@@ -1,12 +1,3 @@
-<!-- +----------------------------------------------------------------------
-  | XYGo Admin [ Vue3 + GoFrame 企业级中后台管理系统 ]
-  +----------------------------------------------------------------------
-  | Copyright (c) 2026 大连星韵网络科技有限公司 All rights reserved.
-  +----------------------------------------------------------------------
-  | Licensed ( https://opensource.org/licenses/MIT )
-  +----------------------------------------------------------------------
-  | Author: 喜羊羊 <751300685@qq.com>
-  +---------------------------------------------------------------------- -->
 <!-- 操作日志管理页面 -->
 <template>
   <div class="art-full-height">
@@ -31,6 +22,7 @@
         <template #left>
           <ElSpace wrap>
             <ElButton
+              v-auth="'batchDel'"
               type="danger"
               :disabled="selectedIds.length === 0"
               @click="handleBatchDelete"
@@ -38,7 +30,7 @@
             >
               批量删除
             </ElButton>
-            <ElButton type="warning" @click="handleClear" v-ripple>清空日志</ElButton>
+            <ElButton v-auth="'clear'" type="warning" @click="handleClear" v-ripple>清空日志</ElButton>
           </ElSpace>
         </template>
       </ArtTableHeader>
@@ -69,6 +61,7 @@
 <script setup lang="ts">
   import { ButtonMoreItem } from '@/components/core/forms/art-button-more/index.vue'
   import { useTable } from '@/hooks/core/useTable'
+  import { useAuth } from '@/hooks/core/useAuth'
   import {
     getOperationLogList,
     deleteOperationLog,
@@ -81,6 +74,7 @@
   import { ElTag, ElMessageBox } from 'element-plus'
 
   defineOptions({ name: 'OperationLog' })
+  const { hasAuth } = useAuth()
 
   const searchForm = ref({
     username: undefined,
@@ -222,13 +216,14 @@
                 color: '#f56c6c'
               }
             ]
+            const filteredMenuList = menuList.filter((m: any) => hasAuth(m.key))
 
-            return h('div', [
+            return filteredMenuList.length ? h('div', [
               h(ArtButtonMore, {
-                list: menuList,
+                list: filteredMenuList,
                 onClick: (item: ButtonMoreItem) => buttonMoreClick(item, row)
               })
-            ])
+            ]) : null
           }
         }
       ]

@@ -4960,10 +4960,10 @@ INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, compon
 INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (80, 0, 1, '内容管理', 'Cms', '/cms', '/index/index', '', 'ri:article-line', 0, 0, '', '', '', 0, 0, 0, '', '', 0, 0, 85, 1, '内容管理根', 0, 0, 1768549363, 1768549363);
 INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (81, 80, 2, '文档分类', 'CmsDocCategory', 'doc-category', '/cms/doc-category', '', 'ri:folder-line', 0, 1, '', '', '', 0, 0, 0, '', '', 0, 0, 1, 1, '文档分类管理', 0, 0, 1768549363, 1768549363);
 INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (82, 80, 2, '文档管理', 'CmsDoc', 'doc', '/cms/doc', '', 'ri:file-text-line', 0, 1, '', '', '', 0, 0, 0, '', '', 0, 0, 2, 1, '文档内容管理', 0, 0, 1768549363, 1768549363);
-INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (83, 82, 3, '新增/编辑', 'CmsDocSave', '', '', '', '', 0, 0, '', '', '/admin/cms/doc/save', 0, 0, 0, '', '', 0, 0, 1, 1, '新增或编辑文档', 0, 0, 1768549363, 1768549363);
-INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (84, 82, 3, '删除', 'CmsDocDelete', '', '', '', '', 0, 0, '', '', '/admin/cms/doc/delete', 0, 0, 0, '', '', 0, 0, 2, 1, '删除文档', 0, 0, 1768549363, 1768549363);
-INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (85, 81, 3, '新增/编辑', 'CmsDocCategorySave', '', '', '', '', 0, 0, '', '', '/admin/cms/docCategory/save', 0, 0, 0, '', '', 0, 0, 1, 1, '新增或编辑分类', 0, 0, 1768549363, 1768549363);
-INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (86, 81, 3, '删除', 'CmsDocCategoryDelete', '', '', '', '', 0, 0, '', '', '/admin/cms/docCategory/delete', 0, 0, 0, '', '', 0, 0, 2, 1, '删除分类', 0, 0, 1768549363, 1768549363);
+INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (83, 82, 3, '新增/编辑', 'edit', '', '', '', '', 0, 0, '', '', '/admin/cms/doc/save', 0, 0, 0, '', '', 0, 0, 1, 1, '新增或编辑文档', 0, 0, 1768549363, 1768549363);
+INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (84, 82, 3, '删除', 'delete', '', '', '', '', 0, 0, '', '', '/admin/cms/doc/delete', 0, 0, 0, '', '', 0, 0, 2, 1, '删除文档', 0, 0, 1768549363, 1768549363);
+INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (85, 81, 3, '新增/编辑', 'edit', '', '', '', '', 0, 0, '', '', '/admin/cms/docCategory/save', 0, 0, 0, '', '', 0, 0, 1, 1, '新增或编辑分类', 0, 0, 1768549363, 1768549363);
+INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (86, 81, 3, '删除', 'delete', '', '', '', '', 0, 0, '', '', '/admin/cms/docCategory/delete', 0, 0, 0, '', '', 0, 0, 2, 1, '删除分类', 0, 0, 1768549363, 1768549363);
 INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (90, 0, 1, '结果页', 'Result', '/result', '/index/index', '', 'ri:checkbox-circle-line', 0, 0, '', '', '', 0, 0, 0, '', '', 0, 0, 100, 1, '结果根', 0, 0, 1768549363, 1768549363);
 INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (91, 90, 2, '成功页', 'ResultSuccess', 'success', '/result/success', '', 'ri:checkbox-circle-line', 0, 0, '', '', '', 0, 0, 0, '', '', 0, 0, 101, 1, '结果-成功', 0, 0, 1768549363, 1768549363);
 INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (92, 90, 2, '失败页', 'ResultFail', 'fail', '/result/fail', '', 'ri:close-circle-line', 0, 0, '', '', '', 0, 0, 0, '', '', 0, 0, 102, 1, '结果-失败', 0, 0, 1768549363, 1768549363);
@@ -4973,11 +4973,11 @@ INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, compon
 INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (103, 100, 2, '500', 'Exception500', '500', '/exception/500', '', '', 0, 0, '', '', '', 0, 0, 0, '', '', 0, 0, 113, 1, '异常-500', 0, 0, 1768549363, 1768549363);
 INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (110, 0, 1, '运维管理', 'Safeguard', '/safeguard', '/index/index', '', 'ri:shield-check-line', 0, 0, '', '', '', 0, 0, 0, '', '', 0, 0, 120, 1, '运维根', 0, 0, 1768549363, 1768549363);
 INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (111, 110, 2, '服务器监控', 'SafeguardServer', 'server', '/safeguard/server', '', 'ri:hard-drive-3-line', 0, 1, '', '', '["GET /admin/monitor/server"]', 0, 0, 0, '', '', 0, 0, 121, 1, '运维-服务器', 0, 0, 1768549363, 1770644180);
-
+INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (121, 0, 2, '更新日志', 'ChangeLog', '/change/log', '/change/log', '', 'ri:gamepad-line', 0, 0, '', '', '', 0, 0, 1, 'v3.0.1', '1', 0, 0, 999, 1, '', 0, 0, 1768549363, 1768549363);
 INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (122, 60, 2, '附件管理', 'system/attachment', 'system/attachment', '/system/attachment/index', 'sys_attachment', 'ep:folder-opened', 0, 1, '', '', NULL, 0, 0, 0, '', '', 0, 0, 3, 1, '附件中心与文件管理', 0, 0, 1768549363, 1768549363);
-INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (123, 122, 3, '查看', 'system/attachment/index', '', '', '', '', 0, 0, '', '', 'system:attachment:list', 0, 0, 0, '', '', 0, 0, 1, 1, '', 0, 0, 1768549363, 1768549363);
-INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (124, 122, 3, '编辑', 'system/attachment/edit', '', '', '', '', 0, 0, '', '', 'system:attachment:edit', 0, 0, 0, '', '', 0, 0, 2, 1, '', 0, 0, 1768549363, 1768549363);
-INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (125, 122, 3, '删除', 'system/attachment/del', '', '', '', '', 0, 0, '', '', 'system:attachment:del', 0, 0, 0, '', '', 0, 0, 3, 1, '', 0, 0, 1768549363, 1768549363);
+INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (123, 122, 3, '查看', 'view', '', '', '', '', 0, 0, '', '', 'system:attachment:list', 0, 0, 0, '', '', 0, 0, 1, 1, '', 0, 0, 1768549363, 1768549363);
+INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (124, 122, 3, '编辑', 'edit', '', '', '', '', 0, 0, '', '', 'system:attachment:edit', 0, 0, 0, '', '', 0, 0, 2, 1, '', 0, 0, 1768549363, 1768549363);
+INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (125, 122, 3, '删除', 'delete', '', '', '', '', 0, 0, '', '', 'system:attachment:del', 0, 0, 0, '', '', 0, 0, 3, 1, '', 0, 0, 1768549363, 1768549363);
 INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (126, 20, 2, '图标选择器', 'IconSelector', 'icon-selector', '/widgets/icon-selector', '', 'ri:palette-line', 0, 1, '', '', '', 0, 0, 0, '', '', 0, 0, 33, 1, '图标选择器组件', 0, 0, 1768549363, 1768549363);
 INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (127, 20, 2, '颜色选择器', 'ColorPicker', 'color-picker', '/widgets/color-picker', '', 'ri:palette-fill', 0, 1, '', '', '', 0, 0, 0, '', '', 0, 0, 34, 1, '颜色选择器组件', 0, 0, 1768549363, 1768549363);
 INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (128, 20, 2, '图片上传', 'ImageUpload', 'image-upload', '/widgets/image-upload', '', 'ri:image-2-line', 0, 1, '', '', '', 0, 0, 0, '', '', 0, 0, 35, 1, '图片上传组件', 0, 0, 1768549363, 1768549363);
@@ -4988,57 +4988,91 @@ INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, compon
 INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (142, 140, 2, '岗位管理', 'Post', 'post', '/system/post', 'admin_post', 'ri:briefcase-line', 0, 1, '', '', '', 0, 0, 0, '', '', 0, 0, 2, 1, '岗位管理（职位字典）', 0, 0, 1768549363, 1768549363);
 INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (143, 0, 1, '会员管理', 'Member', '/member', '', '', 'ri:user-star-line', 0, 0, '', '', NULL, 0, 0, 0, '', '', 0, 0, 50, 1, '', 0, 0, 1768748969, 1768748969);
 INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (144, 143, 2, '会员列表', 'MemberList', 'list', '/member/list/index', '', 'ri:team-line', 0, 0, '', '', NULL, 0, 0, 0, '', '', 0, 0, 10, 1, '', 0, 0, 1768748969, 1768748969);
-INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (145, 143, 3, '添加会员', 'MemberAdd', '', '', '', '', 0, 0, '', '', NULL, 0, 0, 0, '', '', 0, 0, 1, 1, '', 0, 0, 1768748969, 1768748969);
-INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (146, 143, 3, '编辑会员', 'MemberEdit', '', '', '', '', 0, 0, '', '', NULL, 0, 0, 0, '', '', 0, 0, 2, 1, '', 0, 0, 1768748969, 1768748969);
-INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (147, 143, 3, '删除会员', 'MemberDelete', '', '', '', '', 0, 0, '', '', NULL, 0, 0, 0, '', '', 0, 0, 3, 1, '', 0, 0, 1768748969, 1768748969);
-INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (148, 143, 3, '重置密码', 'MemberResetPassword', '', '', '', '', 0, 0, '', '', NULL, 0, 0, 0, '', '', 0, 0, 4, 1, '', 0, 0, 1768748969, 1768748969);
+INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (145, 144, 3, '添加会员', 'add', '', '', '', '', 0, 0, '', '', NULL, 0, 0, 0, '', '', 0, 0, 1, 1, '', 0, 0, 1768748969, 1768748969);
+INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (146, 144, 3, '编辑会员', 'edit', '', '', '', '', 0, 0, '', '', NULL, 0, 0, 0, '', '', 0, 0, 2, 1, '', 0, 0, 1768748969, 1768748969);
+INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (147, 144, 3, '删除会员', 'delete', '', '', '', '', 0, 0, '', '', NULL, 0, 0, 0, '', '', 0, 0, 3, 1, '', 0, 0, 1768748969, 1768748969);
+INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (148, 144, 3, '重置密码', 'resetPwd', '', '', '', '', 0, 0, '', '', NULL, 0, 0, 0, '', '', 0, 0, 4, 1, '', 0, 0, 1768748969, 1768748969);
 INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (149, 143, 2, '会员分组', 'MemberGroup', 'group', '/member/group/index', 'member_group', 'ri:group-line', 0, 1, '', '', '["POST /admin/member/group/list"]', 0, 0, 0, '', '', 0, 0, 20, 1, '会员分组管理', 0, 0, 1768791091, 1768791091);
-INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (150, 149, 3, '新增分组', 'MemberGroupAdd', '', '', 'member_group', '', 0, 0, '', '', '["POST /admin/member/group/save"]', 0, 0, 0, '', '', 0, 0, 1, 1, '新增会员分组', 0, 0, 1768791091, 1768791091);
-INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (151, 149, 3, '编辑分组', 'MemberGroupEdit', '', '', 'member_group', '', 0, 0, '', '', '["POST /admin/member/group/save"]', 0, 0, 0, '', '', 0, 0, 2, 1, '编辑会员分组', 0, 0, 1768791091, 1768791091);
-INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (152, 149, 3, '删除分组', 'MemberGroupDelete', '', '', 'member_group', '', 0, 0, '', '', '["POST /admin/member/group/delete"]', 0, 0, 0, '', '', 0, 0, 3, 1, '删除会员分组', 0, 0, 1768791091, 1768791091);
+INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (150, 149, 3, '新增分组', 'add', '', '', 'member_group', '', 0, 0, '', '', '["POST /admin/member/group/save"]', 0, 0, 0, '', '', 0, 0, 1, 1, '新增会员分组', 0, 0, 1768791091, 1768791091);
+INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (151, 149, 3, '编辑分组', 'edit', '', '', 'member_group', '', 0, 0, '', '', '["POST /admin/member/group/save"]', 0, 0, 0, '', '', 0, 0, 2, 1, '编辑会员分组', 0, 0, 1768791091, 1768791091);
+INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (152, 149, 3, '删除分组', 'delete', '', '', 'member_group', '', 0, 0, '', '', '["POST /admin/member/group/delete"]', 0, 0, 0, '', '', 0, 0, 3, 1, '删除会员分组', 0, 0, 1768791091, 1768791091);
 INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (153, 143, 2, '会员菜单', 'MemberMenu', 'menu', '/member/menu/index', 'member_menu', 'ri:menu-line', 0, 1, '', '', '["GET /admin/member/menu/tree"]', 0, 0, 0, '', '', 0, 0, 30, 1, '会员前台菜单管理', 0, 0, 1768791091, 1768791091);
-INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (154, 153, 3, '新增菜单', 'MemberMenuAdd', '', '', 'member_menu', '', 0, 0, '', '', '["POST /admin/member/menu/save"]', 0, 0, 0, '', '', 0, 0, 1, 1, '新增会员菜单', 0, 0, 1768791091, 1768791091);
-INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (155, 153, 3, '编辑菜单', 'MemberMenuEdit', '', '', 'member_menu', '', 0, 0, '', '', '["POST /admin/member/menu/save"]', 0, 0, 0, '', '', 0, 0, 2, 1, '编辑会员菜单', 0, 0, 1768791091, 1768791091);
-INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (156, 153, 3, '删除菜单', 'MemberMenuDelete', '', '', 'member_menu', '', 0, 0, '', '', '["POST /admin/member/menu/delete"]', 0, 0, 0, '', '', 0, 0, 3, 1, '删除会员菜单', 0, 0, 1768791091, 1768791091);
+INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (154, 153, 3, '新增菜单', 'add', '', '', 'member_menu', '', 0, 0, '', '', '["POST /admin/member/menu/save"]', 0, 0, 0, '', '', 0, 0, 1, 1, '新增会员菜单', 0, 0, 1768791091, 1768791091);
+INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (155, 153, 3, '编辑菜单', 'edit', '', '', 'member_menu', '', 0, 0, '', '', '["POST /admin/member/menu/save"]', 0, 0, 0, '', '', 0, 0, 2, 1, '编辑会员菜单', 0, 0, 1768791091, 1768791091);
+INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (156, 153, 3, '删除菜单', 'delete', '', '', 'member_menu', '', 0, 0, '', '', '["POST /admin/member/menu/delete"]', 0, 0, 0, '', '', 0, 0, 3, 1, '删除会员菜单', 0, 0, 1768791091, 1768791091);
 INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (157, 110, 2, '登录日志', 'LoginLog', 'login-log', '/safeguard/login-log', 'admin_login_log', 'ri:login-box-line', 0, 1, '', '', '["POST /admin/log/login/list"]', 0, 0, 0, '', '', 0, 0, 122, 1, '管理员登录日志', 0, 0, 1770615724, 1770615724);
-INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (158, 157, 3, '删除日志', 'LoginLogDelete', '', '', 'admin_login_log', '', 0, 0, '', '', '["POST /admin/log/login/delete"]', 0, 0, 0, '', '', 0, 0, 1, 1, '删除登录日志', 0, 0, 1770615724, 1770615724);
-INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (159, 157, 3, '清空日志', 'LoginLogClear', '', '', 'admin_login_log', '', 0, 0, '', '', '["POST /admin/log/login/clear"]', 0, 0, 0, '', '', 0, 0, 2, 1, '清空登录日志', 0, 0, 1770615724, 1770615724);
+INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (158, 157, 3, '删除日志', 'batchDel', '', '', 'admin_login_log', '', 0, 0, '', '', '["POST /admin/log/login/delete"]', 0, 0, 0, '', '', 0, 0, 1, 1, '删除登录日志', 0, 0, 1770615724, 1770615724);
+INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (159, 157, 3, '清空日志', 'clear', '', '', 'admin_login_log', '', 0, 0, '', '', '["POST /admin/log/login/clear"]', 0, 0, 0, '', '', 0, 0, 2, 1, '清空登录日志', 0, 0, 1770615724, 1770615724);
 INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (160, 110, 2, '操作日志', 'OperationLog', 'operation-log', '/safeguard/operation-log', 'admin_operation_log', 'ri:file-text-line', 0, 1, '', '', '["POST /admin/log/operation/list"]', 0, 0, 0, '', '', 0, 0, 123, 1, '管理员操作日志', 0, 0, 1770615724, 1770615724);
-INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (161, 160, 3, '查看详情', 'OperationLogDetail', '', '', 'admin_operation_log', '', 0, 0, '', '', '["GET /admin/log/operation/detail"]', 0, 0, 0, '', '', 0, 0, 1, 1, '查看操作日志详情', 0, 0, 1770615724, 1770615724);
-INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (162, 160, 3, '删除日志', 'OperationLogDelete', '', '', 'admin_operation_log', '', 0, 0, '', '', '["POST /admin/log/operation/delete"]', 0, 0, 0, '', '', 0, 0, 2, 1, '删除操作日志', 0, 0, 1770615724, 1770615724);
-INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (163, 160, 3, '清空日志', 'OperationLogClear', '', '', 'admin_operation_log', '', 0, 0, '', '', '["POST /admin/log/operation/clear"]', 0, 0, 0, '', '', 0, 0, 3, 1, '清空操作日志', 0, 0, 1770615724, 1770615724);
+INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (161, 160, 3, '查看详情', 'detail', '', '', 'admin_operation_log', '', 0, 0, '', '', '["GET /admin/log/operation/detail"]', 0, 0, 0, '', '', 0, 0, 1, 1, '查看操作日志详情', 0, 0, 1770615724, 1770615724);
+INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (162, 160, 3, '删除日志', 'delete', '', '', 'admin_operation_log', '', 0, 0, '', '', '["POST /admin/log/operation/delete"]', 0, 0, 0, '', '', 0, 0, 2, 1, '删除操作日志', 0, 0, 1770615724, 1770615724);
+INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (163, 160, 3, '清空日志', 'clear', '', '', 'admin_operation_log', '', 0, 0, '', '', '["POST /admin/log/operation/clear"]', 0, 0, 0, '', '', 0, 0, 3, 1, '清空操作日志', 0, 0, 1770615724, 1770615724);
 INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (164, 110, 2, '性能分析', 'SafeguardPerformance', 'performance', '/safeguard/performance', 'admin_operation_log', 'ri:line-chart-line', 0, 0, '', '', '', 0, 0, 0, '', '', 0, 0, 124, 1, '', 0, 0, 1770644179, 1770644179);
 INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (165, 0, 1, '开发工具', 'Develop', '/develop', '/index/index', '', 'ri:code-box-line', 0, 0, '', '', '', 0, 0, 0, '', '', 0, 0, 125, 1, '开发工具目录', 0, 0, 1770648637, 1770648637);
 INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (166, 165, 2, '代码生成器', 'GenCodes', 'gen-codes', '/develop/gen-codes/index', 'sys_gen_codes', 'ri:magic-line', 0, 1, '', '', '["GET /admin/genCodes/selects","GET /admin/genCodes/tableSelect","GET /admin/genCodes/columnList","GET /admin/genCodes/list","GET /admin/genCodes/view","POST /admin/genCodes/edit","POST /admin/genCodes/delete","POST /admin/genCodes/preview","POST /admin/genCodes/build","POST /admin/genCodes/createTable"]', 0, 0, 0, '', '', 0, 0, 1, 1, '代码生成器', 0, 0, 1770648637, 1770648637);
 INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (202, 110, 2, '函数分析', 'PprofAnalysis', 'pprof', '/safeguard/pprof/index', '', 'ri:code-s-slash-line', 0, 1, '', '', '["GET /admin/monitor/pprof-top"]', 0, 0, 0, '', '', 0, 0, 125, 1, '函数级CPU/内存热点分析(pprof)', 0, 0, 1770702712, 1770702712);
 INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (220, 60, 2, '通知管理', 'Notice', 'notice', '/system/notice/index', 'admin_notice', 'ri:notification-3-line', 0, 1, '', '', '["POST /admin/notice/list"]', 0, 0, 0, '', '', 0, 0, 4, 1, '通知消息管理', 0, 0, 1770700000, 1770700000);
-INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (221, 220, 3, '查看', 'NoticeView', '', '', 'admin_notice', '', 0, 0, '', '', '["POST /admin/notice/list"]', 0, 0, 0, '', '', 0, 0, 1, 1, '查看通知列表', 0, 0, 1770700000, 1770700000);
-INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (222, 220, 3, '发布/编辑', 'NoticeEdit', '', '', 'admin_notice', '', 0, 0, '', '', '["POST /admin/notice/edit"]', 0, 0, 0, '', '', 0, 0, 2, 1, '发布或编辑通知', 0, 0, 1770700000, 1770700000);
-INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (223, 220, 3, '删除', 'NoticeDelete', '', '', 'admin_notice', '', 0, 0, '', '', '["POST /admin/notice/delete"]', 0, 0, 0, '', '', 0, 0, 3, 1, '删除通知', 0, 0, 1770700000, 1770700000);
+INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (221, 220, 3, '查看', 'view', '', '', 'admin_notice', '', 0, 0, '', '', '["POST /admin/notice/list"]', 0, 0, 0, '', '', 0, 0, 1, 1, '查看通知列表', 0, 0, 1770700000, 1770700000);
+INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (222, 220, 3, '发布/编辑', 'edit', '', '', 'admin_notice', '', 0, 0, '', '', '["POST /admin/notice/edit"]', 0, 0, 0, '', '', 0, 0, 2, 1, '发布或编辑通知', 0, 0, 1770700000, 1770700000);
+INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (223, 220, 3, '删除', 'delete', '', '', 'admin_notice', '', 0, 0, '', '', '["POST /admin/notice/delete"]', 0, 0, 0, '', '', 0, 0, 3, 1, '删除通知', 0, 0, 1770700000, 1770700000);
 INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (240, 60, 2, '定时任务', 'CronManage', 'cron', '/system/cron/index', 'sys_cron', 'ri:timer-line', 0, 1, '', '', '', 0, 0, 0, '', '', 0, 0, 80, 1, '定时任务管理', 0, 0, 1770717535, 1770717535);
-INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (241, 240, 3, '查看', 'CronView', '', '', '', '', 0, 0, '', '', 'GET /admin/cron/list', 0, 0, 0, '', '', 0, 0, 0, 1, '', 0, 0, 1770717535, 1770717535);
-INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (242, 240, 3, '新增/编辑', 'CronEdit', '', '', '', '', 0, 0, '', '', 'POST /admin/cron/save', 0, 0, 0, '', '', 0, 0, 0, 1, '', 0, 0, 1770717535, 1770717535);
-INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (243, 240, 3, '删除', 'CronDelete', '', '', '', '', 0, 0, '', '', 'POST /admin/cron/delete', 0, 0, 0, '', '', 0, 0, 0, 1, '', 0, 0, 1770717535, 1770717535);
-INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (244, 240, 3, '在线执行', 'CronOnlineExec', '', '', '', '', 0, 0, '', '', 'POST /admin/cron/onlineExec', 0, 0, 0, '', '', 0, 0, 0, 1, '', 0, 0, 1770717535, 1770717535);
+INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (241, 240, 3, '查看', 'view', '', '', '', '', 0, 0, '', '', 'GET /admin/cron/list', 0, 0, 0, '', '', 0, 0, 0, 1, '', 0, 0, 1770717535, 1770717535);
+INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (242, 240, 3, '新增/编辑', 'edit', '', '', '', '', 0, 0, '', '', 'POST /admin/cron/save', 0, 0, 0, '', '', 0, 0, 0, 1, '', 0, 0, 1770717535, 1770717535);
+INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (243, 240, 3, '删除', 'delete', '', '', '', '', 0, 0, '', '', 'POST /admin/cron/delete', 0, 0, 0, '', '', 0, 0, 0, 1, '', 0, 0, 1770717535, 1770717535);
+INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (244, 240, 3, '在线执行', 'exec', '', '', '', '', 0, 0, '', '', 'POST /admin/cron/onlineExec', 0, 0, 0, '', '', 0, 0, 0, 1, '', 0, 0, 1770717535, 1770717535);
 INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (250, 60, 2, '消息队列', 'QueueManage', 'queue', '/system/queue/index', '', 'ri:stack-line', 0, 1, '', '', '', 0, 0, 0, '', '', 0, 0, 85, 1, '消息队列管理', 0, 0, 1770719034, 1770719034);
 INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (418, 143, 2, '登录日志', 'MemberLoginLog', 'member-login-log', '/member/member-login-log/index', '', 'ri:file-list-line', 0, 1, '', '', '["GET /admin/member-login-log/list"]', 0, 0, 0, '', '', 0, 0, 100, 1, '', 0, 0, 1770873777, 1770873777);
-INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (419, 418, 3, '查看登录日志', 'MemberLoginLogView', '', '', '', '', 0, 0, '', '', '["GET /admin/member-login-log/view"]', 0, 0, 0, '', '', 0, 0, 1, 1, '', 0, 0, 1770873777, 1770873777);
+INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (419, 418, 3, '查看登录日志', 'view', '', '', '', '', 0, 0, '', '', '["GET /admin/member-login-log/view"]', 0, 0, 0, '', '', 0, 0, 1, 1, '', 0, 0, 1770873777, 1770873777);
 INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (420, 143, 2, '登录日志详情', 'MemberLoginLogDetail', 'member-login-log/detail', '/member/member-login-log/detail/index', '', '', 1, 0, '', '', '["GET /admin/member-login-log/view"]', 0, 0, 0, '', '/member-login-log', 0, 0, 0, 1, '', 0, 0, 1770873777, 1770873777);
-INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (421, 418, 3, '删除登录日志', 'MemberLoginLogDelete', '', '', '', '', 0, 0, '', '', '["POST /admin/member-login-log/delete"]', 0, 0, 0, '', '', 0, 0, 4, 1, '', 0, 0, 1770873777, 1770873777);
-INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (422, 418, 3, '导出登录日志', 'MemberLoginLogExport', '', '', '', '', 0, 0, '', '', '["GET /admin/member-login-log/export"]', 0, 0, 0, '', '', 0, 0, 5, 1, '', 0, 0, 1770873777, 1770873777);
+INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (421, 418, 3, '删除登录日志', 'delete', '', '', '', '', 0, 0, '', '', '["POST /admin/member-login-log/delete"]', 0, 0, 0, '', '', 0, 0, 4, 1, '', 0, 0, 1770873777, 1770873777);
+INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (422, 418, 3, '导出登录日志', 'export', '', '', '', '', 0, 0, '', '', '["GET /admin/member-login-log/export"]', 0, 0, 0, '', '', 0, 0, 5, 1, '', 0, 0, 1770873777, 1770873777);
 INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (511, 143, 2, '余额变动日志', 'MemberMoneyLog', 'member-money-log', '/member/member-money-log/index', '', 'ri:file-list-line', 0, 1, '', '', '["GET /admin/member-money-log/list"]', 0, 0, 0, '', '', 0, 0, 100, 1, '', 0, 0, 1770881561, 1770881561);
-INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (512, 511, 3, '查看余额变动日志', 'MemberMoneyLogView', '', '', '', '', 0, 0, '', '', '["GET /admin/member-money-log/view"]', 0, 0, 0, '', '', 0, 0, 1, 1, '', 0, 0, 1770881561, 1770881561);
-INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (513, 511, 3, '新增余额变动日志', 'MemberMoneyLogAdd', '', '', '', '', 0, 0, '', '', '["POST /admin/member-money-log/edit"]', 0, 0, 0, '', '', 0, 0, 2, 1, '', 0, 0, 1770881561, 1770881561);
-INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (514, 511, 3, '编辑余额变动日志', 'MemberMoneyLogEdit', '', '', '', '', 0, 0, '', '', '["POST /admin/member-money-log/edit","GET /admin/member-money-log/view"]', 0, 0, 0, '', '', 0, 0, 3, 1, '', 0, 0, 1770881561, 1770881561);
-INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (515, 511, 3, '删除余额变动日志', 'MemberMoneyLogDelete', '', '', '', '', 0, 0, '', '', '["POST /admin/member-money-log/delete"]', 0, 0, 0, '', '', 0, 0, 4, 1, '', 0, 0, 1770881561, 1770881561);
-INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (516, 511, 3, '导出余额变动日志', 'MemberMoneyLogExport', '', '', '', '', 0, 0, '', '', '["GET /admin/member-money-log/export"]', 0, 0, 0, '', '', 0, 0, 5, 1, '', 0, 0, 1770881561, 1770881561);
+INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (512, 511, 3, '查看余额变动日志', 'view', '', '', '', '', 0, 0, '', '', '["GET /admin/member-money-log/view"]', 0, 0, 0, '', '', 0, 0, 1, 1, '', 0, 0, 1770881561, 1770881561);
+INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (513, 511, 3, '新增余额变动日志', 'add', '', '', '', '', 0, 0, '', '', '["POST /admin/member-money-log/edit"]', 0, 0, 0, '', '', 0, 0, 2, 1, '', 0, 0, 1770881561, 1770881561);
+INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (514, 511, 3, '编辑余额变动日志', 'edit', '', '', '', '', 0, 0, '', '', '["POST /admin/member-money-log/edit","GET /admin/member-money-log/view"]', 0, 0, 0, '', '', 0, 0, 3, 1, '', 0, 0, 1770881561, 1770881561);
+INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (515, 511, 3, '删除余额变动日志', 'delete', '', '', '', '', 0, 0, '', '', '["POST /admin/member-money-log/delete"]', 0, 0, 0, '', '', 0, 0, 4, 1, '', 0, 0, 1770881561, 1770881561);
+INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (516, 511, 3, '导出余额变动日志', 'export', '', '', '', '', 0, 0, '', '', '["GET /admin/member-money-log/export"]', 0, 0, 0, '', '', 0, 0, 5, 1, '', 0, 0, 1770881561, 1770881561);
 INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (517, 143, 2, '积分变动日志', 'MemberScoreLog', 'member-score-log', '/member/member-score-log/index', '', 'ri:file-list-line', 0, 1, '', '', '["GET /admin/member-score-log/list"]', 0, 0, 0, '', '', 0, 0, 100, 1, '', 0, 0, 1770881700, 1770881700);
 INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (617, 143, 2, '会员通知', 'MemberNotice', 'member-notice', '/member/member-notice/index', '', 'ri:notification-line', 0, 1, '', '', '["GET /admin/member-notice/list"]', 0, 0, 0, '', '', 0, 0, 100, 1, '', 0, 0, 1770904531, 1770904531);
-INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (618, 617, 3, '查看会员通知', 'MemberNoticeView', '', '', '', '', 0, 0, '', '', '["GET /admin/member-notice/view"]', 0, 0, 0, '', '', 0, 0, 1, 1, '', 0, 0, 1770904531, 1770904531);
-INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (619, 617, 3, '新增会员通知', 'MemberNoticeAdd', '', '', '', '', 0, 0, '', '', '["POST /admin/member-notice/edit"]', 0, 0, 0, '', '', 0, 0, 2, 1, '', 0, 0, 1770904531, 1770904531);
-INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (620, 617, 3, '编辑会员通知', 'MemberNoticeEdit', '', '', '', '', 0, 0, '', '', '["POST /admin/member-notice/edit","GET /admin/member-notice/view"]', 0, 0, 0, '', '', 0, 0, 3, 1, '', 0, 0, 1770904531, 1770904531);
-INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (621, 617, 3, '删除会员通知', 'MemberNoticeDelete', '', '', '', '', 0, 0, '', '', '["POST /admin/member-notice/delete"]', 0, 0, 0, '', '', 0, 0, 4, 1, '', 0, 0, 1770904531, 1770904531);
-INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (622, 617, 3, '导出会员通知', 'MemberNoticeExport', '', '', '', '', 0, 0, '', '', '["GET /admin/member-notice/export"]', 0, 0, 0, '', '', 0, 0, 5, 1, '', 0, 0, 1770904531, 1770904531);
+INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (618, 617, 3, '查看会员通知', 'view', '', '', '', '', 0, 0, '', '', '["GET /admin/member-notice/view"]', 0, 0, 0, '', '', 0, 0, 1, 1, '', 0, 0, 1770904531, 1770904531);
+INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (619, 617, 3, '新增会员通知', 'add', '', '', '', '', 0, 0, '', '', '["POST /admin/member-notice/edit"]', 0, 0, 0, '', '', 0, 0, 2, 1, '', 0, 0, 1770904531, 1770904531);
+INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (620, 617, 3, '编辑会员通知', 'edit', '', '', '', '', 0, 0, '', '', '["POST /admin/member-notice/edit","GET /admin/member-notice/view"]', 0, 0, 0, '', '', 0, 0, 3, 1, '', 0, 0, 1770904531, 1770904531);
+INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (621, 617, 3, '删除会员通知', 'delete', '', '', '', '', 0, 0, '', '', '["POST /admin/member-notice/delete"]', 0, 0, 0, '', '', 0, 0, 4, 1, '', 0, 0, 1770904531, 1770904531);
+INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (622, 617, 3, '导出会员通知', 'export', '', '', '', '', 0, 0, '', '', '["GET /admin/member-notice/export"]', 0, 0, 0, '', '', 0, 0, 5, 1, '', 0, 0, 1770904531, 1770904531);
+INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (750, 61, 3, '新增用户', 'add', '', '', 'admin_user', '', 0, 0, '', '', '', 0, 0, 0, '', '', 0, 0, 1, 1, '', 0, 0, 1746835200, 1746835200);
+INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (751, 61, 3, '编辑用户', 'edit', '', '', 'admin_user', '', 0, 0, '', '', '', 0, 0, 0, '', '', 0, 0, 2, 1, '', 0, 0, 1746835200, 1746835200);
+INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (752, 61, 3, '删除用户', 'delete', '', '', 'admin_user', '', 0, 0, '', '', '', 0, 0, 0, '', '', 0, 0, 3, 1, '', 0, 0, 1746835200, 1746835200);
+INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (753, 61, 3, '强制下线', 'kick', '', '', 'admin_user', '', 0, 0, '', '', '', 0, 0, 0, '', '', 0, 0, 4, 1, '', 0, 0, 1746835200, 1746835200);
+INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (755, 62, 3, '新增角色', 'add', '', '', 'admin_role', '', 0, 0, '', '', '', 0, 0, 0, '', '', 0, 0, 1, 1, '', 0, 0, 1746835200, 1746835200);
+INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (756, 62, 3, '编辑角色', 'edit', '', '', 'admin_role', '', 0, 0, '', '', '', 0, 0, 0, '', '', 0, 0, 2, 1, '', 0, 0, 1746835200, 1746835200);
+INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (757, 62, 3, '删除角色', 'delete', '', '', 'admin_role', '', 0, 0, '', '', '', 0, 0, 0, '', '', 0, 0, 3, 1, '', 0, 0, 1746835200, 1746835200);
+INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (758, 62, 3, '菜单权限', 'permission', '', '', 'admin_role', '', 0, 0, '', '', '', 0, 0, 0, '', '', 0, 0, 4, 1, '', 0, 0, 1746835200, 1746835200);
+INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (759, 62, 3, '数据权限', 'dataScope', '', '', 'admin_role', '', 0, 0, '', '', '', 0, 0, 0, '', '', 0, 0, 5, 1, '', 0, 0, 1746835200, 1746835200);
+INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (760, 62, 3, '字段权限', 'fieldPerm', '', '', 'admin_role', '', 0, 0, '', '', '', 0, 0, 0, '', '', 0, 0, 6, 1, '', 0, 0, 1746835200, 1746835200);
+INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (765, 141, 3, '添加部门', 'add', '', '', 'admin_dept', '', 0, 0, '', '', '', 0, 0, 0, '', '', 0, 0, 1, 1, '', 0, 0, 1746835200, 1746835200);
+INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (766, 141, 3, '编辑部门', 'edit', '', '', 'admin_dept', '', 0, 0, '', '', '', 0, 0, 0, '', '', 0, 0, 2, 1, '', 0, 0, 1746835200, 1746835200);
+INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (767, 141, 3, '删除部门', 'delete', '', '', 'admin_dept', '', 0, 0, '', '', '', 0, 0, 0, '', '', 0, 0, 3, 1, '', 0, 0, 1746835200, 1746835200);
+INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (770, 142, 3, '新增岗位', 'add', '', '', 'admin_post', '', 0, 0, '', '', '', 0, 0, 0, '', '', 0, 0, 1, 1, '', 0, 0, 1746835200, 1746835200);
+INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (771, 142, 3, '编辑岗位', 'edit', '', '', 'admin_post', '', 0, 0, '', '', '', 0, 0, 0, '', '', 0, 0, 2, 1, '', 0, 0, 1746835200, 1746835200);
+INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (772, 142, 3, '删除岗位', 'delete', '', '', 'admin_post', '', 0, 0, '', '', '', 0, 0, 0, '', '', 0, 0, 3, 1, '', 0, 0, 1746835200, 1746835200);
+INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (775, 122, 3, '上传文件', 'add', '', '', 'sys_attachment', '', 0, 0, '', '', '', 0, 0, 0, '', '', 0, 0, 0, 1, '', 0, 0, 1746835200, 1746835200);
+INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (776, 122, 3, '批量删除', 'batchDel', '', '', 'sys_attachment', '', 0, 0, '', '', '', 0, 0, 0, '', '', 0, 0, 4, 1, '', 0, 0, 1746835200, 1746835200);
+INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (780, 220, 3, '发布通知', 'add', '', '', 'admin_notice', '', 0, 0, '', '', '', 0, 0, 0, '', '', 0, 0, 0, 1, '', 0, 0, 1746835200, 1746835200);
+INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (785, 240, 3, '新增任务', 'add', '', '', 'sys_cron', '', 0, 0, '', '', '', 0, 0, 0, '', '', 0, 0, 0, 1, '', 0, 0, 1746835200, 1746835200);
+INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (790, 144, 3, '批量删除', 'batchDel', '', '', '', '', 0, 0, '', '', '', 0, 0, 0, '', '', 0, 0, 5, 1, '', 0, 0, 1746835200, 1746835200);
+INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (795, 160, 3, '批量删除', 'batchDel', '', '', 'admin_operation_log', '', 0, 0, '', '', '', 0, 0, 0, '', '', 0, 0, 0, 1, '', 0, 0, 1746835200, 1746835200);
+INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (800, 418, 3, '批量删除', 'batchDel', '', '', '', '', 0, 0, '', '', '', 0, 0, 0, '', '', 0, 0, 2, 1, '', 0, 0, 1746835200, 1746835200);
+INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (805, 517, 3, '新增', 'add', '', '', '', '', 0, 0, '', '', '', 0, 0, 0, '', '', 0, 0, 1, 1, '', 0, 0, 1746835200, 1746835200);
+INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (806, 517, 3, '查看', 'view', '', '', '', '', 0, 0, '', '', '', 0, 0, 0, '', '', 0, 0, 2, 1, '', 0, 0, 1746835200, 1746835200);
+INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (807, 517, 3, '编辑', 'edit', '', '', '', '', 0, 0, '', '', '', 0, 0, 0, '', '', 0, 0, 3, 1, '', 0, 0, 1746835200, 1746835200);
+INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (808, 517, 3, '删除', 'delete', '', '', '', '', 0, 0, '', '', '', 0, 0, 0, '', '', 0, 0, 4, 1, '', 0, 0, 1746835200, 1746835200);
+INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (809, 517, 3, '批量删除', 'batchDel', '', '', '', '', 0, 0, '', '', '', 0, 0, 0, '', '', 0, 0, 5, 1, '', 0, 0, 1746835200, 1746835200);
+INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (810, 517, 3, '导出', 'export', '', '', '', '', 0, 0, '', '', '', 0, 0, 0, '', '', 0, 0, 6, 1, '', 0, 0, 1746835200, 1746835200);
+INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (815, 511, 3, '批量删除', 'batchDel', '', '', '', '', 0, 0, '', '', '', 0, 0, 0, '', '', 0, 0, 6, 1, '', 0, 0, 1746835200, 1746835200);
+INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (820, 617, 3, '批量删除', 'batchDel', '', '', '', '', 0, 0, '', '', '', 0, 0, 0, '', '', 0, 0, 6, 1, '', 0, 0, 1746835200, 1746835200);
+INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (700, 0, 1, '租户管理', 'Tenant', '/tenant', '', '', 'ri:building-2-line', 0, 0, '', '', '', 0, 0, 0, '', '', 0, 0, 55, 1, '租户管理目录', 0, 0, 0, 0);
+INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (701, 700, 2, '套餐管理', 'TenantGroup', 'group', '/tenant/group/index', '', 'ri:gift-2-line', 0, 0, '', '', '', 0, 0, 0, '', '', 0, 0, 1, 1, '租户套餐管理', 0, 0, 0, 0);
+INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (702, 700, 2, '租户列表', 'TenantList', 'list', '/tenant/list/index', '', 'ri:home-office-line', 0, 0, '', '', '', 0, 0, 0, '', '', 0, 0, 2, 1, '租户列表管理', 0, 0, 0, 0);
 
 
 --
@@ -5301,6 +5335,13 @@ INSERT INTO public.xy_member_group (id, name, rules, status, sort, remark, creat
 --
 
 INSERT INTO public.xy_member_menu (id, pid, title, name, path, component, icon, menu_type, url, no_login_valid, extend, remark, type, nav_show_children, permission, sort, status, created_at, updated_at) VALUES (1, 0, '文档', 'docs', '/docs', 'docs/index', 'ri:book-open-line', 'tab', '', 1, 'none', '', 'nav', 0, '', 10, 1, NULL, NULL);
+INSERT INTO public.xy_member_menu (id, pid, title, name, path, component, icon, menu_type, url, no_login_valid, extend, remark, type, nav_show_children, permission, sort, status, created_at, updated_at) VALUES (2, 0, '案例', 'cases', '/cases', 'cases/index', 'ri:slideshow-line', 'tab', '', 1, 'none', '', 'nav', 0, '', 20, 1, NULL, NULL);
+INSERT INTO public.xy_member_menu (id, pid, title, name, path, component, icon, menu_type, url, no_login_valid, extend, remark, type, nav_show_children, permission, sort, status, created_at, updated_at) VALUES (3, 0, '社区', 'community', '/community', 'community/index', 'ri:discuss-line', 'tab', '', 1, 'none', '', 'nav', 0, '', 30, 1, NULL, NULL);
+INSERT INTO public.xy_member_menu (id, pid, title, name, path, component, icon, menu_type, url, no_login_valid, extend, remark, type, nav_show_children, permission, sort, status, created_at, updated_at) VALUES (16, 0, '更新日志', 'changelog', '/changelog', '', 'ri:file-list-3-line', 'tab', '', 1, 'none', '', 'nav', 0, '', 40, 1, NULL, NULL);
+INSERT INTO public.xy_member_menu (id, pid, title, name, path, component, icon, menu_type, url, no_login_valid, extend, remark, type, nav_show_children, permission, sort, status, created_at, updated_at) VALUES (12, 3, '帖子详情', 'community-detail', '/community/:id', 'community/detail', '', 'route', '', 1, 'add_rules_only', '', 'route', 0, '', 0, 1, NULL, NULL);
+INSERT INTO public.xy_member_menu (id, pid, title, name, path, component, icon, menu_type, url, no_login_valid, extend, remark, type, nav_show_children, permission, sort, status, created_at, updated_at) VALUES (13, 3, '发布提问', 'community-publish', '/community-publish', 'community/publish', '', 'route', '', 0, 'add_rules_only', '', 'route', 0, '', 0, 1, NULL, NULL);
+INSERT INTO public.xy_member_menu (id, pid, title, name, path, component, icon, menu_type, url, no_login_valid, extend, remark, type, nav_show_children, permission, sort, status, created_at, updated_at) VALUES (14, 3, '搜索结果', 'community-search', '/community-search', 'community/search', '', 'route', '', 1, 'add_rules_only', '', 'route', 0, '', 0, 1, NULL, NULL);
+INSERT INTO public.xy_member_menu (id, pid, title, name, path, component, icon, menu_type, url, no_login_valid, extend, remark, type, nav_show_children, permission, sort, status, created_at, updated_at) VALUES (15, 0, '我的社区', 'my-community', '/user/community', '', 'ri:discuss-line', 'tab', '', 0, 'none', '', 'menu', 0, '', 108, 1, NULL, NULL);
 INSERT INTO public.xy_member_menu (id, pid, title, name, path, component, icon, menu_type, url, no_login_valid, extend, remark, type, nav_show_children, permission, sort, status, created_at, updated_at) VALUES (4, 0, '我的账户', 'account', '/user', '', 'ri:user-line', 'tab', '', 0, 'none', '', 'menu_dir', 0, '', 100, 1, NULL, NULL);
 INSERT INTO public.xy_member_menu (id, pid, title, name, path, component, icon, menu_type, url, no_login_valid, extend, remark, type, nav_show_children, permission, sort, status, created_at, updated_at) VALUES (5, 4, '账户概览', 'overview', '/user/overview', 'member/center', 'ri:home-4-line', 'tab', '', 0, 'none', '', 'menu', 0, '', 101, 1, NULL, NULL);
 INSERT INTO public.xy_member_menu (id, pid, title, name, path, component, icon, menu_type, url, no_login_valid, extend, remark, type, nav_show_children, permission, sort, status, created_at, updated_at) VALUES (6, 4, '每日签到', 'checkin', '/user/checkin', 'member/center', 'ri:calendar-check-line', 'tab', '', 0, 'none', '', 'menu', 0, '', 102, 1, NULL, NULL);
@@ -5660,7 +5701,7 @@ SELECT pg_catalog.setval('public.xy_admin_login_log_id_seq', 1, true);
 -- Name: xy_admin_menu_id_seq; Type: SEQUENCE SET; Schema: xygonew; Owner: -
 --
 
-SELECT pg_catalog.setval('public.xy_admin_menu_id_seq', 622, true);
+SELECT pg_catalog.setval('public.xy_admin_menu_id_seq', 820, true);
 
 
 --
@@ -5758,7 +5799,7 @@ SELECT pg_catalog.setval('public.xy_member_login_log_id_seq', 19, true);
 -- Name: xy_member_menu_id_seq; Type: SEQUENCE SET; Schema: xygonew; Owner: -
 --
 
-SELECT pg_catalog.setval('public.xy_member_menu_id_seq', 11, true);
+SELECT pg_catalog.setval('public.xy_member_menu_id_seq', 15, true);
 
 
 --
@@ -6802,38 +6843,452 @@ CREATE INDEX idx_cms_doc_deleted_at ON public.xy_cms_doc USING btree (deleted_at
 SELECT pg_catalog.setval('public.xy_cms_doc_category_id_seq', 1, false);
 SELECT pg_catalog.setval('public.xy_cms_doc_id_seq', 1, false);
 
+-- --------------------------------------------------------
+
+--
+-- 更新日志表
+--
+
+CREATE TABLE public.xy_cms_changelog (
+    id bigint NOT NULL,
+    version character varying(32) DEFAULT ''::character varying NOT NULL,
+    title character varying(255) DEFAULT ''::character varying NOT NULL,
+    content text,
+    remark character varying(500) DEFAULT ''::character varying NOT NULL,
+    require_re_login smallint DEFAULT 0 NOT NULL,
+    release_date character varying(20) DEFAULT ''::character varying NOT NULL,
+    status smallint DEFAULT 1 NOT NULL,
+    sort integer DEFAULT 0 NOT NULL,
+    created_by bigint DEFAULT 0 NOT NULL,
+    updated_by bigint DEFAULT 0 NOT NULL,
+    created_at bigint DEFAULT 0 NOT NULL,
+    updated_at bigint DEFAULT 0 NOT NULL,
+    deleted_at bigint DEFAULT 0 NOT NULL
+);
+
+COMMENT ON TABLE public.xy_cms_changelog IS '更新日志表';
+COMMENT ON COLUMN public.xy_cms_changelog.id IS '日志ID';
+COMMENT ON COLUMN public.xy_cms_changelog.version IS '版本号(如v3.0.1)';
+COMMENT ON COLUMN public.xy_cms_changelog.title IS '更新标题';
+COMMENT ON COLUMN public.xy_cms_changelog.content IS '更新内容(JSON数组)';
+COMMENT ON COLUMN public.xy_cms_changelog.remark IS '备注';
+COMMENT ON COLUMN public.xy_cms_changelog.require_re_login IS '是否需要重新登录:0=否,1=是';
+COMMENT ON COLUMN public.xy_cms_changelog.release_date IS '发布日期(如2025-11-15)';
+COMMENT ON COLUMN public.xy_cms_changelog.status IS '状态:1=已发布,2=草稿';
+COMMENT ON COLUMN public.xy_cms_changelog.sort IS '排序(越大越靠前)';
+COMMENT ON COLUMN public.xy_cms_changelog.created_by IS '创建人ID';
+COMMENT ON COLUMN public.xy_cms_changelog.updated_by IS '更新人ID';
+COMMENT ON COLUMN public.xy_cms_changelog.created_at IS '创建时间';
+COMMENT ON COLUMN public.xy_cms_changelog.updated_at IS '更新时间';
+COMMENT ON COLUMN public.xy_cms_changelog.deleted_at IS '删除时间(软删除)';
+
+CREATE SEQUENCE public.xy_cms_changelog_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+ALTER SEQUENCE public.xy_cms_changelog_id_seq OWNED BY public.xy_cms_changelog.id;
+ALTER TABLE ONLY public.xy_cms_changelog ALTER COLUMN id SET DEFAULT nextval('public.xy_cms_changelog_id_seq'::regclass);
+
+ALTER TABLE ONLY public.xy_cms_changelog
+    ADD CONSTRAINT xy_cms_changelog_pkey PRIMARY KEY (id);
+
+CREATE INDEX idx_cms_changelog_version ON public.xy_cms_changelog USING btree (version);
+CREATE INDEX idx_cms_changelog_status ON public.xy_cms_changelog USING btree (status);
+CREATE INDEX idx_cms_changelog_sort ON public.xy_cms_changelog USING btree (sort);
+CREATE INDEX idx_cms_changelog_release_date ON public.xy_cms_changelog USING btree (release_date);
+CREATE INDEX idx_cms_changelog_deleted_at ON public.xy_cms_changelog USING btree (deleted_at);
+
+SELECT pg_catalog.setval('public.xy_cms_changelog_id_seq', 1, false);
+
+-- --------------------------------------------------------
+-- 租户套餐表
+-- --------------------------------------------------------
+
+CREATE TABLE public.xy_tenant_group (
+    id bigint NOT NULL,
+    group_name character varying(100) DEFAULT ''::character varying NOT NULL,
+    remark character varying(255) DEFAULT ''::character varying,
+    content text,
+    sort integer DEFAULT 0 NOT NULL,
+    status smallint DEFAULT 1 NOT NULL,
+    created_by bigint DEFAULT 0 NOT NULL,
+    updated_by bigint DEFAULT 0 NOT NULL,
+    create_time integer,
+    update_time integer,
+    delete_time integer DEFAULT 0
+);
+
+COMMENT ON TABLE public.xy_tenant_group IS '租户套餐表';
+COMMENT ON COLUMN public.xy_tenant_group.id IS '套餐ID';
+COMMENT ON COLUMN public.xy_tenant_group.group_name IS '套餐名称';
+COMMENT ON COLUMN public.xy_tenant_group.remark IS '描述';
+COMMENT ON COLUMN public.xy_tenant_group.content IS '套餐详情';
+COMMENT ON COLUMN public.xy_tenant_group.sort IS '排序';
+COMMENT ON COLUMN public.xy_tenant_group.status IS '状态:0停用,1启用';
+COMMENT ON COLUMN public.xy_tenant_group.created_by IS '创建人ID';
+COMMENT ON COLUMN public.xy_tenant_group.updated_by IS '更新人ID';
+COMMENT ON COLUMN public.xy_tenant_group.create_time IS '创建时间';
+COMMENT ON COLUMN public.xy_tenant_group.update_time IS '更新时间';
+COMMENT ON COLUMN public.xy_tenant_group.delete_time IS '删除时间(软删除)';
+
+CREATE SEQUENCE public.xy_tenant_group_id_seq
+    AS bigint START WITH 3 INCREMENT BY 1 NO MINVALUE NO MAXVALUE CACHE 1;
+ALTER SEQUENCE public.xy_tenant_group_id_seq OWNED BY public.xy_tenant_group.id;
+ALTER TABLE ONLY public.xy_tenant_group ALTER COLUMN id SET DEFAULT nextval('public.xy_tenant_group_id_seq'::regclass);
+
+INSERT INTO public.xy_tenant_group (id, group_name, remark, sort, status, created_by, updated_by, create_time, update_time, delete_time) VALUES
+(1, '基础版', '基础功能套餐', 1, 1, 1, 1, EXTRACT(EPOCH FROM NOW())::integer, EXTRACT(EPOCH FROM NOW())::integer, 0),
+(2, '专业版', '包含全部功能', 2, 1, 1, 1, EXTRACT(EPOCH FROM NOW())::integer, EXTRACT(EPOCH FROM NOW())::integer, 0);
+
+ALTER TABLE ONLY public.xy_tenant_group ADD CONSTRAINT xy_tenant_group_pkey PRIMARY KEY (id);
+
+-- --------------------------------------------------------
+-- 套餐与菜单关联表
+-- --------------------------------------------------------
+
+CREATE TABLE public.xy_tenant_group_menu (
+    id bigint NOT NULL,
+    group_id bigint NOT NULL,
+    menu_id bigint NOT NULL
+);
+
+COMMENT ON TABLE public.xy_tenant_group_menu IS '租户套餐与菜单关联表';
+COMMENT ON COLUMN public.xy_tenant_group_menu.id IS '主键';
+COMMENT ON COLUMN public.xy_tenant_group_menu.group_id IS '套餐ID';
+COMMENT ON COLUMN public.xy_tenant_group_menu.menu_id IS '菜单ID';
+
+CREATE SEQUENCE public.xy_tenant_group_menu_id_seq
+    AS bigint START WITH 1 INCREMENT BY 1 NO MINVALUE NO MAXVALUE CACHE 1;
+ALTER SEQUENCE public.xy_tenant_group_menu_id_seq OWNED BY public.xy_tenant_group_menu.id;
+ALTER TABLE ONLY public.xy_tenant_group_menu ALTER COLUMN id SET DEFAULT nextval('public.xy_tenant_group_menu_id_seq'::regclass);
+
+ALTER TABLE ONLY public.xy_tenant_group_menu ADD CONSTRAINT xy_tenant_group_menu_pkey PRIMARY KEY (id);
+CREATE INDEX idx_tgm_group_id ON public.xy_tenant_group_menu USING btree (group_id);
+CREATE INDEX idx_tgm_menu_id ON public.xy_tenant_group_menu USING btree (menu_id);
+
+-- --------------------------------------------------------
+-- 租户信息表
+-- --------------------------------------------------------
+
+CREATE TABLE public.xy_tenant (
+    id bigint NOT NULL,
+    group_id bigint,
+    title character varying(100) DEFAULT ''::character varying,
+    logo character varying(255) DEFAULT ''::character varying,
+    tenant_name character varying(255) DEFAULT ''::character varying,
+    domain character varying(100) DEFAULT NULL,
+    sms_type smallint DEFAULT 1 NOT NULL,
+    storage_type smallint DEFAULT 1 NOT NULL,
+    contact_name character varying(50) DEFAULT ''::character varying,
+    contact_phone character varying(50) DEFAULT ''::character varying,
+    contact_email character varying(100) DEFAULT ''::character varying,
+    status smallint DEFAULT 1 NOT NULL,
+    remark character varying(255) DEFAULT ''::character varying,
+    is_init smallint DEFAULT 0 NOT NULL,
+    money numeric(10,2) DEFAULT 0.00 NOT NULL,
+    expire_time integer,
+    created_by bigint DEFAULT 0 NOT NULL,
+    updated_by bigint DEFAULT 0 NOT NULL,
+    create_time integer,
+    update_time integer,
+    delete_time integer DEFAULT 0,
+    admin_username character varying(50) DEFAULT ''::character varying NOT NULL,
+    admin_password character varying(100) DEFAULT ''::character varying NOT NULL,
+    salt character varying(10) DEFAULT ''::character varying NOT NULL
+);
+
+COMMENT ON TABLE public.xy_tenant IS '租户信息表';
+COMMENT ON COLUMN public.xy_tenant.id IS '租户ID';
+COMMENT ON COLUMN public.xy_tenant.group_id IS '套餐ID';
+COMMENT ON COLUMN public.xy_tenant.title IS '租户简称';
+COMMENT ON COLUMN public.xy_tenant.logo IS '租户Logo';
+COMMENT ON COLUMN public.xy_tenant.tenant_name IS '租户全称';
+COMMENT ON COLUMN public.xy_tenant.domain IS '绑定域名';
+COMMENT ON COLUMN public.xy_tenant.sms_type IS '短信配置:1跟随平台,2独立配置';
+COMMENT ON COLUMN public.xy_tenant.storage_type IS '存储配置:1跟随平台,2独立配置';
+COMMENT ON COLUMN public.xy_tenant.contact_name IS '联系人';
+COMMENT ON COLUMN public.xy_tenant.contact_phone IS '联系电话';
+COMMENT ON COLUMN public.xy_tenant.contact_email IS '联系邮箱';
+COMMENT ON COLUMN public.xy_tenant.status IS '状态:0停用,1启用';
+COMMENT ON COLUMN public.xy_tenant.remark IS '备注';
+COMMENT ON COLUMN public.xy_tenant.is_init IS '是否已初始化:0否,1是';
+COMMENT ON COLUMN public.xy_tenant.money IS '站内余额';
+COMMENT ON COLUMN public.xy_tenant.expire_time IS '到期时间(时间戳)';
+COMMENT ON COLUMN public.xy_tenant.created_by IS '创建人ID';
+COMMENT ON COLUMN public.xy_tenant.updated_by IS '更新人ID';
+COMMENT ON COLUMN public.xy_tenant.create_time IS '创建时间';
+COMMENT ON COLUMN public.xy_tenant.update_time IS '更新时间';
+COMMENT ON COLUMN public.xy_tenant.delete_time IS '删除时间(软删除)';
+COMMENT ON COLUMN public.xy_tenant.admin_username IS '租户管理员账号';
+COMMENT ON COLUMN public.xy_tenant.admin_password IS '租户管理员密码(加密)';
+COMMENT ON COLUMN public.xy_tenant.salt IS '密码盐值';
+
+CREATE SEQUENCE public.xy_tenant_id_seq
+    AS bigint START WITH 2 INCREMENT BY 1 NO MINVALUE NO MAXVALUE CACHE 1;
+ALTER SEQUENCE public.xy_tenant_id_seq OWNED BY public.xy_tenant.id;
+ALTER TABLE ONLY public.xy_tenant ALTER COLUMN id SET DEFAULT nextval('public.xy_tenant_id_seq'::regclass);
+
+INSERT INTO public.xy_tenant (id, group_id, title, tenant_name, status, is_init, admin_username, created_by, updated_by, create_time, update_time, delete_time) VALUES
+(1, 2, '默认租户', '系统默认租户（平台自用）', 1, 1, 'admin', 1, 1, EXTRACT(EPOCH FROM NOW())::integer, EXTRACT(EPOCH FROM NOW())::integer, 0);
+
+ALTER TABLE ONLY public.xy_tenant ADD CONSTRAINT xy_tenant_pkey PRIMARY KEY (id);
+CREATE INDEX idx_tenant_group_id ON public.xy_tenant USING btree (group_id);
+CREATE UNIQUE INDEX uk_tenant_domain ON public.xy_tenant USING btree (domain);
+
+-- --------------------------------------------------------
+-- 租户账户流水表
+-- --------------------------------------------------------
+
+CREATE TABLE public.xy_tenant_account_log (
+    id bigint NOT NULL,
+    tenant_id bigint NOT NULL,
+    sn character varying(32) DEFAULT ''::character varying NOT NULL,
+    change_object smallint DEFAULT 1 NOT NULL,
+    change_type integer DEFAULT 0 NOT NULL,
+    action smallint DEFAULT 1 NOT NULL,
+    change_amount numeric(10,2) DEFAULT 0.00 NOT NULL,
+    left_amount numeric(10,2) DEFAULT 0.00 NOT NULL,
+    association_sn character varying(255) DEFAULT ''::character varying,
+    remark character varying(255) DEFAULT ''::character varying,
+    admin_id bigint DEFAULT 0,
+    create_time integer,
+    update_time integer,
+    delete_time integer DEFAULT 0
+);
+
+COMMENT ON TABLE public.xy_tenant_account_log IS '租户账户流水表';
+COMMENT ON COLUMN public.xy_tenant_account_log.id IS '流水ID';
+COMMENT ON COLUMN public.xy_tenant_account_log.tenant_id IS '租户ID';
+COMMENT ON COLUMN public.xy_tenant_account_log.sn IS '流水号';
+COMMENT ON COLUMN public.xy_tenant_account_log.change_object IS '变动对象:1余额';
+COMMENT ON COLUMN public.xy_tenant_account_log.change_type IS '变动类型';
+COMMENT ON COLUMN public.xy_tenant_account_log.action IS '动作:1增加,2扣减';
+COMMENT ON COLUMN public.xy_tenant_account_log.change_amount IS '变动金额';
+COMMENT ON COLUMN public.xy_tenant_account_log.left_amount IS '变动后余额';
+COMMENT ON COLUMN public.xy_tenant_account_log.association_sn IS '关联单号';
+COMMENT ON COLUMN public.xy_tenant_account_log.remark IS '备注';
+COMMENT ON COLUMN public.xy_tenant_account_log.admin_id IS '操作管理员ID';
+COMMENT ON COLUMN public.xy_tenant_account_log.create_time IS '创建时间';
+COMMENT ON COLUMN public.xy_tenant_account_log.update_time IS '更新时间';
+COMMENT ON COLUMN public.xy_tenant_account_log.delete_time IS '删除时间(软删除)';
+
+CREATE SEQUENCE public.xy_tenant_account_log_id_seq
+    AS bigint START WITH 1 INCREMENT BY 1 NO MINVALUE NO MAXVALUE CACHE 1;
+ALTER SEQUENCE public.xy_tenant_account_log_id_seq OWNED BY public.xy_tenant_account_log.id;
+ALTER TABLE ONLY public.xy_tenant_account_log ALTER COLUMN id SET DEFAULT nextval('public.xy_tenant_account_log_id_seq'::regclass);
+
+ALTER TABLE ONLY public.xy_tenant_account_log ADD CONSTRAINT xy_tenant_account_log_pkey PRIMARY KEY (id);
+CREATE INDEX idx_tal_tenant_id ON public.xy_tenant_account_log USING btree (tenant_id);
+CREATE INDEX idx_tal_sn ON public.xy_tenant_account_log USING btree (sn);
+CREATE INDEX idx_tal_create_time ON public.xy_tenant_account_log USING btree (create_time);
+
+
+-- ============================================================
+-- 租户核心镜像表（Phase 3: RBAC + 配置）
+-- ============================================================
+
+CREATE TABLE public.xy_tenant_admin (
+    id bigint NOT NULL,
+    tenant_id bigint NOT NULL,
+    username character varying(50) NOT NULL,
+    nickname character varying(50) DEFAULT ''::character varying NOT NULL,
+    real_name character varying(50),
+    password character varying(255) NOT NULL,
+    gender smallint DEFAULT 0 NOT NULL,
+    salt character varying(50) DEFAULT ''::character varying NOT NULL,
+    mobile character varying(20) DEFAULT ''::character varying NOT NULL,
+    email character varying(100) DEFAULT ''::character varying NOT NULL,
+    avatar character varying(255) DEFAULT ''::character varying NOT NULL,
+    dept_id bigint DEFAULT 0 NOT NULL,
+    is_super smallint DEFAULT 0 NOT NULL,
+    status smallint DEFAULT 1 NOT NULL,
+    last_login_at bigint,
+    last_login_ip character varying(50) DEFAULT ''::character varying NOT NULL,
+    remark character varying(500),
+    created_by bigint DEFAULT 0 NOT NULL,
+    updated_by bigint DEFAULT 0 NOT NULL,
+    create_time integer,
+    update_time integer
+);
+
+COMMENT ON TABLE public.xy_tenant_admin IS '租户管理员表';
+COMMENT ON COLUMN public.xy_tenant_admin.id IS '管理员ID';
+COMMENT ON COLUMN public.xy_tenant_admin.tenant_id IS '所属租户ID';
+COMMENT ON COLUMN public.xy_tenant_admin.username IS '登录账号';
+COMMENT ON COLUMN public.xy_tenant_admin.nickname IS '昵称';
+COMMENT ON COLUMN public.xy_tenant_admin.real_name IS '真实姓名';
+COMMENT ON COLUMN public.xy_tenant_admin.password IS '密码哈希';
+COMMENT ON COLUMN public.xy_tenant_admin.gender IS '性别0保密 1男 2女';
+COMMENT ON COLUMN public.xy_tenant_admin.salt IS '密码盐';
+COMMENT ON COLUMN public.xy_tenant_admin.mobile IS '手机号';
+COMMENT ON COLUMN public.xy_tenant_admin.email IS '邮箱';
+COMMENT ON COLUMN public.xy_tenant_admin.avatar IS '头像';
+COMMENT ON COLUMN public.xy_tenant_admin.dept_id IS '部门ID';
+COMMENT ON COLUMN public.xy_tenant_admin.is_super IS '是否租户超管:0=否,1=是';
+COMMENT ON COLUMN public.xy_tenant_admin.status IS '状态:0=禁用,1=启用';
+COMMENT ON COLUMN public.xy_tenant_admin.last_login_at IS '最后登录时间';
+COMMENT ON COLUMN public.xy_tenant_admin.last_login_ip IS '最后登录IP';
+COMMENT ON COLUMN public.xy_tenant_admin.remark IS '备注';
+COMMENT ON COLUMN public.xy_tenant_admin.created_by IS '创建人ID';
+COMMENT ON COLUMN public.xy_tenant_admin.updated_by IS '更新人ID';
+COMMENT ON COLUMN public.xy_tenant_admin.create_time IS '创建时间';
+COMMENT ON COLUMN public.xy_tenant_admin.update_time IS '更新时间';
+
+CREATE SEQUENCE public.xy_tenant_admin_id_seq AS bigint START WITH 1 INCREMENT BY 1 NO MINVALUE NO MAXVALUE CACHE 1;
+ALTER SEQUENCE public.xy_tenant_admin_id_seq OWNED BY public.xy_tenant_admin.id;
+ALTER TABLE ONLY public.xy_tenant_admin ALTER COLUMN id SET DEFAULT nextval('public.xy_tenant_admin_id_seq'::regclass);
+ALTER TABLE ONLY public.xy_tenant_admin ADD CONSTRAINT xy_tenant_admin_pkey PRIMARY KEY (id);
+CREATE INDEX idx_ta_tenant_id ON public.xy_tenant_admin USING btree (tenant_id);
+CREATE UNIQUE INDEX uk_ta_tenant_username ON public.xy_tenant_admin USING btree (tenant_id, username);
+
+CREATE TABLE public.xy_tenant_role (
+    id bigint NOT NULL,
+    tenant_id bigint NOT NULL,
+    name character varying(50) NOT NULL,
+    key character varying(50) NOT NULL,
+    data_scope smallint DEFAULT 0 NOT NULL,
+    custom_depts text,
+    pid bigint DEFAULT 0 NOT NULL,
+    level bigint DEFAULT 1 NOT NULL,
+    tree character varying(255) DEFAULT '0'::character varying NOT NULL,
+    sort integer DEFAULT 0 NOT NULL,
+    status smallint DEFAULT 1 NOT NULL,
+    remark character varying(255) DEFAULT ''::character varying NOT NULL,
+    created_by bigint DEFAULT 0 NOT NULL,
+    updated_by bigint DEFAULT 0 NOT NULL,
+    create_time integer NOT NULL,
+    update_time integer NOT NULL
+);
+
+COMMENT ON TABLE public.xy_tenant_role IS '租户角色表';
+CREATE SEQUENCE public.xy_tenant_role_id_seq AS bigint START WITH 1 INCREMENT BY 1 NO MINVALUE NO MAXVALUE CACHE 1;
+ALTER SEQUENCE public.xy_tenant_role_id_seq OWNED BY public.xy_tenant_role.id;
+ALTER TABLE ONLY public.xy_tenant_role ALTER COLUMN id SET DEFAULT nextval('public.xy_tenant_role_id_seq'::regclass);
+ALTER TABLE ONLY public.xy_tenant_role ADD CONSTRAINT xy_tenant_role_pkey PRIMARY KEY (id);
+CREATE INDEX idx_tr_tenant_id ON public.xy_tenant_role USING btree (tenant_id);
+CREATE UNIQUE INDEX uk_tr_tenant_key ON public.xy_tenant_role USING btree (tenant_id, key);
+
+CREATE TABLE public.xy_tenant_menu (
+    id bigint NOT NULL,
+    tenant_id bigint NOT NULL,
+    source_menu_id bigint DEFAULT 0 NOT NULL,
+    parent_id bigint DEFAULT 0 NOT NULL,
+    type smallint DEFAULT 1 NOT NULL,
+    title character varying(50) NOT NULL,
+    name character varying(50) DEFAULT ''::character varying NOT NULL,
+    path character varying(100) DEFAULT ''::character varying NOT NULL,
+    component character varying(100) DEFAULT ''::character varying NOT NULL,
+    icon character varying(50) DEFAULT ''::character varying NOT NULL,
+    hidden smallint DEFAULT 0 NOT NULL,
+    keep_alive smallint DEFAULT 0 NOT NULL,
+    redirect character varying(100) DEFAULT ''::character varying NOT NULL,
+    frame_src character varying(255) DEFAULT ''::character varying NOT NULL,
+    perms text,
+    is_frame smallint DEFAULT 0 NOT NULL,
+    sort integer DEFAULT 0 NOT NULL,
+    status smallint DEFAULT 1 NOT NULL,
+    create_time integer NOT NULL,
+    update_time integer NOT NULL
+);
+
+COMMENT ON TABLE public.xy_tenant_menu IS '租户菜单表';
+CREATE SEQUENCE public.xy_tenant_menu_id_seq AS bigint START WITH 1 INCREMENT BY 1 NO MINVALUE NO MAXVALUE CACHE 1;
+ALTER SEQUENCE public.xy_tenant_menu_id_seq OWNED BY public.xy_tenant_menu.id;
+ALTER TABLE ONLY public.xy_tenant_menu ALTER COLUMN id SET DEFAULT nextval('public.xy_tenant_menu_id_seq'::regclass);
+ALTER TABLE ONLY public.xy_tenant_menu ADD CONSTRAINT xy_tenant_menu_pkey PRIMARY KEY (id);
+CREATE INDEX idx_tm_tenant_id ON public.xy_tenant_menu USING btree (tenant_id);
+CREATE INDEX idx_tm_source_menu_id ON public.xy_tenant_menu USING btree (source_menu_id);
+
+CREATE TABLE public.xy_tenant_role_menu (
+    role_id bigint NOT NULL,
+    menu_id bigint NOT NULL
+);
+COMMENT ON TABLE public.xy_tenant_role_menu IS '租户角色-菜单关联表';
+ALTER TABLE ONLY public.xy_tenant_role_menu ADD CONSTRAINT xy_tenant_role_menu_pkey PRIMARY KEY (role_id, menu_id);
+
+CREATE TABLE public.xy_tenant_admin_role (
+    admin_id bigint NOT NULL,
+    role_id bigint NOT NULL
+);
+COMMENT ON TABLE public.xy_tenant_admin_role IS '租户管理员-角色关联表';
+ALTER TABLE ONLY public.xy_tenant_admin_role ADD CONSTRAINT xy_tenant_admin_role_pkey PRIMARY KEY (admin_id, role_id);
+
+CREATE TABLE public.xy_tenant_dept (
+    id bigint NOT NULL,
+    tenant_id bigint NOT NULL,
+    parent_id bigint DEFAULT 0 NOT NULL,
+    name character varying(50) NOT NULL,
+    sort integer DEFAULT 0 NOT NULL,
+    status smallint DEFAULT 1 NOT NULL,
+    remark character varying(500),
+    create_by bigint DEFAULT 0,
+    create_time integer,
+    update_time integer
+);
+
+COMMENT ON TABLE public.xy_tenant_dept IS '租户部门表';
+CREATE SEQUENCE public.xy_tenant_dept_id_seq AS bigint START WITH 1 INCREMENT BY 1 NO MINVALUE NO MAXVALUE CACHE 1;
+ALTER SEQUENCE public.xy_tenant_dept_id_seq OWNED BY public.xy_tenant_dept.id;
+ALTER TABLE ONLY public.xy_tenant_dept ALTER COLUMN id SET DEFAULT nextval('public.xy_tenant_dept_id_seq'::regclass);
+ALTER TABLE ONLY public.xy_tenant_dept ADD CONSTRAINT xy_tenant_dept_pkey PRIMARY KEY (id);
+CREATE INDEX idx_td_tenant_id ON public.xy_tenant_dept USING btree (tenant_id);
+
+CREATE TABLE public.xy_tenant_post (
+    id bigint NOT NULL,
+    tenant_id bigint NOT NULL,
+    code character varying(64) NOT NULL,
+    name character varying(50) NOT NULL,
+    sort integer DEFAULT 0 NOT NULL,
+    status smallint DEFAULT 1 NOT NULL,
+    remark character varying(500) DEFAULT ''::character varying,
+    created_by bigint DEFAULT 0,
+    updated_by bigint DEFAULT 0,
+    create_time integer DEFAULT 0,
+    update_time integer DEFAULT 0
+);
+
+COMMENT ON TABLE public.xy_tenant_post IS '租户岗位表';
+CREATE SEQUENCE public.xy_tenant_post_id_seq AS bigint START WITH 1 INCREMENT BY 1 NO MINVALUE NO MAXVALUE CACHE 1;
+ALTER SEQUENCE public.xy_tenant_post_id_seq OWNED BY public.xy_tenant_post.id;
+ALTER TABLE ONLY public.xy_tenant_post ALTER COLUMN id SET DEFAULT nextval('public.xy_tenant_post_id_seq'::regclass);
+ALTER TABLE ONLY public.xy_tenant_post ADD CONSTRAINT xy_tenant_post_pkey PRIMARY KEY (id);
+CREATE INDEX idx_tp_tenant_id ON public.xy_tenant_post USING btree (tenant_id);
+CREATE UNIQUE INDEX uk_tp_tenant_code ON public.xy_tenant_post USING btree (tenant_id, code);
+
+CREATE TABLE public.xy_tenant_config (
+    id bigint NOT NULL,
+    tenant_id bigint NOT NULL,
+    "group" character varying(64) DEFAULT ''::character varying NOT NULL,
+    group_name character varying(64) DEFAULT ''::character varying NOT NULL,
+    name character varying(128) DEFAULT ''::character varying NOT NULL,
+    key character varying(128) DEFAULT ''::character varying NOT NULL,
+    value text,
+    type character varying(32) DEFAULT 'text'::character varying NOT NULL,
+    options jsonb,
+    rules jsonb,
+    sort integer DEFAULT 0 NOT NULL,
+    remark character varying(255) DEFAULT ''::character varying NOT NULL,
+    allow_del smallint DEFAULT 0 NOT NULL,
+    created_by bigint,
+    updated_by bigint,
+    create_time integer NOT NULL,
+    update_time integer NOT NULL
+);
+
+COMMENT ON TABLE public.xy_tenant_config IS '租户配置表';
+CREATE SEQUENCE public.xy_tenant_config_id_seq AS bigint START WITH 1 INCREMENT BY 1 NO MINVALUE NO MAXVALUE CACHE 1;
+ALTER SEQUENCE public.xy_tenant_config_id_seq OWNED BY public.xy_tenant_config.id;
+ALTER TABLE ONLY public.xy_tenant_config ALTER COLUMN id SET DEFAULT nextval('public.xy_tenant_config_id_seq'::regclass);
+ALTER TABLE ONLY public.xy_tenant_config ADD CONSTRAINT xy_tenant_config_pkey PRIMARY KEY (id);
+CREATE INDEX idx_tc_tenant_id ON public.xy_tenant_config USING btree (tenant_id);
+CREATE UNIQUE INDEX uk_tc_tenant_key ON public.xy_tenant_config USING btree (tenant_id, key);
 
 --
 -- PostgreSQL database dump complete
 --
-
--- ============================================================
--- xy_migration: 数据库迁移版本记录
--- ============================================================
-SET search_path = public;
-
-CREATE TABLE IF NOT EXISTS xy_migration (
-    id bigserial PRIMARY KEY,
-    version varchar(32) NOT NULL UNIQUE,
-    name varchar(128) NOT NULL DEFAULT '',
-    executed_at bigint NOT NULL DEFAULT 0,
-    checksum varchar(64) NOT NULL DEFAULT '',
-    success smallint NOT NULL DEFAULT 1
-);
-
--- ============================================================
--- xy_addon: 扩展安装记录
--- ============================================================
-CREATE TABLE IF NOT EXISTS xy_addon (
-    id bigserial PRIMARY KEY,
-    name varchar(64) NOT NULL UNIQUE,
-    version varchar(32) NOT NULL DEFAULT '',
-    title varchar(128) NOT NULL DEFAULT '',
-    status smallint NOT NULL DEFAULT 1,
-    installed_at bigint NOT NULL DEFAULT 0,
-    uninstalled_at bigint NOT NULL DEFAULT 0,
-    file_list text
-);
 
 -- end of dump
 

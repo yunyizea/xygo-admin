@@ -1,12 +1,3 @@
-<!-- +----------------------------------------------------------------------
-  | XYGo Admin [ Vue3 + GoFrame 企业级中后台管理系统 ]
-  +----------------------------------------------------------------------
-  | Copyright (c) 2026 大连星韵网络科技有限公司 All rights reserved.
-  +----------------------------------------------------------------------
-  | Licensed ( https://opensource.org/licenses/MIT )
-  +----------------------------------------------------------------------
-  | Author: 喜羊羊 <751300685@qq.com>
-  +---------------------------------------------------------------------- -->
 <!-- 附件管理页面 -->
 <template>
   <div class="attachment-page art-full-height">
@@ -18,12 +9,13 @@
       <ArtTableHeader v-model:columns="columnChecks" :loading="loading" @refresh="refreshData">
         <template #left>
           <ElSpace wrap>
-            <ElButton @click="showUploadDialog" type="primary" v-ripple>
+            <ElButton v-auth="'add'" @click="showUploadDialog" type="primary" v-ripple>
               <ArtSvgIcon icon="ri:upload-2-line" class="text-sm mr-1" />
               上传文件
             </ElButton>
             <ElButton
               v-if="selectedRows.length"
+              v-auth="'batchDel'"
               type="danger"
               @click="handleBatchDelete"
               v-ripple
@@ -150,6 +142,7 @@
 
 <script setup lang="ts">
   import { useTable } from '@/hooks/core/useTable'
+  import { useAuth } from '@/hooks/core/useAuth'
   import { fetchAttachmentList, fetchDeleteAttachment } from '@/api/backend/common/attachment'
   import { uploadFileApi } from '@/api/backend/common/upload'
   import AttachmentSearch from './modules/attachment-search.vue'
@@ -159,6 +152,7 @@
   import { formatTimestamp } from '@/utils/time'
 
   defineOptions({ name: 'Attachment' })
+  const { hasAuth } = useAuth()
 
   interface AttachmentItem {
     id: number
@@ -227,8 +221,8 @@
           formatter: (row: AttachmentItem) => h('div', { class: 'flex items-center gap-1' }, [
             h(ElButton, { type: 'primary', link: true, size: 'small', onClick: () => handleCopyUrl(row) }, () => '复制'),
             h(ElButton, { type: 'success', link: true, size: 'small', onClick: () => handleDownload(row) }, () => '下载'),
-            h(ArtButtonTable, { type: 'delete', onClick: () => handleDelete(row) })
-          ])
+            hasAuth('delete') ? h(ArtButtonTable, { type: 'delete', onClick: () => handleDelete(row) }) : null,
+          ].filter(Boolean))
         }
       ]
     }
