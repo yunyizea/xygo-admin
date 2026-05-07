@@ -1,13 +1,3 @@
-// +----------------------------------------------------------------------
-// | XYGo Admin [ Vue3 + GoFrame 企业级中后台管理系统 ]
-// +----------------------------------------------------------------------
-// | Copyright (c) 2026 大连星韵网络科技有限公司 All rights reserved.
-// +----------------------------------------------------------------------
-// | Licensed ( https://opensource.org/licenses/MIT )
-// +----------------------------------------------------------------------
-// | Author: 喜羊羊 <751300685@qq.com>
-// +----------------------------------------------------------------------
-
 /**
  * 认证相关 API
  * @module api/backend/auth/login
@@ -33,6 +23,18 @@ export function fetchLogin(params: Api.Auth.LoginParams) {
 export function fetchGetUserInfo() {
   return adminRequest.get<Api.Auth.UserInfo>({
     url: '/auth/profile'
+  })
+}
+
+/**
+ * 刷新访问令牌
+ * @param refreshToken 刷新令牌
+ * @returns 新的访问令牌
+ */
+export function fetchRefreshToken(refreshToken: string) {
+  return adminRequest.post<{ accessToken: string; expiresIn: number }>({
+    url: '/auth/refresh',
+    params: { refreshToken }
   })
 }
 

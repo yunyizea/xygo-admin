@@ -101,13 +101,12 @@ func (e *Endpoint) Generate(ctx context.Context, userId uint64, data map[string]
 	)
 
 	if !multiLogin {
-		kickOldSession(ctx, e.config.Name, bindKey)
+		refreshBindKey := GetRefreshBindKey(e.config.Name, userId)
+		kickOldSession(ctx, e.config.Name, bindKey, refreshBindKey)
 	}
 
 	tokenMeta := &TokenMeta{
-		ExpireAt:     expireAt.Unix(),
-		RefreshAt:    now.Unix(),
-		RefreshCount: 0,
+		ExpireAt: expireAt.Unix(),
 	}
 
 	if err = cache.Instance().Set(ctx, tokenKey, tokenMeta, duration); err != nil {
@@ -160,7 +159,8 @@ func (e *Endpoint) Delete(ctx context.Context, accessToken string) error {
 // KickByUserId 按用户ID踢人
 func (e *Endpoint) KickByUserId(ctx context.Context, userId uint64) error {
 	bindKey := GetBindKey(e.config.Name, userId)
-	kickOldSession(ctx, e.config.Name, bindKey)
+	refreshBindKey := GetRefreshBindKey(e.config.Name, userId)
+	kickOldSession(ctx, e.config.Name, bindKey, refreshBindKey)
 	_, err := cache.Instance().Remove(ctx, bindKey)
 	return err
 }

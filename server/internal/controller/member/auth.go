@@ -1,21 +1,16 @@
-// +----------------------------------------------------------------------
-// | XYGo Admin [ Vue3 + GoFrame 企业级中后台管理系统 ]
-// +----------------------------------------------------------------------
-// | Copyright (c) 2026 大连星韵网络科技有限公司 All rights reserved.
-// +----------------------------------------------------------------------
-// | Licensed ( https://opensource.org/licenses/MIT )
-// +----------------------------------------------------------------------
-// | Author: 喜羊羊 <751300685@qq.com>
-// +----------------------------------------------------------------------
-
 package member
 
 import (
 	"context"
 
+	"github.com/gogf/gf/v2/errors/gerror"
 	"github.com/gogf/gf/v2/net/ghttp"
+	"github.com/gogf/gf/v2/os/gtime"
 
 	"xygo/api/member"
+	"xygo/internal/dao"
+	"xygo/internal/library/token"
+	"xygo/internal/model"
 	"xygo/internal/model/input/memberin"
 	"xygo/internal/service"
 )
@@ -35,8 +30,64 @@ func (c *ControllerV1) Login(ctx context.Context, req *member.LoginReq) (res *me
 	}
 
 	return &member.LoginRes{
-		Token:     output.Token,
-		ExpiresIn: output.ExpiresIn,
+		Token:            output.Token,
+		ExpiresIn:        output.ExpiresIn,
+		RefreshToken:     output.RefreshToken,
+		RefreshExpiresIn: output.RefreshExpiresIn,
+	}, nil
+}
+
+// Refresh 刷新会员 accessToken
+func (c *ControllerV1) Refresh(ctx context.Context, req *member.RefreshReq) (res *member.RefreshRes, err error) {
+	userId, err := token.ValidateRefreshToken(ctx, token.AppMember, req.RefreshToken)
+	if err != nil {
+		return nil, gerror.New("刷新令牌无效或已过期，请重新登录")
+	}
+
+	var memberEntity *struct {
+		Id       uint64  `json:"id"`
+		Username string  `json:"username"`
+		Nickname string  `json:"nickname"`
+		Avatar   string  `json:"avatar"`
+		Email    string  `json:"email"`
+		Mobile   string  `json:"mobile"`
+		Gender   int     `json:"gender"`
+		Level    int     `json:"level"`
+		GroupId  uint64  `json:"groupId"`
+		Score    int     `json:"score"`
+		Money    float64 `json:"money"`
+		Status   int     `json:"status"`
+	}
+	if err = dao.Member.Ctx(ctx).Where("id", userId).Scan(&memberEntity); err != nil {
+		return nil, err
+	}
+	if memberEntity == nil || memberEntity.Status != 1 {
+		return nil, gerror.New("用户不存在或已禁用")
+	}
+
+	memberUser := model.MemberUser{
+		Id:       memberEntity.Id,
+		Username: memberEntity.Username,
+		Nickname: memberEntity.Nickname,
+		Avatar:   memberEntity.Avatar,
+		Email:    memberEntity.Email,
+		Mobile:   memberEntity.Mobile,
+		Gender:   memberEntity.Gender,
+		Level:    uint(memberEntity.Level),
+		GroupId:  memberEntity.GroupId,
+		Score:    memberEntity.Score,
+		Money:    memberEntity.Money,
+		LoginAt:  gtime.Now().Unix(),
+	}
+
+	accessToken, expiresIn, err := token.RefreshAccessMember(ctx, req.RefreshToken, memberUser)
+	if err != nil {
+		return nil, gerror.New("刷新令牌无效或已过期，请重新登录")
+	}
+
+	return &member.RefreshRes{
+		AccessToken: accessToken,
+		ExpiresIn:   expiresIn,
 	}, nil
 }
 

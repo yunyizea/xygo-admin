@@ -106,7 +106,7 @@ func (s *sMemberAuth) Login(ctx context.Context, in *memberin.LoginInput) (out *
 		LoginAt:  gtime.Now().Unix(),
 	}
 
-	accessToken, expiresIn, err := token.GenerateMember(ctx, memberUser)
+	accessToken, refreshToken, expiresIn, refreshExpiresIn, err := token.GenerateMember(ctx, memberUser)
 	if err != nil {
 		recordLog(member.Id, in.Username, 0, "Token 生成失败")
 		return nil, gerror.NewCode(consts.CodeServerError, "登录失败，请稍后重试")
@@ -126,8 +126,10 @@ func (s *sMemberAuth) Login(ctx context.Context, in *memberin.LoginInput) (out *
 	recordLog(member.Id, member.Username, 1, "登录成功")
 
 	return &memberin.LoginOutput{
-		Token:     accessToken,
-		ExpiresIn: expiresIn,
+		Token:            accessToken,
+		ExpiresIn:        expiresIn,
+		RefreshToken:     refreshToken,
+		RefreshExpiresIn: refreshExpiresIn,
 	}, nil
 }
 

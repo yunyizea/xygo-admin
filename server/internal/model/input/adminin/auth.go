@@ -12,11 +12,13 @@ type LoginInp struct {
 
 // LoginModel 管理员登录出参
 type LoginModel struct {
-	Id          uint64 `json:"id" dc:"用户ID"`
-	Username    string `json:"username" dc:"用户名"`
-	Nickname    string `json:"nickname" dc:"昵称"`
-	AccessToken string `json:"accessToken" dc:"访问令牌"`
-	ExpiresIn   int64  `json:"expiresIn" dc:"过期时间（秒）"`
+	Id               uint64 `json:"id" dc:"用户ID"`
+	Username         string `json:"username" dc:"用户名"`
+	Nickname         string `json:"nickname" dc:"昵称"`
+	AccessToken      string `json:"accessToken" dc:"访问令牌"`
+	ExpiresIn        int64  `json:"expiresIn" dc:"访问令牌过期时间（秒）"`
+	RefreshToken     string `json:"refreshToken" dc:"刷新令牌"`
+	RefreshExpiresIn int64  `json:"refreshExpiresIn" dc:"刷新令牌过期时间（秒）"`
 }
 
 // ===================== 个人信息 =====================

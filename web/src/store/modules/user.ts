@@ -1,13 +1,3 @@
-// +----------------------------------------------------------------------
-// | XYGo Admin [ Vue3 + GoFrame 企业级中后台管理系统 ]
-// +----------------------------------------------------------------------
-// | Copyright (c) 2026 大连星韵网络科技有限公司 All rights reserved.
-// +----------------------------------------------------------------------
-// | Licensed ( https://opensource.org/licenses/MIT )
-// +----------------------------------------------------------------------
-// | Author: 喜羊羊 <751300685@qq.com>
-// +----------------------------------------------------------------------
-
 /**
  * 用户状态管理模块
  *
@@ -187,6 +177,8 @@ export const useUserStore = defineStore(
       sessionStorage.removeItem('iframeRoutes')
       // 清空主页路径
       useMenuStore().setHomePath('')
+      // 清理历史非版本化存储，避免旧 token 在路由守卫中被错误恢复
+      localStorage.removeItem('user')
       // 重置路由状态
       resetRouterState(500)
       if (redirect) {

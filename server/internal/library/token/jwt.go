@@ -2,6 +2,8 @@ package token
 
 import (
 	"context"
+	"crypto/rand"
+	"encoding/hex"
 	"fmt"
 	"time"
 
@@ -15,22 +17,22 @@ import (
 	"xygo/internal/model"
 )
 
-// 应用名常量
 const (
-	AppAdmin  = "admin"  // 后台管理员
-	AppMember = "member" // 前台会员
+	AppAdmin  = "admin"
+	AppMember = "member"
 )
 
 // Config JWT 配置
 type Config struct {
-	Secret     string
-	Expires    int64 // 秒
-	MultiLogin bool  // 是否允许多端登录（false=单点登录，新登录踢掉旧会话）
+	Secret         string
+	Expires        int64 // accessToken 有效期（秒）
+	RefreshExpires int64 // refreshToken 最长有效期（秒）
+	MultiLogin     bool  // 是否允许多端登录（false=单点登录，新登录踢掉旧会话）
 }
 
-// Claims JWT 载荷（包含完整用户信息，对齐 HotGo）
+// Claims JWT 载荷（包含完整用户信息）
 type Claims struct {
-	*model.AuthUser // 嵌入完整用户信息
+	*model.AuthUser
 	jwt.RegisteredClaims
 }
 
@@ -40,7 +42,6 @@ type MemberClaims struct {
 	jwt.RegisteredClaims
 }
 
-// getConfig 从配置文件读取 jwt 配置
 func getConfig(ctx context.Context) Config {
 	secret := g.Cfg().MustGet(ctx, "auth.jwt.secret").String()
 	if secret == "" {
@@ -50,38 +51,78 @@ func getConfig(ctx context.Context) Config {
 	if expires <= 0 {
 		expires = 7200
 	}
+	refreshExpires := g.Cfg().MustGet(ctx, "auth.jwt.refreshExpires").Int64()
+	if refreshExpires <= 0 {
+		refreshExpires = 172800
+	}
 	multiLogin := g.Cfg().MustGet(ctx, "auth.jwt.multiLogin").Bool()
 	return Config{
-		Secret:     secret,
-		Expires:    expires,
-		MultiLogin: multiLogin,
+		Secret:         secret,
+		Expires:        expires,
+		RefreshExpires: refreshExpires,
+		MultiLogin:     multiLogin,
 	}
 }
 
-// TokenMeta Token 元数据（存储在缓存中）
+// TokenMeta accessToken 元数据（存储在缓存中）
 type TokenMeta struct {
-	ExpireAt     int64 `json:"exp"`    // token 过期时间
-	RefreshAt    int64 `json:"ra"`     // 刷新时间
-	RefreshCount int64 `json:"rc"`     // 刷新次数
-	Kicked       bool  `json:"kicked"` // 是否被踢下线
+	ExpireAt int64 `json:"exp"`
+	Kicked   bool  `json:"kicked"`
+}
+
+// RefreshMeta refreshToken 元数据（存储在缓存中）
+type RefreshMeta struct {
+	UserId   uint64 `json:"uid"`
+	TokenKey string `json:"tk"`
+	ExpireAt int64  `json:"exp"`
 }
 
 // ErrTokenKicked 自定义错误：Token 被踢下线
 var ErrTokenKicked = fmt.Errorf("token kicked")
 
-// Generate 登录成功后生成 token（后台管理员专用，保持兼容）
-func Generate(ctx context.Context, user model.AuthUser) (accessToken string, expiresIn int64, err error) {
+func generateRefreshToken() (string, error) {
+	b := make([]byte, 32)
+	if _, err := rand.Read(b); err != nil {
+		return "", err
+	}
+	return hex.EncodeToString(b), nil
+}
+
+// ==================== Cache Key ====================
+
+func GetAuthKey(token string) string {
+	return gmd5.MustEncryptString("xygo" + token)
+}
+
+func GetTokenKey(appName, authKey string) string {
+	return fmt.Sprintf("%s:token:%s:%s", consts.CachePrefix, appName, authKey)
+}
+
+func GetBindKey(appName string, userId uint64) string {
+	return fmt.Sprintf("%s:token:bind:%s:%d", consts.CachePrefix, appName, userId)
+}
+
+func GetRefreshKey(appName, refreshToken string) string {
+	return fmt.Sprintf("%s:refresh:%s:%s", consts.CachePrefix, appName, refreshToken)
+}
+
+func GetRefreshBindKey(appName string, userId uint64) string {
+	return fmt.Sprintf("%s:refresh:bind:%s:%d", consts.CachePrefix, appName, userId)
+}
+
+// ==================== Generate ====================
+
+// Generate 登录成功后生成双 Token（后台管理员专用，保持兼容）
+func Generate(ctx context.Context, user model.AuthUser) (accessToken, refreshToken string, expiresIn, refreshExpiresIn int64, err error) {
 	return GenerateAdmin(ctx, user)
 }
 
-// GenerateAdmin 后台管理员登录生成 token
-func GenerateAdmin(ctx context.Context, user model.AuthUser) (accessToken string, expiresIn int64, err error) {
+// GenerateAdmin 后台管理员登录生成 accessToken + refreshToken
+func GenerateAdmin(ctx context.Context, user model.AuthUser) (accessToken, refreshToken string, expiresIn, refreshExpiresIn int64, err error) {
 	cfg := getConfig(ctx)
-
 	now := time.Now()
 	expireAt := now.Add(time.Duration(cfg.Expires) * time.Second)
 
-	// ✨ Claims 包含完整用户信息（对齐 HotGo）
 	claims := &Claims{
 		AuthUser: &user,
 		RegisteredClaims: jwt.RegisteredClaims{
@@ -90,50 +131,62 @@ func GenerateAdmin(ctx context.Context, user model.AuthUser) (accessToken string
 		},
 	}
 
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	accessToken, err = token.SignedString([]byte(cfg.Secret))
+	tok := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	accessToken, err = tok.SignedString([]byte(cfg.Secret))
 	if err != nil {
-		return "", 0, err
+		return
 	}
 
-	// ✨ 使用缓存存储 Token 元数据
+	refreshToken, err = generateRefreshToken()
+	if err != nil {
+		return
+	}
+
 	var (
-		authKey  = GetAuthKey(accessToken)
-		tokenKey = GetTokenKey(AppAdmin, authKey)
-		bindKey  = GetBindKey(AppAdmin, user.Id)
-		duration = time.Second * gconv.Duration(cfg.Expires)
+		authKey         = GetAuthKey(accessToken)
+		tokenKey        = GetTokenKey(AppAdmin, authKey)
+		bindKey         = GetBindKey(AppAdmin, user.Id)
+		refreshKey      = GetRefreshKey(AppAdmin, refreshToken)
+		refreshBindKey  = GetRefreshBindKey(AppAdmin, user.Id)
+		duration        = time.Second * gconv.Duration(cfg.Expires)
+		refreshDuration = time.Second * gconv.Duration(cfg.RefreshExpires)
 	)
 
-	// ✨ 单点登录模式：踢掉旧会话（仅在 multiLogin=false 时生效）
 	if !cfg.MultiLogin {
-		kickOldSession(ctx, AppAdmin, bindKey)
+		kickOldSession(ctx, AppAdmin, bindKey, refreshBindKey)
 	}
 
-	tokenMeta := &TokenMeta{
-		ExpireAt:     expireAt.Unix(),
-		RefreshAt:    now.Unix(),
-		RefreshCount: 0,
-	}
-
+	tokenMeta := &TokenMeta{ExpireAt: expireAt.Unix()}
 	if err = cache.Instance().Set(ctx, tokenKey, tokenMeta, duration); err != nil {
-		return "", 0, err
+		return
 	}
-
 	if err = cache.Instance().Set(ctx, bindKey, tokenKey, duration); err != nil {
-		return "", 0, err
+		return
 	}
 
-	return accessToken, cfg.Expires, nil
+	refreshMeta := &RefreshMeta{
+		UserId:   user.Id,
+		TokenKey: tokenKey,
+		ExpireAt: now.Add(time.Duration(cfg.RefreshExpires) * time.Second).Unix(),
+	}
+	if err = cache.Instance().Set(ctx, refreshKey, refreshMeta, refreshDuration); err != nil {
+		return
+	}
+	if err = cache.Instance().Set(ctx, refreshBindKey, refreshKey, refreshDuration); err != nil {
+		return
+	}
+
+	expiresIn = cfg.Expires
+	refreshExpiresIn = cfg.RefreshExpires
+	return
 }
 
-// GenerateMember 前台会员登录生成 token
-func GenerateMember(ctx context.Context, user model.MemberUser) (accessToken string, expiresIn int64, err error) {
+// GenerateMember 前台会员登录生成 accessToken + refreshToken
+func GenerateMember(ctx context.Context, user model.MemberUser) (accessToken, refreshToken string, expiresIn, refreshExpiresIn int64, err error) {
 	cfg := getConfig(ctx)
-
 	now := time.Now()
 	expireAt := now.Add(time.Duration(cfg.Expires) * time.Second)
 
-	// 会员 Claims
 	claims := &MemberClaims{
 		MemberUser: &user,
 		RegisteredClaims: jwt.RegisteredClaims{
@@ -142,84 +195,66 @@ func GenerateMember(ctx context.Context, user model.MemberUser) (accessToken str
 		},
 	}
 
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	accessToken, err = token.SignedString([]byte(cfg.Secret))
+	tok := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	accessToken, err = tok.SignedString([]byte(cfg.Secret))
 	if err != nil {
-		return "", 0, err
+		return
 	}
 
-	// 使用缓存存储 Token 元数据
+	refreshToken, err = generateRefreshToken()
+	if err != nil {
+		return
+	}
+
 	var (
-		authKey  = GetAuthKey(accessToken)
-		tokenKey = GetTokenKey(AppMember, authKey)
-		bindKey  = GetBindKey(AppMember, user.Id)
-		duration = time.Second * gconv.Duration(cfg.Expires)
+		authKey         = GetAuthKey(accessToken)
+		tokenKey        = GetTokenKey(AppMember, authKey)
+		bindKey         = GetBindKey(AppMember, user.Id)
+		refreshKey      = GetRefreshKey(AppMember, refreshToken)
+		refreshBindKey  = GetRefreshBindKey(AppMember, user.Id)
+		duration        = time.Second * gconv.Duration(cfg.Expires)
+		refreshDuration = time.Second * gconv.Duration(cfg.RefreshExpires)
 	)
 
-	// ✨ 单点登录模式：踢掉旧会话（仅在 multiLogin=false 时生效）
 	if !cfg.MultiLogin {
-		kickOldSession(ctx, AppMember, bindKey)
+		kickOldSession(ctx, AppMember, bindKey, refreshBindKey)
 	}
 
-	tokenMeta := &TokenMeta{
-		ExpireAt:     expireAt.Unix(),
-		RefreshAt:    now.Unix(),
-		RefreshCount: 0,
-	}
-
+	tokenMeta := &TokenMeta{ExpireAt: expireAt.Unix()}
 	if err = cache.Instance().Set(ctx, tokenKey, tokenMeta, duration); err != nil {
-		return "", 0, err
+		return
 	}
-
 	if err = cache.Instance().Set(ctx, bindKey, tokenKey, duration); err != nil {
-		return "", 0, err
+		return
 	}
 
-	return accessToken, cfg.Expires, nil
+	refreshMeta := &RefreshMeta{
+		UserId:   user.Id,
+		TokenKey: tokenKey,
+		ExpireAt: now.Add(time.Duration(cfg.RefreshExpires) * time.Second).Unix(),
+	}
+	if err = cache.Instance().Set(ctx, refreshKey, refreshMeta, refreshDuration); err != nil {
+		return
+	}
+	if err = cache.Instance().Set(ctx, refreshBindKey, refreshKey, refreshDuration); err != nil {
+		return
+	}
+
+	expiresIn = cfg.Expires
+	refreshExpiresIn = cfg.RefreshExpires
+	return
 }
 
-// GetAuthKey 生成认证 key（MD5 哈希）
-func GetAuthKey(token string) string {
-	return gmd5.MustEncryptString("xygo" + token)
-}
+// ==================== Parse ====================
 
-// GetTokenKey 获取 Token 缓存 key
-func GetTokenKey(appName, authKey string) string {
-	return fmt.Sprintf("%s:token:%s:%s", consts.CachePrefix, appName, authKey)
-}
-
-// GetBindKey 获取用户绑定 key（单点登录）
-func GetBindKey(appName string, userId uint64) string {
-	return fmt.Sprintf("%s:token:bind:%s:%d", consts.CachePrefix, appName, userId)
-}
-
-// Delete 删除 Token（退出登录，后台管理员专用，保持兼容）
-func Delete(ctx context.Context, accessToken string) error {
-	return DeleteByApp(ctx, AppAdmin, accessToken)
-}
-
-// DeleteByApp 按应用类型删除 Token
-func DeleteByApp(ctx context.Context, appName string, accessToken string) error {
-	var (
-		authKey  = GetAuthKey(accessToken)
-		tokenKey = GetTokenKey(appName, authKey)
-	)
-
-	// 从缓存中删除 Token
-	_, err := cache.Instance().Remove(ctx, tokenKey)
-	return err
-}
-
-// Parse 解析并校验 token（后台管理员专用，保持兼容）
+// Parse 解析并校验 accessToken（后台管理员专用，保持兼容）
 func Parse(ctx context.Context, accessToken string) (*model.AuthUser, error) {
 	return ParseAdmin(ctx, accessToken)
 }
 
-// ParseAdmin 解析后台管理员 Token
+// ParseAdmin 解析后台管理员 accessToken
 func ParseAdmin(ctx context.Context, accessToken string) (*model.AuthUser, error) {
 	cfg := getConfig(ctx)
-
-	// 解析 JWT Token
 	parsed, err := jwt.ParseWithClaims(accessToken, &Claims{}, func(t *jwt.Token) (interface{}, error) {
 		return []byte(cfg.Secret), nil
 	})
@@ -232,24 +267,17 @@ func ParseAdmin(ctx context.Context, accessToken string) (*model.AuthUser, error
 		return nil, jwt.ErrTokenMalformed
 	}
 
-	// 从缓存检查 Token 是否有效
-	var (
-		authKey  = GetAuthKey(accessToken)
-		tokenKey = GetTokenKey(AppAdmin, authKey)
-	)
-
+	authKey := GetAuthKey(accessToken)
+	tokenKey := GetTokenKey(AppAdmin, authKey)
 	if err = validateTokenMeta(ctx, tokenKey); err != nil {
 		return nil, err
 	}
-
 	return claims.AuthUser, nil
 }
 
-// ParseMember 解析前台会员 Token
+// ParseMember 解析前台会员 accessToken
 func ParseMember(ctx context.Context, accessToken string) (*model.MemberUser, error) {
 	cfg := getConfig(ctx)
-
-	// 解析 JWT Token
 	parsed, err := jwt.ParseWithClaims(accessToken, &MemberClaims{}, func(t *jwt.Token) (interface{}, error) {
 		return []byte(cfg.Secret), nil
 	})
@@ -262,27 +290,20 @@ func ParseMember(ctx context.Context, accessToken string) (*model.MemberUser, er
 		return nil, jwt.ErrTokenMalformed
 	}
 
-	// 从缓存检查 Token 是否有效
-	var (
-		authKey  = GetAuthKey(accessToken)
-		tokenKey = GetTokenKey(AppMember, authKey)
-	)
-
+	authKey := GetAuthKey(accessToken)
+	tokenKey := GetTokenKey(AppMember, authKey)
 	if err = validateTokenMeta(ctx, tokenKey); err != nil {
 		return nil, err
 	}
-
 	return claims.MemberUser, nil
 }
 
-// validateTokenMeta 验证 Token 元数据（缓存中是否存在且未过期）
 func validateTokenMeta(ctx context.Context, tokenKey string) error {
 	tk, err := cache.Instance().Get(ctx, tokenKey)
 	if err != nil {
 		g.Log().Debugf(ctx, "get tokenKey err:%+v", err)
 		return jwt.ErrTokenInvalidAudience
 	}
-
 	if tk.IsEmpty() {
 		g.Log().Debug(ctx, "token isEmpty")
 		return jwt.ErrTokenInvalidAudience
@@ -293,65 +314,233 @@ func validateTokenMeta(ctx context.Context, tokenKey string) error {
 		g.Log().Debugf(ctx, "token scan err:%+v", err)
 		return jwt.ErrTokenInvalidAudience
 	}
-
 	if tokenMeta == nil {
 		return jwt.ErrTokenInvalidAudience
 	}
-
-	// ✨ 检查是否被踢下线
 	if tokenMeta.Kicked {
 		return ErrTokenKicked
 	}
-
-	// 检查是否过期
-	now := time.Now()
-	if tokenMeta.ExpireAt < now.Unix() {
+	if tokenMeta.ExpireAt < time.Now().Unix() {
 		return jwt.ErrTokenExpired
 	}
-
 	return nil
 }
 
+// ==================== Refresh ====================
+
+// ValidateRefreshToken 验证 refreshToken 是否有效，返回关联的 userId
+func ValidateRefreshToken(ctx context.Context, appName string, refreshTokenStr string) (userId uint64, err error) {
+	refreshKey := GetRefreshKey(appName, refreshTokenStr)
+	val, err := cache.Instance().Get(ctx, refreshKey)
+	if err != nil || val.IsEmpty() {
+		return 0, jwt.ErrTokenExpired
+	}
+	var meta *RefreshMeta
+	if err = val.Scan(&meta); err != nil || meta == nil {
+		return 0, jwt.ErrTokenMalformed
+	}
+	if meta.ExpireAt < time.Now().Unix() {
+		return 0, jwt.ErrTokenExpired
+	}
+	return meta.UserId, nil
+}
+
+// RefreshAccessAdmin 用 refreshToken 签发新的 accessToken（后台管理员）
+func RefreshAccessAdmin(ctx context.Context, refreshTokenStr string, user model.AuthUser) (accessToken string, expiresIn int64, err error) {
+	cfg := getConfig(ctx)
+	refreshKey := GetRefreshKey(AppAdmin, refreshTokenStr)
+
+	val, err := cache.Instance().Get(ctx, refreshKey)
+	if err != nil || val.IsEmpty() {
+		return "", 0, jwt.ErrTokenExpired
+	}
+	var refreshMeta *RefreshMeta
+	if err = val.Scan(&refreshMeta); err != nil || refreshMeta == nil {
+		return "", 0, jwt.ErrTokenMalformed
+	}
+	if refreshMeta.ExpireAt < time.Now().Unix() {
+		return "", 0, jwt.ErrTokenExpired
+	}
+
+	// 删除旧 accessToken 缓存
+	if refreshMeta.TokenKey != "" {
+		_, _ = cache.Instance().Remove(ctx, refreshMeta.TokenKey)
+	}
+
+	// 签发新 accessToken
+	now := time.Now()
+	expireAt := now.Add(time.Duration(cfg.Expires) * time.Second)
+	claims := &Claims{
+		AuthUser: &user,
+		RegisteredClaims: jwt.RegisteredClaims{
+			IssuedAt:  jwt.NewNumericDate(now),
+			ExpiresAt: jwt.NewNumericDate(expireAt),
+		},
+	}
+	tok := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	accessToken, err = tok.SignedString([]byte(cfg.Secret))
+	if err != nil {
+		return
+	}
+
+	authKey := GetAuthKey(accessToken)
+	tokenKey := GetTokenKey(AppAdmin, authKey)
+	bindKey := GetBindKey(AppAdmin, user.Id)
+	duration := time.Second * gconv.Duration(cfg.Expires)
+
+	tokenMeta := &TokenMeta{ExpireAt: expireAt.Unix()}
+	if err = cache.Instance().Set(ctx, tokenKey, tokenMeta, duration); err != nil {
+		return
+	}
+	if err = cache.Instance().Set(ctx, bindKey, tokenKey, duration); err != nil {
+		return
+	}
+
+	// 更新 RefreshMeta（保持原始过期时间不变）
+	remaining := time.Duration(refreshMeta.ExpireAt-now.Unix()) * time.Second
+	if remaining <= 0 {
+		remaining = time.Second
+	}
+	refreshMeta.TokenKey = tokenKey
+	_ = cache.Instance().Set(ctx, refreshKey, refreshMeta, remaining)
+
+	expiresIn = cfg.Expires
+	return
+}
+
+// RefreshAccessMember 用 refreshToken 签发新的 accessToken（前台会员）
+func RefreshAccessMember(ctx context.Context, refreshTokenStr string, user model.MemberUser) (accessToken string, expiresIn int64, err error) {
+	cfg := getConfig(ctx)
+	refreshKey := GetRefreshKey(AppMember, refreshTokenStr)
+
+	val, err := cache.Instance().Get(ctx, refreshKey)
+	if err != nil || val.IsEmpty() {
+		return "", 0, jwt.ErrTokenExpired
+	}
+	var refreshMeta *RefreshMeta
+	if err = val.Scan(&refreshMeta); err != nil || refreshMeta == nil {
+		return "", 0, jwt.ErrTokenMalformed
+	}
+	if refreshMeta.ExpireAt < time.Now().Unix() {
+		return "", 0, jwt.ErrTokenExpired
+	}
+
+	if refreshMeta.TokenKey != "" {
+		_, _ = cache.Instance().Remove(ctx, refreshMeta.TokenKey)
+	}
+
+	now := time.Now()
+	expireAt := now.Add(time.Duration(cfg.Expires) * time.Second)
+	claims := &MemberClaims{
+		MemberUser: &user,
+		RegisteredClaims: jwt.RegisteredClaims{
+			IssuedAt:  jwt.NewNumericDate(now),
+			ExpiresAt: jwt.NewNumericDate(expireAt),
+		},
+	}
+	tok := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	accessToken, err = tok.SignedString([]byte(cfg.Secret))
+	if err != nil {
+		return
+	}
+
+	authKey := GetAuthKey(accessToken)
+	tokenKey := GetTokenKey(AppMember, authKey)
+	bindKey := GetBindKey(AppMember, user.Id)
+	duration := time.Second * gconv.Duration(cfg.Expires)
+
+	tokenMeta := &TokenMeta{ExpireAt: expireAt.Unix()}
+	if err = cache.Instance().Set(ctx, tokenKey, tokenMeta, duration); err != nil {
+		return
+	}
+	if err = cache.Instance().Set(ctx, bindKey, tokenKey, duration); err != nil {
+		return
+	}
+
+	remaining := time.Duration(refreshMeta.ExpireAt-now.Unix()) * time.Second
+	if remaining <= 0 {
+		remaining = time.Second
+	}
+	refreshMeta.TokenKey = tokenKey
+	_ = cache.Instance().Set(ctx, refreshKey, refreshMeta, remaining)
+
+	expiresIn = cfg.Expires
+	return
+}
+
+// ==================== Delete ====================
+
+// Delete 删除 accessToken（退出登录，后台管理员专用，保持兼容）
+func Delete(ctx context.Context, accessToken string) error {
+	return DeleteByApp(ctx, AppAdmin, accessToken)
+}
+
+// DeleteByApp 按应用类型删除 accessToken
+func DeleteByApp(ctx context.Context, appName string, accessToken string) error {
+	authKey := GetAuthKey(accessToken)
+	tokenKey := GetTokenKey(appName, authKey)
+	_, err := cache.Instance().Remove(ctx, tokenKey)
+	return err
+}
+
+// DeleteSession 删除用户的完整会话（accessToken + refreshToken），退出登录时使用
+func DeleteSession(ctx context.Context, appName string, accessToken string, userId uint64) error {
+	_ = DeleteByApp(ctx, appName, accessToken)
+
+	refreshBindKey := GetRefreshBindKey(appName, userId)
+	oldRefreshKey, err := cache.Instance().Get(ctx, refreshBindKey)
+	if err == nil && !oldRefreshKey.IsEmpty() {
+		_, _ = cache.Instance().Remove(ctx, oldRefreshKey.String())
+	}
+	_, _ = cache.Instance().Remove(ctx, refreshBindKey)
+
+	bindKey := GetBindKey(appName, userId)
+	_, _ = cache.Instance().Remove(ctx, bindKey)
+	return nil
+}
+
+// ==================== SSO 踢人 ====================
+
 // kickOldSession 踢掉旧会话（SSO单点登录核心逻辑）
-// 通过 bindKey 找到旧的 tokenKey，将其标记为 kicked
-func kickOldSession(ctx context.Context, appName string, bindKey string) {
+// 标记旧 accessToken 为 kicked，同时删除旧 refreshToken
+func kickOldSession(ctx context.Context, appName string, bindKey string, refreshBindKey string) {
+	// 踢旧 accessToken
 	oldTokenKey, err := cache.Instance().Get(ctx, bindKey)
-	if err != nil || oldTokenKey.IsEmpty() {
-		return // 无旧会话
+	if err == nil && !oldTokenKey.IsEmpty() {
+		oldKey := oldTokenKey.String()
+		oldMeta, getErr := cache.Instance().Get(ctx, oldKey)
+		if getErr == nil && !oldMeta.IsEmpty() {
+			var meta *TokenMeta
+			if scanErr := oldMeta.Scan(&meta); scanErr == nil && meta != nil {
+				meta.Kicked = true
+				_ = cache.Instance().Set(ctx, oldKey, meta, 30*time.Second)
+			}
+		}
 	}
 
-	oldKey := oldTokenKey.String()
-
-	// 将旧 token 标记为"被踢"（而非删除，这样前端可区分"过期"和"被踢"）
-	oldMeta, err := cache.Instance().Get(ctx, oldKey)
-	if err != nil || oldMeta.IsEmpty() {
-		return
+	// 删除旧 refreshToken（使被踢设备无法通过刷新绕过 SSO）
+	if refreshBindKey != "" {
+		oldRefreshKey, getErr := cache.Instance().Get(ctx, refreshBindKey)
+		if getErr == nil && !oldRefreshKey.IsEmpty() {
+			_, _ = cache.Instance().Remove(ctx, oldRefreshKey.String())
+			_, _ = cache.Instance().Remove(ctx, refreshBindKey)
+		}
 	}
-
-	var meta *TokenMeta
-	if err = oldMeta.Scan(&meta); err != nil || meta == nil {
-		return
-	}
-
-	meta.Kicked = true
-	// 保留 30 秒，让前端有机会识别"被踢"状态，之后自动清除
-	_ = cache.Instance().Set(ctx, oldKey, meta, 30*time.Second)
 }
 
 // KickByUserId 按用户ID踢人（管理员强制下线）
 func KickByUserId(ctx context.Context, appName string, userId uint64) error {
 	bindKey := GetBindKey(appName, userId)
-	kickOldSession(ctx, appName, bindKey)
-	// 删除 bindKey
-	_, err := cache.Instance().Remove(ctx, bindKey)
+	refreshBindKey := GetRefreshBindKey(appName, userId)
+	kickOldSession(ctx, appName, bindKey, refreshBindKey)
+	_, _ = cache.Instance().Remove(ctx, bindKey)
 
-	// ✨ 通过 WebSocket 实时推送踢人通知
 	notifyKickViaWs(appName, userId)
-
-	return err
+	return nil
 }
 
-// notifyKickViaWs 通过 WebSocket 推送被踢通知（延迟导入避免循环依赖）
+// ==================== WebSocket 踢人通知 ====================
+
 var WsKickNotifier func(userType string, userId uint64)
 
 func notifyKickViaWs(appName string, userId uint64) {

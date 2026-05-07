@@ -1,13 +1,3 @@
-// +----------------------------------------------------------------------
-// | XYGo Admin [ Vue3 + GoFrame 企业级中后台管理系统 ]
-// +----------------------------------------------------------------------
-// | Copyright (c) 2026 大连星韵网络科技有限公司 All rights reserved.
-// +----------------------------------------------------------------------
-// | Licensed ( https://opensource.org/licenses/MIT )
-// +----------------------------------------------------------------------
-// | Author: 喜羊羊 <751300685@qq.com>
-// +----------------------------------------------------------------------
-
 package memberin
 
 // LoginInput 会员登录输入
@@ -20,8 +10,10 @@ type LoginInput struct {
 
 // LoginOutput 会员登录输出
 type LoginOutput struct {
-	Token     string `json:"token"`
-	ExpiresIn int64  `json:"expiresIn"`
+	Token            string `json:"token"`
+	ExpiresIn        int64  `json:"expiresIn"`
+	RefreshToken     string `json:"refreshToken"`
+	RefreshExpiresIn int64  `json:"refreshExpiresIn"`
 }
 
 // RegisterInput 会员注册输入

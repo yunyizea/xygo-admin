@@ -1,13 +1,3 @@
-// +----------------------------------------------------------------------
-// | XYGo Admin [ Vue3 + GoFrame 企业级中后台管理系统 ]
-// +----------------------------------------------------------------------
-// | Copyright (c) 2026 大连星韵网络科技有限公司 All rights reserved.
-// +----------------------------------------------------------------------
-// | Licensed ( https://opensource.org/licenses/MIT )
-// +----------------------------------------------------------------------
-// | Author: 喜羊羊 <751300685@qq.com>
-// +----------------------------------------------------------------------
-
 package member
 
 import "github.com/gogf/gf/v2/frame/g"
@@ -25,8 +15,24 @@ type LoginReq struct {
 
 // LoginRes 会员登录响应
 type LoginRes struct {
-	Token     string `json:"token"`
-	ExpiresIn int64  `json:"expiresIn"`
+	Token            string `json:"token"`
+	ExpiresIn        int64  `json:"expiresIn"`
+	RefreshToken     string `json:"refreshToken"`
+	RefreshExpiresIn int64  `json:"refreshExpiresIn"`
+}
+
+// ==================== 刷新令牌 ====================
+
+// RefreshReq 会员刷新令牌请求
+type RefreshReq struct {
+	g.Meta       `path:"/auth/refresh" method:"post" tags:"会员认证" summary:"刷新访问令牌"`
+	RefreshToken string `json:"refreshToken" v:"required#刷新令牌不能为空"`
+}
+
+// RefreshRes 会员刷新令牌响应
+type RefreshRes struct {
+	AccessToken string `json:"accessToken"`
+	ExpiresIn   int64  `json:"expiresIn"`
 }
 
 // ==================== 注册 ====================

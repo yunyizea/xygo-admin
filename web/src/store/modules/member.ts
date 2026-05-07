@@ -1,13 +1,3 @@
-// +----------------------------------------------------------------------
-// | XYGo Admin [ Vue3 + GoFrame 企业级中后台管理系统 ]
-// +----------------------------------------------------------------------
-// | Copyright (c) 2026 大连星韵网络科技有限公司 All rights reserved.
-// +----------------------------------------------------------------------
-// | Licensed ( https://opensource.org/licenses/MIT )
-// +----------------------------------------------------------------------
-// | Author: 喜羊羊 <751300685@qq.com>
-// +----------------------------------------------------------------------
-
 /**
  * 会员状态管理模块（前台用户）
  *
@@ -70,6 +60,8 @@ export const useMemberStore = defineStore(
     const info = ref<Partial<MemberInfo>>({})
     // 访问令牌（使用 Xy-User-Token）
     const token = ref('')
+    // 刷新令牌
+    const refreshToken = ref('')
 
     // 计算属性：获取会员信息
     const getMemberInfo = computed(() => info.value)
@@ -96,11 +88,15 @@ export const useMemberStore = defineStore(
     /**
      * 设置令牌
      * @param newToken 访问令牌
+     * @param newRefreshToken 刷新令牌（可选）
      */
-    const setToken = (newToken: string) => {
+    const setToken = (newToken: string, newRefreshToken?: string) => {
       token.value = newToken
       if (newToken) {
         isLogin.value = true
+      }
+      if (newRefreshToken !== undefined) {
+        refreshToken.value = newRefreshToken
       }
     }
 
@@ -109,6 +105,13 @@ export const useMemberStore = defineStore(
      */
     const getToken = (): string => {
       return token.value
+    }
+
+    /**
+     * 获取刷新令牌
+     */
+    const getRefreshToken = (): string => {
+      return refreshToken.value
     }
 
     /**
@@ -125,6 +128,7 @@ export const useMemberStore = defineStore(
       info.value = {}
       isLogin.value = false
       token.value = ''
+      refreshToken.value = ''
 
       // 再调后端退出接口（清除服务端 Token 缓存），token 已清空不会触发重复 401
       if (oldToken) {
@@ -151,12 +155,14 @@ export const useMemberStore = defineStore(
       isLogin,
       info,
       token,
+      refreshToken,
       getMemberInfo,
       getIsLogin,
       setMemberInfo,
       setLoginStatus,
       setToken,
       getToken,
+      getRefreshToken,
       logOut
     }
   },

@@ -1,13 +1,3 @@
-// +----------------------------------------------------------------------
-// | XYGo Admin [ Vue3 + GoFrame 企业级中后台管理系统 ]
-// +----------------------------------------------------------------------
-// | Copyright (c) 2026 大连星韵网络科技有限公司 All rights reserved.
-// +----------------------------------------------------------------------
-// | Licensed ( https://opensource.org/licenses/MIT )
-// +----------------------------------------------------------------------
-// | Author: 喜羊羊 <751300685@qq.com>
-// +----------------------------------------------------------------------
-
 package admin
 
 import (
@@ -144,8 +134,8 @@ func (c *ControllerV1) Login(ctx context.Context, req *api.LoginReq) (res *api.L
 		RoleKey:  roleKey,
 	}
 
-	// 生成 accessToken 并记录会话
-	accessToken, expiresIn, err := token.Generate(ctx, authUser)
+	// 生成 accessToken + refreshToken
+	accessToken, refreshToken, expiresIn, refreshExpiresIn, err := token.Generate(ctx, authUser)
 	if err != nil {
 		return nil, err
 	}
@@ -158,13 +148,70 @@ func (c *ControllerV1) Login(ctx context.Context, req *api.LoginReq) (res *api.L
 
 	res = new(api.LoginRes)
 	res.LoginModel = &adminin.LoginModel{
-		Id:          user.Id,
-		Username:    user.Username,
-		Nickname:    user.Nickname,
-		AccessToken: accessToken,
-		ExpiresIn:   expiresIn,
+		Id:               user.Id,
+		Username:         user.Username,
+		Nickname:         user.Nickname,
+		AccessToken:      accessToken,
+		ExpiresIn:        expiresIn,
+		RefreshToken:     refreshToken,
+		RefreshExpiresIn: refreshExpiresIn,
 	}
 	return
+}
+
+// Refresh 刷新 accessToken
+func (c *ControllerV1) Refresh(ctx context.Context, req *api.RefreshReq) (res *api.RefreshRes, err error) {
+	userId, err := token.ValidateRefreshToken(ctx, token.AppAdmin, req.RefreshToken)
+	if err != nil {
+		return nil, gerror.New("刷新令牌无效或已过期，请重新登录")
+	}
+
+	var user *entity.AdminUser
+	if err = dao.AdminUser.Ctx(ctx).Where("id", userId).Scan(&user); err != nil {
+		return nil, err
+	}
+	if user == nil || user.Status != 1 {
+		return nil, gerror.New("用户不存在或已禁用")
+	}
+
+	var role *entity.AdminRole
+	_ = dao.AdminRole.Ctx(ctx).
+		LeftJoin(dao.AdminUserRole.Table()+" aur", "aur.role_id = "+dao.AdminRole.Table()+".id").
+		Where("aur.user_id", user.Id).
+		Where(dao.AdminRole.Table()+".status", 1).
+		OrderAsc(dao.AdminRole.Table() + ".id").
+		Limit(1).
+		Scan(&role)
+
+	var roleId uint64
+	var roleKey string
+	if role != nil {
+		roleId = uint64(role.Id)
+		roleKey = role.Key
+	}
+
+	authUser := model.AuthUser{
+		Id:       user.Id,
+		Username: user.Username,
+		Nickname: user.Nickname,
+		Avatar:   user.Avatar,
+		Email:    user.Email,
+		Mobile:   user.Mobile,
+		Pid:      user.Pid,
+		DeptId:   user.DeptId,
+		RoleId:   roleId,
+		RoleKey:  roleKey,
+	}
+
+	accessToken, expiresIn, err := token.RefreshAccessAdmin(ctx, req.RefreshToken, authUser)
+	if err != nil {
+		return nil, gerror.New("刷新令牌无效或已过期，请重新登录")
+	}
+
+	return &api.RefreshRes{
+		AccessToken: accessToken,
+		ExpiresIn:   expiresIn,
+	}, nil
 }
 
 // Logout 管理员退出登录
@@ -176,9 +223,11 @@ func (c *ControllerV1) Logout(ctx context.Context, req *api.LogoutReq) (res *api
 	authHeader := r.Header.Get("Authorization")
 	tokenStr := strings.TrimPrefix(authHeader, "Bearer ")
 	if tokenStr != "" {
-		// ✨ 从缓存删除 Token
-		if err := token.Delete(ctx, tokenStr); err != nil {
-			return nil, err
+		au, parseErr := token.Parse(ctx, tokenStr)
+		if parseErr == nil && au != nil {
+			_ = token.DeleteSession(ctx, token.AppAdmin, tokenStr, au.Id)
+		} else {
+			_ = token.Delete(ctx, tokenStr)
 		}
 	}
 	return &api.LogoutRes{}, nil

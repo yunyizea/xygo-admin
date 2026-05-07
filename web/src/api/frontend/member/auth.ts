@@ -1,13 +1,3 @@
-// +----------------------------------------------------------------------
-// | XYGo Admin [ Vue3 + GoFrame 企业级中后台管理系统 ]
-// +----------------------------------------------------------------------
-// | Copyright (c) 2026 大连星韵网络科技有限公司 All rights reserved.
-// +----------------------------------------------------------------------
-// | Licensed ( https://opensource.org/licenses/MIT )
-// +----------------------------------------------------------------------
-// | Author: 喜羊羊 <751300685@qq.com>
-// +----------------------------------------------------------------------
-
 /**
  * 前台会员认证 API
  *
@@ -27,6 +17,8 @@ export interface MemberLoginParams {
 export interface MemberLoginResult {
   token: string
   expiresIn: number
+  refreshToken: string
+  refreshExpiresIn: number
 }
 
 /** 注册参数 */
@@ -60,6 +52,16 @@ export function memberRegister(params: MemberRegisterParams) {
   return memberRequest.post<MemberRegisterResult>({
     url: '/auth/register',
     data: params
+  })
+}
+
+/**
+ * 会员刷新访问令牌
+ */
+export function memberRefreshToken(refreshToken: string) {
+  return memberRequest.post<{ accessToken: string; expiresIn: number }>({
+    url: '/auth/refresh',
+    data: { refreshToken }
   })
 }
 

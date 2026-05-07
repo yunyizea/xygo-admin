@@ -157,7 +157,7 @@ func (s *sWmAuth) WxLogin(ctx context.Context, in *wmin.WxLoginInput) (out *wmin
 		LoginAt:  gtime.Now().Unix(),
 	}
 
-	accessToken, expiresIn, err := token.GenerateMember(ctx, memberUser)
+	accessToken, _, expiresIn, _, err := token.GenerateMember(ctx, memberUser)
 	if err != nil {
 		return nil, gerror.NewCode(consts.CodeServerError, "Token 生成失败")
 	}

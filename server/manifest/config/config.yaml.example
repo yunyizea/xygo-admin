@@ -51,7 +51,8 @@ databaseLogger:
 auth:
   jwt:
     secret:  "your-jwt-secret-change-me"   # JWT 签名密钥（生产环境请改成32位以上随机字符串）
-    expires: 7200                           # Token 有效期（秒），例如 2 小时
+    expires: 7200                           # accessToken 有效期（秒），即空闲超时，默认 2 小时
+    refreshExpires: 172800                  # refreshToken 有效期（秒），即绝对会话上限，默认 48 小时
     multiLogin: false                       # 是否允许多端登录
 
 # 缓存配置（Token 存储）

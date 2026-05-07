@@ -1,13 +1,3 @@
-// +----------------------------------------------------------------------
-// | XYGo Admin [ Vue3 + GoFrame 企业级中后台管理系统 ]
-// +----------------------------------------------------------------------
-// | Copyright (c) 2026 大连星韵网络科技有限公司 All rights reserved.
-// +----------------------------------------------------------------------
-// | Licensed ( https://opensource.org/licenses/MIT )
-// +----------------------------------------------------------------------
-// | Author: 喜羊羊 <751300685@qq.com>
-// +----------------------------------------------------------------------
-
 /**
  * HTTP 请求封装模块
  * 基于 Axios 封装的 HTTP 请求工具，提供统一的请求/响应处理
@@ -31,9 +21,11 @@ import { ApiStatus } from './status'
 import { HttpError, handleError, showError, showSuccess } from './error'
 import { $t } from '@/locales'
 import { BaseResponse } from '@/types'
+import { router } from '@/router'
+import { ADMIN_LOGIN_PATH } from '@/router/routesAlias'
 
 /** 请求配置常量 */
-const REQUEST_TIMEOUT = 15000
+const REQUEST_TIMEOUT = 15000 // 临时改成1ms复现context canceled，测完改回15000
 const LOGOUT_DELAY = 500
 const MAX_RETRIES = 0
 const RETRY_DELAY = 1000
@@ -42,6 +34,12 @@ const UNAUTHORIZED_DEBOUNCE_TIME = 3000
 /** 401防抖状态 */
 let isUnauthorizedErrorShown = false
 let unauthorizedTimer: NodeJS.Timeout | null = null
+
+/** Token 刷新状态 */
+let isAdminRefreshing = false
+let adminPendingRequests: Array<{ resolve: (value: any) => void; reject: (reason: any) => void; config: any }> = []
+let isMemberRefreshing = false
+let memberPendingRequests: Array<{ resolve: (value: any) => void; reject: (reason: any) => void; config: any }> = []
 
 /** 扩展 AxiosRequestConfig */
 interface ExtendedAxiosRequestConfig extends AxiosRequestConfig {
@@ -116,24 +114,33 @@ axiosInstance.interceptors.request.use(
 
 /** 响应拦截器 */
 axiosInstance.interceptors.response.use(
-  (response: AxiosResponse<BaseResponse>) => {
+  async (response: AxiosResponse<BaseResponse>) => {
     const { code, msg, message } = response.data as any
-    const errorMsg = msg || message  // 兼容两种字段名
+    const errorMsg = msg || message
     const url = response.config.url || ''
     const isMember = isMemberRequest(url)
 
     if (code === ApiStatus.success) return response
-    // ✨ 被踢下线：专属提示
     if (code === ApiStatus.kickedOut) handleKickedOutError(errorMsg, isMember)
-    if (code === ApiStatus.unauthorized) handleUnauthorizedError(errorMsg, isMember)
+
+    if (code === ApiStatus.unauthorized && !isRefreshRequest(response.config)) {
+      const result = await tryTokenRefresh(response.config, isMember)
+      if (result) return result
+      handleUnauthorizedError(errorMsg, isMember)
+    }
+
     throw createHttpError(errorMsg || $t('httpMsg.requestFailed'), code)
   },
-  (error) => {
+  async (error) => {
     const url = error.config?.url || ''
     const isMember = isMemberRequest(url)
-    if (error.response?.status === 401 || error.response?.status === ApiStatus.unauthorized) {
+
+    if ((error.response?.status === 401 || error.response?.status === ApiStatus.unauthorized) && !isRefreshRequest(error.config)) {
+      const result = await tryTokenRefresh(error.config, isMember)
+      if (result) return result
       handleUnauthorizedError(undefined, isMember)
     }
+
     return Promise.reject(handleError(error))
   }
 )
@@ -180,6 +187,98 @@ function handleKickedOutError(message?: string, isMember: boolean = false): neve
   throw error
 }
 
+/** 判断是否为刷新令牌请求（防止递归刷新） */
+function isRefreshRequest(config: any): boolean {
+  const url = config?.url || ''
+  return url.includes('/auth/refresh')
+}
+
+/** 直接调用 admin 刷新接口（不通过 adminRequest，避免循环依赖） */
+async function doAdminRefresh(refreshToken: string) {
+  const response = await axiosInstance.post('/admin/auth/refresh', { refreshToken })
+  return response.data?.data as { accessToken: string; expiresIn: number } | undefined
+}
+
+/** 直接调用 member 刷新接口 */
+async function doMemberRefresh(refreshToken: string) {
+  const response = await axiosInstance.post('/member/auth/refresh', { refreshToken })
+  return response.data?.data as { accessToken: string; expiresIn: number } | undefined
+}
+
+/** 尝试用 refreshToken 静默刷新，成功则重试原请求 */
+async function tryTokenRefresh(config: any, isMember: boolean): Promise<AxiosResponse | null> {
+  if (isMember) {
+    return tryMemberRefresh(config)
+  }
+  return tryAdminRefresh(config)
+}
+
+async function tryAdminRefresh(config: any): Promise<AxiosResponse | null> {
+  const userStore = useUserStore()
+  const { refreshToken } = userStore
+  if (!refreshToken) return null
+
+  if (isAdminRefreshing) {
+    return new Promise((resolve, reject) => {
+      adminPendingRequests.push({ resolve, reject, config })
+    })
+  }
+
+  isAdminRefreshing = true
+  try {
+    const res = await doAdminRefresh(refreshToken)
+    if (!res?.accessToken) return null
+
+    userStore.setToken(res.accessToken)
+    adminPendingRequests.forEach(({ resolve, config: c }) => {
+      resolve(axiosInstance.request(c))
+    })
+    adminPendingRequests = []
+    return axiosInstance.request(config)
+  } catch {
+    adminPendingRequests.forEach(({ reject }) => {
+      reject(new HttpError('refresh failed', ApiStatus.unauthorized))
+    })
+    adminPendingRequests = []
+    return null
+  } finally {
+    isAdminRefreshing = false
+  }
+}
+
+async function tryMemberRefresh(config: any): Promise<AxiosResponse | null> {
+  const memberStore = useMemberStore()
+  const refreshToken = memberStore.getRefreshToken()
+  if (!refreshToken) return null
+
+  if (isMemberRefreshing) {
+    return new Promise((resolve, reject) => {
+      memberPendingRequests.push({ resolve, reject, config })
+    })
+  }
+
+  isMemberRefreshing = true
+  try {
+    const res = await doMemberRefresh(refreshToken)
+    if (!res?.accessToken) return null
+
+    memberStore.setToken(res.accessToken)
+    memberPendingRequests.forEach(({ resolve, config: c }) => {
+      resolve(axiosInstance.request(c))
+    })
+    memberPendingRequests = []
+    return axiosInstance.request(config)
+  } catch {
+    memberPendingRequests.forEach(({ reject }) => {
+      reject(new HttpError('refresh failed', ApiStatus.unauthorized))
+    })
+    memberPendingRequests = []
+    return null
+  } finally {
+    isMemberRefreshing = false
+  }
+}
+
 /** 处理401错误（带防抖） */
 function handleUnauthorizedError(message?: string, isMember: boolean = false): never {
   const error = createHttpError(message || $t('httpMsg.unauthorized'), ApiStatus.unauthorized)
@@ -210,10 +309,23 @@ function resetUnauthorizedError() {
   unauthorizedTimer = null
 }
 
+function getCurrentHashPath() {
+  const hash = window.location.hash || ''
+  const path = hash.startsWith('#') ? hash.slice(1) : hash
+  return path || router.currentRoute.value.fullPath || '/'
+}
+
 /** 后台管理员退出登录 */
 function logOut() {
   setTimeout(() => {
-    useUserStore().logOut()
+    const redirectPath = getCurrentHashPath()
+    useUserStore().logOut({ redirect: false })
+    if (router.currentRoute.value.path !== ADMIN_LOGIN_PATH) {
+      router.push({
+        path: ADMIN_LOGIN_PATH,
+        query: redirectPath && redirectPath !== ADMIN_LOGIN_PATH ? { redirect: redirectPath } : undefined
+      })
+    }
   }, LOGOUT_DELAY)
 }
 

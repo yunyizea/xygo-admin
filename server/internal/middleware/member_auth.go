@@ -21,6 +21,7 @@ var memberAlwaysAllow = []string{
 var memberWhitelist = []string{
 	"/member/auth/login",
 	"/member/auth/register",
+	"/member/auth/refresh",
 	"/member/auth/captcha",
 	"/member/auth/checkCaptcha",
 	"/member/user/menus", // 菜单接口：有 token 返回完整菜单，无 token 返回公开菜单

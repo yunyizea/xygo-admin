@@ -1,13 +1,3 @@
-// +----------------------------------------------------------------------
-// | XYGo Admin [ Vue3 + GoFrame 企业级中后台管理系统 ]
-// +----------------------------------------------------------------------
-// | Copyright (c) 2026 大连星韵网络科技有限公司 All rights reserved.
-// +----------------------------------------------------------------------
-// | Licensed ( https://opensource.org/licenses/MIT )
-// +----------------------------------------------------------------------
-// | Author: 喜羊羊 <751300685@qq.com>
-// +----------------------------------------------------------------------
-
 /**
  * 路由全局前置守卫模块
  *
@@ -156,6 +146,9 @@ async function handleRouteGuard(
   next: NavigationGuardNext,
   router: Router
 ): Promise<void> {
+  // 清理历史非版本化用户存储，避免旧 accessToken 被误当作当前登录态。
+  localStorage.removeItem('user')
+
   const settingStore = useSettingStore()
   const userStore = useUserStore()
 
@@ -310,20 +303,6 @@ function handleLoginStatus(
     return true
   }
 
-  // 4.5 Pinia 状态可能未恢复，检查 localStorage 中是否有有效 token
-  try {
-    const raw = localStorage.getItem('user')
-    if (raw) {
-      const stored = JSON.parse(raw)
-      if (stored.accessToken) {
-        userStore.setToken(stored.accessToken, stored.refreshToken)
-        userStore.isLogin = true
-        if (stored.info) userStore.info = stored.info
-        return true
-      }
-    }
-  } catch { /* ignore parse errors */ }
-
   // 5. 确实未登录，跳转到后台登录页
   next({
     name: 'Login',
@@ -415,11 +394,16 @@ async function handleDynamicRoutes(
     // 关闭 loading
     closeLoading()
 
-    // 401 错误：axios 拦截器已处理退出登录，取消当前导航
+    // 后台初始化时 accessToken 失效：不能 next(false) 回滚到来源页，
+    // 否则从门户首页直接访问后台时会被带回前台登录/首页。
     if (isUnauthorizedError(error)) {
-      // 重置状态，允许重新登录后再次初始化
       routeInitInProgress = false
-      next(false)
+      await useUserStore().logOut({ callApi: false, redirect: false })
+      next({
+        path: ADMIN_LOGIN_PATH,
+        query: { redirect: to.fullPath },
+        replace: true
+      })
       return
     }
 

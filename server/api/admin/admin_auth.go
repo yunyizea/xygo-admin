@@ -1,13 +1,3 @@
-// +----------------------------------------------------------------------
-// | XYGo Admin [ Vue3 + GoFrame 企业级中后台管理系统 ]
-// +----------------------------------------------------------------------
-// | Copyright (c) 2026 大连星韵网络科技有限公司 All rights reserved.
-// +----------------------------------------------------------------------
-// | Licensed ( https://opensource.org/licenses/MIT )
-// +----------------------------------------------------------------------
-// | Author: 喜羊羊 <751300685@qq.com>
-// +----------------------------------------------------------------------
-
 package admin
 
 import (
@@ -25,6 +15,18 @@ type LoginReq struct {
 
 type LoginRes struct {
 	*adminin.LoginModel
+}
+
+// ===================== 刷新令牌 =====================
+
+type RefreshReq struct {
+	g.Meta       `path:"/admin/auth/refresh" method:"post" tags:"AdminAuth" summary:"Refresh access token"`
+	RefreshToken string `json:"refreshToken" v:"required#刷新令牌不能为空"`
+}
+
+type RefreshRes struct {
+	AccessToken string `json:"accessToken"`
+	ExpiresIn   int64  `json:"expiresIn"`
 }
 
 // ===================== 登出 =====================

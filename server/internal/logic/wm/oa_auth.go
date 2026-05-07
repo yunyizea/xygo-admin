@@ -205,7 +205,7 @@ func (s *sWmAuth) OaCallback(ctx context.Context, in *wmin.OaCallbackInput) (out
 		LoginAt:  gtime.Now().Unix(),
 	}
 
-	jwtToken, expiresIn, err := token.GenerateMember(ctx, memberUser)
+	jwtToken, _, expiresIn, _, err := token.GenerateMember(ctx, memberUser)
 	if err != nil {
 		return nil, gerror.NewCode(consts.CodeServerError, "Token 生成失败")
 	}
