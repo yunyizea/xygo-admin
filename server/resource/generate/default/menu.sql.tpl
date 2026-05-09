@@ -12,7 +12,7 @@ SET @parentId = LAST_INSERT_ID();
 
 -- 2. 创建页面菜单
 INSERT INTO `xy_admin_menu` (`parent_id`, `type`, `title`, `name`, `path`, `component`, `resource`, `icon`, `hidden`, `keep_alive`, `redirect`, `frame_src`, `perms`, `is_frame`, `affix`, `show_badge`, `badge_text`, `active_path`, `hide_tab`, `is_full_page`, `sort`, `status`, `remark`, `created_by`, `updated_by`, `create_time`, `update_time`)
-VALUES (@parentId, 2, '{{.TableComment}}列表', '{{.VarName}}', '{{.RouteName}}', '{{.MenuComponentPath}}/index', '', '', 0, 1, '', '', '["GET {{.ApiPrefix}}/list"]', 0, 0, 0, '', '', 0, 0, 1, 1, '{{.MenuRemark}}', 0, 0, UNIX_TIMESTAMP(), UNIX_TIMESTAMP());
+VALUES (@parentId, 2, '{{.TableComment}}列表', '{{.VarName}}', '{{.RouteName}}', '{{.MenuComponentPath}}/index', '{{.ResourceName}}', '', 0, 1, '', '', '["GET {{.ApiPrefix}}/list"]', 0, 0, 0, '', '', 0, 0, 1, 1, '{{.MenuRemark}}', 0, 0, UNIX_TIMESTAMP(), UNIX_TIMESTAMP());
 
 SET @pageId = LAST_INSERT_ID();
 
@@ -21,7 +21,7 @@ SET @pageId = LAST_INSERT_ID();
 
 -- 1. 创建页面菜单（挂载到上级 #{{.MenuPid}}）
 INSERT INTO `xy_admin_menu` (`parent_id`, `type`, `title`, `name`, `path`, `component`, `resource`, `icon`, `hidden`, `keep_alive`, `redirect`, `frame_src`, `perms`, `is_frame`, `affix`, `show_badge`, `badge_text`, `active_path`, `hide_tab`, `is_full_page`, `sort`, `status`, `remark`, `created_by`, `updated_by`, `create_time`, `update_time`)
-VALUES ({{.MenuPid}}, 2, '{{.TableComment}}', '{{.VarName}}', '{{.RouteName}}', '{{.MenuComponentPath}}/index', '', '{{.MenuIcon}}', 0, 1, '', '', '["GET {{.ApiPrefix}}/list"]', 0, 0, 0, '', '', 0, 0, {{.MenuSort}}, 1, '{{.MenuRemark}}', 0, 0, UNIX_TIMESTAMP(), UNIX_TIMESTAMP());
+VALUES ({{.MenuPid}}, 2, '{{.TableComment}}', '{{.VarName}}', '{{.RouteName}}', '{{.MenuComponentPath}}/index', '{{.ResourceName}}', '{{.MenuIcon}}', 0, 1, '', '', '["GET {{.ApiPrefix}}/list"]', 0, 0, 0, '', '', 0, 0, {{.MenuSort}}, 1, '{{.MenuRemark}}', 0, 0, UNIX_TIMESTAMP(), UNIX_TIMESTAMP());
 
 SET @pageId = LAST_INSERT_ID();
 

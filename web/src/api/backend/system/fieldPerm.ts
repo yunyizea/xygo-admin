@@ -1,13 +1,3 @@
-// +----------------------------------------------------------------------
-// | XYGo Admin [ Vue3 + GoFrame 企业级中后台管理系统 ]
-// +----------------------------------------------------------------------
-// | Copyright (c) 2026 大连星韵网络科技有限公司 All rights reserved.
-// +----------------------------------------------------------------------
-// | Licensed ( https://opensource.org/licenses/MIT )
-// +----------------------------------------------------------------------
-// | Author: 喜羊羊 <751300685@qq.com>
-// +----------------------------------------------------------------------
-
 /**
  * 字段权限管理 API
  */
@@ -59,5 +49,12 @@ export function getResourceFieldsApi(params: {
   return adminRequest.get<any>({
     url: '/fieldPerm/resourceFields',
     params
+  })
+}
+
+// 获取当前用户的字段权限（合并所有角色）
+export function getFieldPermMineApi() {
+  return adminRequest.get<{ fieldPerms: Record<string, Record<string, number>> }>({
+    url: '/fieldPerm/mine'
   })
 }

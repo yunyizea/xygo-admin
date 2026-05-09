@@ -1,13 +1,3 @@
-// +----------------------------------------------------------------------
-// | XYGo Admin [ Vue3 + GoFrame 企业级中后台管理系统 ]
-// +----------------------------------------------------------------------
-// | Copyright (c) 2026 大连星韵网络科技有限公司 All rights reserved.
-// +----------------------------------------------------------------------
-// | Licensed ( https://opensource.org/licenses/MIT )
-// +----------------------------------------------------------------------
-// | Author: 喜羊羊 <751300685@qq.com>
-// +----------------------------------------------------------------------
-
 /**
  * useTable - 企业级表格数据管理方案
  *
@@ -30,6 +20,7 @@
 import { ref, reactive, computed, onMounted, onUnmounted, nextTick, readonly } from 'vue'
 import { useWindowSize } from '@vueuse/core'
 import { useTableColumns } from './useTableColumns'
+import { useFieldPerm } from './useFieldPerm'
 import type { ColumnOption } from '@/types/component'
 import {
   TableCache,
@@ -235,8 +226,12 @@ function useTableImpl<TApiFn extends (params: any) => Promise<any>>(
     small: width.value < 768
   }))
 
-  // 列配置
-  const columnConfig = columnsFactory ? useTableColumns<TRecord>(columnsFactory) : null
+  // 列配置（自动集成字段权限过滤）
+  const { filterColumns: fpFilter } = useFieldPerm()
+  const wrappedColumnsFactory = columnsFactory
+    ? () => fpFilter(columnsFactory())
+    : undefined
+  const columnConfig = wrappedColumnsFactory ? useTableColumns<TRecord>(wrappedColumnsFactory) : null
   const columns = columnConfig?.columns
   const columnChecks = columnConfig?.columnChecks
 

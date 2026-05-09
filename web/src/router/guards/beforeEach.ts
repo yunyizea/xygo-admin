@@ -49,6 +49,7 @@ import { ADMIN_BASE_PATH, ADMIN_LOGIN_PATH } from '../routesAlias'
 import { loadingService } from '@/utils/ui'
 import { useCommon } from '@/hooks/core/useCommon'
 import { useWorktabStore } from '@/store/modules/worktab'
+import { useFieldPermStore } from '@/store/modules/fieldPerm'
 import { fetchGetUserInfo } from '@/api/backend/auth'
 import { ApiStatus } from '@/utils/http/status'
 import { isHttpError } from '@/utils/http/error'
@@ -332,6 +333,12 @@ async function handleDynamicRoutes(
     // 1. 获取用户信息
     await fetchUserInfo()
 
+    // 1.5 加载字段权限
+    const fieldPermStore = useFieldPermStore()
+    if (!fieldPermStore.loaded) {
+      await fieldPermStore.loadFieldPerms()
+    }
+
     // 2. 获取菜单数据
     const menuList = await menuProcessor.getMenuList()
 
@@ -443,6 +450,8 @@ export function resetRouterState(delay: number): void {
     const menuStore = useMenuStore()
     menuStore.removeAllDynamicRoutes()
     menuStore.setMenuList([])
+
+    useFieldPermStore().reset()
 
     // 重置路由初始化状态，允许重新登录后再次初始化
     resetRouteInitState()

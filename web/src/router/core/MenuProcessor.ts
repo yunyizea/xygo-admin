@@ -99,6 +99,7 @@ export class MenuProcessor {
             showBadge: !!item.showBadge || !!item.badgeText,
             showTextBadge: item.badgeText || '',
             activePath: item.activePath || '',
+            ...(item.resource ? { resource: item.resource } : {}),
             ...(authList ? { authList } : {})
           },
           children

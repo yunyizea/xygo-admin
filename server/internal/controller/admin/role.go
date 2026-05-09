@@ -1,13 +1,3 @@
-// +----------------------------------------------------------------------
-// | XYGo Admin [ Vue3 + GoFrame 企业级中后台管理系统 ]
-// +----------------------------------------------------------------------
-// | Copyright (c) 2026 大连星韵网络科技有限公司 All rights reserved.
-// +----------------------------------------------------------------------
-// | Licensed ( https://opensource.org/licenses/MIT )
-// +----------------------------------------------------------------------
-// | Author: 喜羊羊 <751300685@qq.com>
-// +----------------------------------------------------------------------
-
 package admin
 
 import (
@@ -22,6 +12,7 @@ import (
 	"xygo/internal/dao"
 	"xygo/internal/field"
 	"xygo/internal/library/dbdialect"
+	"xygo/internal/middleware"
 	"xygo/internal/model"
 	"xygo/internal/model/do"
 	"xygo/internal/model/entity"
@@ -287,6 +278,7 @@ func (c *ControllerV1) RoleBindMenus(ctx context.Context, req *api.RoleBindMenus
 		}
 	}
 
+	middleware.RefreshPermCache(ctx)
 	return &api.RoleBindMenusRes{}, nil
 }
 

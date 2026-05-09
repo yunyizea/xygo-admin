@@ -1,13 +1,3 @@
-// +----------------------------------------------------------------------
-// | XYGo Admin [ Vue3 + GoFrame 企业级中后台管理系统 ]
-// +----------------------------------------------------------------------
-// | Copyright (c) 2026 大连星韵网络科技有限公司 All rights reserved.
-// +----------------------------------------------------------------------
-// | Licensed ( https://opensource.org/licenses/MIT )
-// +----------------------------------------------------------------------
-// | Author: 喜羊羊 <751300685@qq.com>
-// +----------------------------------------------------------------------
-
 // 通用功能集合
 export { useCommon } from './core/useCommon'
 
@@ -16,6 +6,9 @@ export { useAppMode } from './core/useAppMode'
 
 // 权限控制
 export { useAuth } from './core/useAuth'
+
+// 字段权限
+export { useFieldPerm } from './core/useFieldPerm'
 
 // 表格数据管理方案
 export { useTable } from './core/useTable'

@@ -1,13 +1,3 @@
-// +----------------------------------------------------------------------
-// | XYGo Admin [ Vue3 + GoFrame 企业级中后台管理系统 ]
-// +----------------------------------------------------------------------
-// | Copyright (c) 2026 大连星韵网络科技有限公司 All rights reserved.
-// +----------------------------------------------------------------------
-// | Licensed ( https://opensource.org/licenses/MIT )
-// +----------------------------------------------------------------------
-// | Author: 喜羊羊 <751300685@qq.com>
-// +----------------------------------------------------------------------
-
 package admin
 
 import (
@@ -79,4 +69,13 @@ type ResourceFieldItem struct {
 	FieldName   string `json:"fieldName"`
 	FieldLabel  string `json:"fieldLabel"`
 	IsSensitive bool   `json:"isSensitive"`
+}
+
+// FieldPermMineReq 获取当前登录用户的字段权限（合并所有角色，取最高权限）
+type FieldPermMineReq struct {
+	g.Meta `path:"/admin/fieldPerm/mine" method:"get" tags:"FieldPerm" summary:"获取当前用户字段权限"`
+}
+
+type FieldPermMineRes struct {
+	FieldPerms map[string]map[string]int `json:"fieldPerms"` // resource -> field -> permType
 }

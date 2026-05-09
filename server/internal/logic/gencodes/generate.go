@@ -48,8 +48,9 @@ type TplData struct {
 	MenuPid    int
 	MenuIcon   string
 	MenuSort   int
-	PermPrefix string // 权限前缀
-	ApiPrefix  string // API 路径前缀
+	PermPrefix   string // 权限前缀
+	ApiPrefix    string // API 路径前缀
+	ResourceName string // 资源标识（去前缀表名，用于字段权限关联）
 
 	// 时间字段标记
 	HasCreatedAt  bool
@@ -68,9 +69,9 @@ type TplData struct {
 	QueryColumns []TplColumn
 
 	// 关联表
-	HasRelations       bool          // 是否有关联表
-	HasRelSoftDelete   bool          // 是否有关联表带软删除（需要 Unscoped）
-	Relations          []TplRelation // 关联表列表
+	HasRelations     bool          // 是否有关联表
+	HasRelSoftDelete bool          // 是否有关联表带软删除（需要 Unscoped）
+	Relations        []TplRelation // 关联表列表
 
 	// 生成步骤控制（从 HeadOps/ColumnOps/AutoOps 转换，模板用 if 条件渲染）
 	HasAdd        bool // 新增按钮（HeadOps: add）
@@ -184,7 +185,6 @@ type RadioOption struct {
 }
 
 // Tag 颜色轮换表（对齐 Element Plus TagProps type）
-// 第一项 success 对应常见场景：状态字段第一个选项通常是正向值（启用/正常）
 var tagTypeColors = []string{"success", "danger", "warning", "info", "primary", ""}
 
 // OptionsJson options JSON 解析
@@ -500,8 +500,15 @@ func executeMenuORM(ctx context.Context, data *TplData) error {
 	now := time.Now().Unix()
 	menuTable := "xy_admin_menu"
 
+	// resource 标识：去掉表前缀，用于字段权限关联
+	resourceName := strings.TrimPrefix(data.TableName, "xy_")
+
 	// 公共字段模板
 	baseMenu := func(parentId int64, menuType int, title, name, path, component, icon, perms string, hidden, keepAlive, sort int) g.Map {
+		res := ""
+		if menuType == 2 {
+			res = resourceName
+		}
 		return g.Map{
 			"parent_id":    parentId,
 			"type":         menuType,
@@ -509,7 +516,7 @@ func executeMenuORM(ctx context.Context, data *TplData) error {
 			"name":         name,
 			"path":         path,
 			"component":    component,
-			"resource":     "",
+			"resource":     res,
 			"icon":         icon,
 			"hidden":       hidden,
 			"keep_alive":   keepAlive,
@@ -788,12 +795,13 @@ func buildTplData(ctx context.Context, in *adminin.GenCodesEditInp, opts Options
 		MenuSort:     opts.Menu.Sort,
 		PermPrefix:   "/admin/" + routeName,
 		ApiPrefix:    "/admin/" + routeName,
+		ResourceName: strings.TrimPrefix(in.TableName, tablePrefix),
 
 		// 默认主包模式路径
-		GoApiImport:     "xygo/api/admin",
-		GoApiPkg:        "admin",
-		GoInputImport:   "xygo/internal/model/input/adminin",
-		GoInputPkg:      "adminin",
+		GoApiImport:        "xygo/api/admin",
+		GoApiPkg:           "admin",
+		GoInputImport:      "xygo/internal/model/input/adminin",
+		GoInputPkg:         "adminin",
 		GoServiceImport:    "xygo/internal/service",
 		GoControllerPkg:    "admin",
 		ControllerReceiver: "ControllerV1",

@@ -1,13 +1,3 @@
-// +----------------------------------------------------------------------
-// | XYGo Admin [ Vue3 + GoFrame 企业级中后台管理系统 ]
-// +----------------------------------------------------------------------
-// | Copyright (c) 2026 大连星韵网络科技有限公司 All rights reserved.
-// +----------------------------------------------------------------------
-// | Licensed ( https://opensource.org/licenses/MIT )
-// +----------------------------------------------------------------------
-// | Author: 喜羊羊 <751300685@qq.com>
-// +----------------------------------------------------------------------
-
 package admin
 
 import (
@@ -21,6 +11,7 @@ import (
 	"xygo/internal/consts"
 	"xygo/internal/dao"
 	"xygo/internal/field"
+	"xygo/internal/library/contexts"
 	"xygo/internal/library/dbdialect"
 	"xygo/internal/model/do"
 	"xygo/internal/model/entity"
@@ -277,4 +268,57 @@ func isSensitiveColumn(column string) bool {
 		}
 	}
 	return false
+}
+
+// FieldPermMine 获取当前登录用户的字段权限（合并所有角色，取最高权限）
+func (c *ControllerV1) FieldPermMine(ctx context.Context, req *api.FieldPermMineReq) (res *api.FieldPermMineRes, err error) {
+	user := contexts.GetUser(ctx)
+	if user == nil {
+		return nil, gerror.NewCode(consts.CodeNotAuthorized, "未登录")
+	}
+
+	if consts.IsSuperRole(user.RoleKey) {
+		res = &api.FieldPermMineRes{FieldPerms: map[string]map[string]int{}}
+		return
+	}
+
+	var userRoles []entity.AdminUserRole
+	if err = dao.AdminUserRole.Ctx(ctx).
+		Where(dao.AdminUserRole.Columns().UserId, user.Id).
+		Scan(&userRoles); err != nil {
+		return nil, err
+	}
+
+	if len(userRoles) == 0 {
+		res = &api.FieldPermMineRes{FieldPerms: map[string]map[string]int{}}
+		return
+	}
+
+	roleIds := make([]uint64, 0, len(userRoles))
+	for _, r := range userRoles {
+		roleIds = append(roleIds, r.RoleId)
+	}
+
+	var items []entity.AdminFieldPerm
+	err = dao.AdminFieldPerm.Ctx(ctx).
+		Where(dao.AdminFieldPerm.Columns().Status, 1).
+		Where(dao.AdminFieldPerm.Columns().RoleId, roleIds).
+		Scan(&items)
+	if err != nil {
+		return nil, err
+	}
+
+	fieldPerms := make(map[string]map[string]int)
+	for _, item := range items {
+		if fieldPerms[item.Resource] == nil {
+			fieldPerms[item.Resource] = make(map[string]int)
+		}
+		existing, ok := fieldPerms[item.Resource][item.FieldName]
+		if !ok || item.PermType > existing {
+			fieldPerms[item.Resource][item.FieldName] = item.PermType
+		}
+	}
+
+	res = &api.FieldPermMineRes{FieldPerms: fieldPerms}
+	return
 }

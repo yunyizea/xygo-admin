@@ -12,6 +12,8 @@ import (
 	"xygo/internal/consts"
 	"xygo/internal/dao"
 	"xygo/internal/library/token"
+	logcache "xygo/internal/logic/log"
+	"xygo/internal/middleware"
 	"xygo/internal/model"
 	"xygo/internal/model/do"
 	"xygo/internal/model/entity"
@@ -135,7 +137,7 @@ func (c *ControllerV1) MenuRoutes(ctx context.Context, req *api.MenuRoutesReq) (
 
 	// 查询菜单
 	builder := dao.AdminMenu.Ctx(ctx).
-		Fields("id, parent_id as parentId, type, title, name, path, component, icon, hidden, keep_alive as keepAlive, redirect, frame_src as frameSrc, perms, is_frame as isFrame, affix, show_badge as showBadge, badge_text as badgeText, active_path as activePath, hide_tab as hideTab, is_full_page as isFullPage, sort, status, remark, create_time, update_time").
+		Fields("id, parent_id as parentId, type, title, name, path, component, resource, icon, hidden, keep_alive as keepAlive, redirect, frame_src as frameSrc, perms, is_frame as isFrame, affix, show_badge as showBadge, badge_text as badgeText, active_path as activePath, hide_tab as hideTab, is_full_page as isFullPage, sort, status, remark, create_time, update_time").
 		WhereIn("type", []int{1, 2, 3}). // 目录/菜单/按钮
 		Where("status", 1)               // 仅启用
 
@@ -315,6 +317,9 @@ func (c *ControllerV1) MenuSave(ctx context.Context, req *api.MenuSaveReq) (res 
 		}
 		res = &api.MenuSaveRes{Id: uint(req.MenuSaveInp.Id)}
 	}
+
+	middleware.RefreshPermCache(ctx)
+	logcache.RefreshMenuRouteCache(ctx)
 	return
 }
 
@@ -337,6 +342,9 @@ func (c *ControllerV1) MenuDelete(ctx context.Context, req *api.MenuDeleteReq) (
 	if err != nil {
 		return nil, err
 	}
+
+	middleware.RefreshPermCache(ctx)
+	logcache.RefreshMenuRouteCache(ctx)
 	return &api.MenuDeleteRes{}, nil
 }
 

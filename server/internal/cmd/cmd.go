@@ -112,6 +112,7 @@ var (
 			// 后台管理接口（带鉴权）
 			group.Group("/", func(ag *ghttp.RouterGroup) {
 				ag.Middleware(middleware.AdminAuth)
+				ag.Middleware(middleware.AdminPermission)
 				ag.Middleware(middleware.DemoGuard)
 				ag.Middleware(middleware.OperationLog)
 					ag.Bind(
