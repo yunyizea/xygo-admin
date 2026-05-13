@@ -5070,9 +5070,6 @@ INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, compon
 INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (810, 517, 3, '导出', 'export', '', '', '', '', 0, 0, '', '', '["GET /admin/member-score-log/export"]', 0, 0, 0, '', '', 0, 0, 6, 1, '', 0, 0, 1746835200, 1746835200);
 INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (815, 511, 3, '批量删除', 'batchDel', '', '', '', '', 0, 0, '', '', '["POST /admin/member-money-log/delete"]', 0, 0, 0, '', '', 0, 0, 6, 1, '', 0, 0, 1746835200, 1746835200);
 INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (820, 617, 3, '批量删除', 'batchDel', '', '', '', '', 0, 0, '', '', '["POST /admin/member-notice/delete"]', 0, 0, 0, '', '', 0, 0, 6, 1, '', 0, 0, 1746835200, 1746835200);
-INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (700, 0, 1, '租户管理', 'Tenant', '/tenant', '', '', 'ri:building-2-line', 0, 0, '', '', '', 0, 0, 0, '', '', 0, 0, 55, 1, '租户管理目录', 0, 0, 0, 0);
-INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (701, 700, 2, '套餐管理', 'TenantGroup', 'group', '/tenant/group/index', '', 'ri:gift-2-line', 0, 0, '', '', '', 0, 0, 0, '', '', 0, 0, 1, 1, '租户套餐管理', 0, 0, 0, 0);
-INSERT INTO public.xy_admin_menu (id, parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time) VALUES (702, 700, 2, '租户列表', 'TenantList', 'list', '/tenant/list/index', '', 'ri:home-office-line', 0, 0, '', '', '', 0, 0, 0, '', '', 0, 0, 2, 1, '租户列表管理', 0, 0, 0, 0);
 
 
 --
@@ -6903,388 +6900,269 @@ CREATE INDEX idx_cms_changelog_deleted_at ON public.xy_cms_changelog USING btree
 
 SELECT pg_catalog.setval('public.xy_cms_changelog_id_seq', 1, false);
 
--- --------------------------------------------------------
--- 租户套餐表
--- --------------------------------------------------------
+-- ============================================================
+-- 短信模块完整初始化（表、配置、菜单、种子数据）
+-- ============================================================
 
-CREATE TABLE public.xy_tenant_group (
-    id bigint NOT NULL,
-    group_name character varying(100) DEFAULT ''::character varying NOT NULL,
-    remark character varying(255) DEFAULT ''::character varying,
-    content text,
-    sort integer DEFAULT 0 NOT NULL,
-    status smallint DEFAULT 1 NOT NULL,
-    created_by bigint DEFAULT 0 NOT NULL,
-    updated_by bigint DEFAULT 0 NOT NULL,
-    create_time integer,
-    update_time integer,
-    delete_time integer DEFAULT 0
+-- ============================================================
+-- 短信模块建表脚本（PostgreSQL）
+-- 表前缀：xy_sms_
+-- ============================================================
+
+-- 短信模板
+CREATE TABLE IF NOT EXISTS xy_sms_template (
+    id                   bigserial PRIMARY KEY,
+    title                character varying(128) DEFAULT '' NOT NULL,
+    code                 character varying(64) DEFAULT '' NOT NULL,
+    content              text DEFAULT '' NOT NULL,
+    provider_template_id character varying(64) DEFAULT '' NOT NULL,
+    variables            jsonb DEFAULT '[]'::jsonb,
+    related_variable_id  bigint DEFAULT 0 NOT NULL,
+    status               smallint DEFAULT 1 NOT NULL,
+    sort                 integer DEFAULT 0 NOT NULL,
+    remark               character varying(255) DEFAULT '' NOT NULL,
+    created_by           bigint DEFAULT 0 NOT NULL,
+    updated_by           bigint DEFAULT 0 NOT NULL,
+    create_time          bigint DEFAULT 0 NOT NULL,
+    update_time          bigint DEFAULT 0 NOT NULL
 );
 
-COMMENT ON TABLE public.xy_tenant_group IS '租户套餐表';
-COMMENT ON COLUMN public.xy_tenant_group.id IS '套餐ID';
-COMMENT ON COLUMN public.xy_tenant_group.group_name IS '套餐名称';
-COMMENT ON COLUMN public.xy_tenant_group.remark IS '描述';
-COMMENT ON COLUMN public.xy_tenant_group.content IS '套餐详情';
-COMMENT ON COLUMN public.xy_tenant_group.sort IS '排序';
-COMMENT ON COLUMN public.xy_tenant_group.status IS '状态:0停用,1启用';
-COMMENT ON COLUMN public.xy_tenant_group.created_by IS '创建人ID';
-COMMENT ON COLUMN public.xy_tenant_group.updated_by IS '更新人ID';
-COMMENT ON COLUMN public.xy_tenant_group.create_time IS '创建时间';
-COMMENT ON COLUMN public.xy_tenant_group.update_time IS '更新时间';
-COMMENT ON COLUMN public.xy_tenant_group.delete_time IS '删除时间(软删除)';
+COMMENT ON TABLE  xy_sms_template IS '短信模板';
+COMMENT ON COLUMN xy_sms_template.id IS '主键';
+COMMENT ON COLUMN xy_sms_template.title IS '模板标题';
+COMMENT ON COLUMN xy_sms_template.code IS '模板唯一标识（如 user_register）';
+COMMENT ON COLUMN xy_sms_template.content IS '短信文案（含变量占位 ${var}）';
+COMMENT ON COLUMN xy_sms_template.provider_template_id IS '服务商模板ID';
+COMMENT ON COLUMN xy_sms_template.variables IS '模板变量列表 JSON';
+COMMENT ON COLUMN xy_sms_template.related_variable_id IS '关联文案变量ID';
+COMMENT ON COLUMN xy_sms_template.status IS '状态：1=启用 0=禁用';
+COMMENT ON COLUMN xy_sms_template.sort IS '排序';
+COMMENT ON COLUMN xy_sms_template.remark IS '备注';
+COMMENT ON COLUMN xy_sms_template.created_by IS '创建人ID';
+COMMENT ON COLUMN xy_sms_template.updated_by IS '更新人ID';
+COMMENT ON COLUMN xy_sms_template.create_time IS '创建时间（Unix秒）';
+COMMENT ON COLUMN xy_sms_template.update_time IS '更新时间（Unix秒）';
 
-CREATE SEQUENCE public.xy_tenant_group_id_seq
-    AS bigint START WITH 3 INCREMENT BY 1 NO MINVALUE NO MAXVALUE CACHE 1;
-ALTER SEQUENCE public.xy_tenant_group_id_seq OWNED BY public.xy_tenant_group.id;
-ALTER TABLE ONLY public.xy_tenant_group ALTER COLUMN id SET DEFAULT nextval('public.xy_tenant_group_id_seq'::regclass);
+CREATE UNIQUE INDEX IF NOT EXISTS uk_sms_template_code ON xy_sms_template (code);
 
-INSERT INTO public.xy_tenant_group (id, group_name, remark, sort, status, created_by, updated_by, create_time, update_time, delete_time) VALUES
-(1, '基础版', '基础功能套餐', 1, 1, 1, 1, EXTRACT(EPOCH FROM NOW())::integer, EXTRACT(EPOCH FROM NOW())::integer, 0),
-(2, '专业版', '包含全部功能', 2, 1, 1, 1, EXTRACT(EPOCH FROM NOW())::integer, EXTRACT(EPOCH FROM NOW())::integer, 0);
 
-ALTER TABLE ONLY public.xy_tenant_group ADD CONSTRAINT xy_tenant_group_pkey PRIMARY KEY (id);
-
--- --------------------------------------------------------
--- 套餐与菜单关联表
--- --------------------------------------------------------
-
-CREATE TABLE public.xy_tenant_group_menu (
-    id bigint NOT NULL,
-    group_id bigint NOT NULL,
-    menu_id bigint NOT NULL
+-- 短信变量
+CREATE TABLE IF NOT EXISTS xy_sms_variable (
+    id            bigserial PRIMARY KEY,
+    title         character varying(128) DEFAULT '' NOT NULL,
+    name          character varying(64) DEFAULT '' NOT NULL,
+    source_type   smallint DEFAULT 1 NOT NULL,
+    sql_query     text DEFAULT '' NOT NULL,
+    method_name   character varying(128) DEFAULT '' NOT NULL,
+    shared_count  integer DEFAULT 0 NOT NULL,
+    status        smallint DEFAULT 1 NOT NULL,
+    created_by    bigint DEFAULT 0 NOT NULL,
+    updated_by    bigint DEFAULT 0 NOT NULL,
+    create_time   bigint DEFAULT 0 NOT NULL,
+    update_time   bigint DEFAULT 0 NOT NULL
 );
 
-COMMENT ON TABLE public.xy_tenant_group_menu IS '租户套餐与菜单关联表';
-COMMENT ON COLUMN public.xy_tenant_group_menu.id IS '主键';
-COMMENT ON COLUMN public.xy_tenant_group_menu.group_id IS '套餐ID';
-COMMENT ON COLUMN public.xy_tenant_group_menu.menu_id IS '菜单ID';
+COMMENT ON TABLE  xy_sms_variable IS '短信模板变量';
+COMMENT ON COLUMN xy_sms_variable.id IS '主键';
+COMMENT ON COLUMN xy_sms_variable.title IS '变量标题';
+COMMENT ON COLUMN xy_sms_variable.name IS '变量名（如 usermobile）';
+COMMENT ON COLUMN xy_sms_variable.source_type IS '来源类型：1=字段提取 2=SQL查询 3=内置Helper';
+COMMENT ON COLUMN xy_sms_variable.sql_query IS 'SQL查询语句（source_type=2 时）';
+COMMENT ON COLUMN xy_sms_variable.method_name IS 'Helper方法路径（source_type=3 时）';
+COMMENT ON COLUMN xy_sms_variable.shared_count IS '共通数据数';
+COMMENT ON COLUMN xy_sms_variable.status IS '状态：1=启用 0=禁用';
+COMMENT ON COLUMN xy_sms_variable.created_by IS '创建人ID';
+COMMENT ON COLUMN xy_sms_variable.updated_by IS '更新人ID';
+COMMENT ON COLUMN xy_sms_variable.create_time IS '创建时间（Unix秒）';
+COMMENT ON COLUMN xy_sms_variable.update_time IS '更新时间（Unix秒）';
 
-CREATE SEQUENCE public.xy_tenant_group_menu_id_seq
-    AS bigint START WITH 1 INCREMENT BY 1 NO MINVALUE NO MAXVALUE CACHE 1;
-ALTER SEQUENCE public.xy_tenant_group_menu_id_seq OWNED BY public.xy_tenant_group_menu.id;
-ALTER TABLE ONLY public.xy_tenant_group_menu ALTER COLUMN id SET DEFAULT nextval('public.xy_tenant_group_menu_id_seq'::regclass);
+CREATE UNIQUE INDEX IF NOT EXISTS uk_sms_variable_name ON xy_sms_variable (name);
 
-ALTER TABLE ONLY public.xy_tenant_group_menu ADD CONSTRAINT xy_tenant_group_menu_pkey PRIMARY KEY (id);
-CREATE INDEX idx_tgm_group_id ON public.xy_tenant_group_menu USING btree (group_id);
-CREATE INDEX idx_tgm_menu_id ON public.xy_tenant_group_menu USING btree (menu_id);
 
--- --------------------------------------------------------
--- 租户信息表
--- --------------------------------------------------------
-
-CREATE TABLE public.xy_tenant (
-    id bigint NOT NULL,
-    group_id bigint,
-    title character varying(100) DEFAULT ''::character varying,
-    logo character varying(255) DEFAULT ''::character varying,
-    tenant_name character varying(255) DEFAULT ''::character varying,
-    domain character varying(100) DEFAULT NULL,
-    sms_type smallint DEFAULT 1 NOT NULL,
-    storage_type smallint DEFAULT 1 NOT NULL,
-    contact_name character varying(50) DEFAULT ''::character varying,
-    contact_phone character varying(50) DEFAULT ''::character varying,
-    contact_email character varying(100) DEFAULT ''::character varying,
-    status smallint DEFAULT 1 NOT NULL,
-    remark character varying(255) DEFAULT ''::character varying,
-    is_init smallint DEFAULT 0 NOT NULL,
-    money numeric(10,2) DEFAULT 0.00 NOT NULL,
-    expire_time integer,
-    created_by bigint DEFAULT 0 NOT NULL,
-    updated_by bigint DEFAULT 0 NOT NULL,
-    create_time integer,
-    update_time integer,
-    delete_time integer DEFAULT 0,
-    admin_username character varying(50) DEFAULT ''::character varying NOT NULL,
-    admin_password character varying(100) DEFAULT ''::character varying NOT NULL,
-    salt character varying(10) DEFAULT ''::character varying NOT NULL
+-- 短信发送日志
+CREATE TABLE IF NOT EXISTS xy_sms_log (
+    id             bigserial PRIMARY KEY,
+    phone          character varying(20) DEFAULT '' NOT NULL,
+    template_code  character varying(64) DEFAULT '' NOT NULL,
+    driver         character varying(32) DEFAULT '' NOT NULL,
+    content        text DEFAULT '' NOT NULL,
+    params         jsonb DEFAULT '{}'::jsonb,
+    status         smallint DEFAULT 0 NOT NULL,
+    request_id     character varying(128) DEFAULT '' NOT NULL,
+    error_msg      text DEFAULT '' NOT NULL,
+    create_time    bigint DEFAULT 0 NOT NULL
 );
 
-COMMENT ON TABLE public.xy_tenant IS '租户信息表';
-COMMENT ON COLUMN public.xy_tenant.id IS '租户ID';
-COMMENT ON COLUMN public.xy_tenant.group_id IS '套餐ID';
-COMMENT ON COLUMN public.xy_tenant.title IS '租户简称';
-COMMENT ON COLUMN public.xy_tenant.logo IS '租户Logo';
-COMMENT ON COLUMN public.xy_tenant.tenant_name IS '租户全称';
-COMMENT ON COLUMN public.xy_tenant.domain IS '绑定域名';
-COMMENT ON COLUMN public.xy_tenant.sms_type IS '短信配置:1跟随平台,2独立配置';
-COMMENT ON COLUMN public.xy_tenant.storage_type IS '存储配置:1跟随平台,2独立配置';
-COMMENT ON COLUMN public.xy_tenant.contact_name IS '联系人';
-COMMENT ON COLUMN public.xy_tenant.contact_phone IS '联系电话';
-COMMENT ON COLUMN public.xy_tenant.contact_email IS '联系邮箱';
-COMMENT ON COLUMN public.xy_tenant.status IS '状态:0停用,1启用';
-COMMENT ON COLUMN public.xy_tenant.remark IS '备注';
-COMMENT ON COLUMN public.xy_tenant.is_init IS '是否已初始化:0否,1是';
-COMMENT ON COLUMN public.xy_tenant.money IS '站内余额';
-COMMENT ON COLUMN public.xy_tenant.expire_time IS '到期时间(时间戳)';
-COMMENT ON COLUMN public.xy_tenant.created_by IS '创建人ID';
-COMMENT ON COLUMN public.xy_tenant.updated_by IS '更新人ID';
-COMMENT ON COLUMN public.xy_tenant.create_time IS '创建时间';
-COMMENT ON COLUMN public.xy_tenant.update_time IS '更新时间';
-COMMENT ON COLUMN public.xy_tenant.delete_time IS '删除时间(软删除)';
-COMMENT ON COLUMN public.xy_tenant.admin_username IS '租户管理员账号';
-COMMENT ON COLUMN public.xy_tenant.admin_password IS '租户管理员密码(加密)';
-COMMENT ON COLUMN public.xy_tenant.salt IS '密码盐值';
+COMMENT ON TABLE  xy_sms_log IS '短信发送日志';
+COMMENT ON COLUMN xy_sms_log.id IS '主键';
+COMMENT ON COLUMN xy_sms_log.phone IS '手机号';
+COMMENT ON COLUMN xy_sms_log.template_code IS '使用的模板标识';
+COMMENT ON COLUMN xy_sms_log.driver IS '驱动名（aliyun/tencent）';
+COMMENT ON COLUMN xy_sms_log.content IS '实际发送内容';
+COMMENT ON COLUMN xy_sms_log.params IS '发送参数 JSON';
+COMMENT ON COLUMN xy_sms_log.status IS '状态：1=成功 0=失败';
+COMMENT ON COLUMN xy_sms_log.request_id IS '服务商返回请求ID';
+COMMENT ON COLUMN xy_sms_log.error_msg IS '错误信息';
+COMMENT ON COLUMN xy_sms_log.create_time IS '发送时间（Unix秒）';
 
-CREATE SEQUENCE public.xy_tenant_id_seq
-    AS bigint START WITH 2 INCREMENT BY 1 NO MINVALUE NO MAXVALUE CACHE 1;
-ALTER SEQUENCE public.xy_tenant_id_seq OWNED BY public.xy_tenant.id;
-ALTER TABLE ONLY public.xy_tenant ALTER COLUMN id SET DEFAULT nextval('public.xy_tenant_id_seq'::regclass);
-
-INSERT INTO public.xy_tenant (id, group_id, title, tenant_name, status, is_init, admin_username, created_by, updated_by, create_time, update_time, delete_time) VALUES
-(1, 2, '默认租户', '系统默认租户（平台自用）', 1, 1, 'admin', 1, 1, EXTRACT(EPOCH FROM NOW())::integer, EXTRACT(EPOCH FROM NOW())::integer, 0);
-
-ALTER TABLE ONLY public.xy_tenant ADD CONSTRAINT xy_tenant_pkey PRIMARY KEY (id);
-CREATE INDEX idx_tenant_group_id ON public.xy_tenant USING btree (group_id);
-CREATE UNIQUE INDEX uk_tenant_domain ON public.xy_tenant USING btree (domain);
-
--- --------------------------------------------------------
--- 租户账户流水表
--- --------------------------------------------------------
-
-CREATE TABLE public.xy_tenant_account_log (
-    id bigint NOT NULL,
-    tenant_id bigint NOT NULL,
-    sn character varying(32) DEFAULT ''::character varying NOT NULL,
-    change_object smallint DEFAULT 1 NOT NULL,
-    change_type integer DEFAULT 0 NOT NULL,
-    action smallint DEFAULT 1 NOT NULL,
-    change_amount numeric(10,2) DEFAULT 0.00 NOT NULL,
-    left_amount numeric(10,2) DEFAULT 0.00 NOT NULL,
-    association_sn character varying(255) DEFAULT ''::character varying,
-    remark character varying(255) DEFAULT ''::character varying,
-    admin_id bigint DEFAULT 0,
-    create_time integer,
-    update_time integer,
-    delete_time integer DEFAULT 0
-);
-
-COMMENT ON TABLE public.xy_tenant_account_log IS '租户账户流水表';
-COMMENT ON COLUMN public.xy_tenant_account_log.id IS '流水ID';
-COMMENT ON COLUMN public.xy_tenant_account_log.tenant_id IS '租户ID';
-COMMENT ON COLUMN public.xy_tenant_account_log.sn IS '流水号';
-COMMENT ON COLUMN public.xy_tenant_account_log.change_object IS '变动对象:1余额';
-COMMENT ON COLUMN public.xy_tenant_account_log.change_type IS '变动类型';
-COMMENT ON COLUMN public.xy_tenant_account_log.action IS '动作:1增加,2扣减';
-COMMENT ON COLUMN public.xy_tenant_account_log.change_amount IS '变动金额';
-COMMENT ON COLUMN public.xy_tenant_account_log.left_amount IS '变动后余额';
-COMMENT ON COLUMN public.xy_tenant_account_log.association_sn IS '关联单号';
-COMMENT ON COLUMN public.xy_tenant_account_log.remark IS '备注';
-COMMENT ON COLUMN public.xy_tenant_account_log.admin_id IS '操作管理员ID';
-COMMENT ON COLUMN public.xy_tenant_account_log.create_time IS '创建时间';
-COMMENT ON COLUMN public.xy_tenant_account_log.update_time IS '更新时间';
-COMMENT ON COLUMN public.xy_tenant_account_log.delete_time IS '删除时间(软删除)';
-
-CREATE SEQUENCE public.xy_tenant_account_log_id_seq
-    AS bigint START WITH 1 INCREMENT BY 1 NO MINVALUE NO MAXVALUE CACHE 1;
-ALTER SEQUENCE public.xy_tenant_account_log_id_seq OWNED BY public.xy_tenant_account_log.id;
-ALTER TABLE ONLY public.xy_tenant_account_log ALTER COLUMN id SET DEFAULT nextval('public.xy_tenant_account_log_id_seq'::regclass);
-
-ALTER TABLE ONLY public.xy_tenant_account_log ADD CONSTRAINT xy_tenant_account_log_pkey PRIMARY KEY (id);
-CREATE INDEX idx_tal_tenant_id ON public.xy_tenant_account_log USING btree (tenant_id);
-CREATE INDEX idx_tal_sn ON public.xy_tenant_account_log USING btree (sn);
-CREATE INDEX idx_tal_create_time ON public.xy_tenant_account_log USING btree (create_time);
+CREATE INDEX IF NOT EXISTS idx_sms_log_phone ON xy_sms_log (phone);
+CREATE INDEX IF NOT EXISTS idx_sms_log_template_code ON xy_sms_log (template_code);
+CREATE INDEX IF NOT EXISTS idx_sms_log_create_time ON xy_sms_log (create_time);
 
 
 -- ============================================================
--- 租户核心镜像表（Phase 3: RBAC + 配置）
+-- 将 sms 分组追加到 config_group JSON（如果尚未包含）
+-- ============================================================
+UPDATE xy_sys_config
+SET value = value::jsonb || '[{"group":"sms","groupName":"短信配置","icon":"ri:smartphone-line","description":"配置短信接口","sort":40}]'::jsonb,
+    update_time = EXTRACT(EPOCH FROM NOW())::bigint
+WHERE key = 'config_group'
+  AND NOT (value::jsonb @> '[{"group":"sms"}]'::jsonb);
+
+
+-- ============================================================
+-- sys_config 配置数据（短信配置组）
+-- 逐条 INSERT，ON CONFLICT (key) DO NOTHING 防重复
+-- ============================================================
+INSERT INTO xy_sys_config ("group", group_name, name, key, value, type, options, rules, sort, remark, allow_del, created_by, updated_by, create_time, update_time)
+VALUES ('sms', '短信配置', '发送超时（秒）', 'sms_timeout', '5', 'number', NULL, '{"required": true}', 10, '短信发送超时时间', 0, 0, 0, 0, 0)
+ON CONFLICT (key) DO NOTHING;
+
+INSERT INTO xy_sys_config ("group", group_name, name, key, value, type, options, rules, sort, remark, allow_del, created_by, updated_by, create_time, update_time)
+VALUES ('sms', '短信配置', '发送策略', 'sms_strategy', 'weight', 'select', '{"options": [{"label": "按权重", "value": "weight"}, {"label": "随机", "value": "random"}]}', '{"required": true}', 20, '多驱动时的选择策略', 0, 0, 0, 0, 0)
+ON CONFLICT (key) DO NOTHING;
+
+INSERT INTO xy_sys_config ("group", group_name, name, key, value, type, options, rules, sort, remark, allow_del, created_by, updated_by, create_time, update_time)
+VALUES ('sms', '短信配置', '启用的服务商', 'sms_enabled_drivers', '', 'selects', '{"options": [{"label": "阿里云", "value": "aliyun"}, {"label": "腾讯云", "value": "tencent"}]}', NULL, 30, '可多选，逗号分隔', 0, 0, 0, 0, 0)
+ON CONFLICT (key) DO NOTHING;
+
+INSERT INTO xy_sys_config ("group", group_name, name, key, value, type, options, rules, sort, remark, allow_del, created_by, updated_by, create_time, update_time)
+VALUES ('sms', '短信配置', '阿里云 AccessKey ID', 'sms_aliyun_access_key_id', '', 'text', NULL, NULL, 100, '', 0, 0, 0, 0, 0)
+ON CONFLICT (key) DO NOTHING;
+
+INSERT INTO xy_sys_config ("group", group_name, name, key, value, type, options, rules, sort, remark, allow_del, created_by, updated_by, create_time, update_time)
+VALUES ('sms', '短信配置', '阿里云 AccessKey Secret', 'sms_aliyun_access_key_secret', '', 'password', NULL, NULL, 110, '', 0, 0, 0, 0, 0)
+ON CONFLICT (key) DO NOTHING;
+
+INSERT INTO xy_sys_config ("group", group_name, name, key, value, type, options, rules, sort, remark, allow_del, created_by, updated_by, create_time, update_time)
+VALUES ('sms', '短信配置', '阿里云短信签名', 'sms_aliyun_sign_name', '', 'text', NULL, NULL, 120, '在阿里云控制台申请的签名', 0, 0, 0, 0, 0)
+ON CONFLICT (key) DO NOTHING;
+
+INSERT INTO xy_sys_config ("group", group_name, name, key, value, type, options, rules, sort, remark, allow_del, created_by, updated_by, create_time, update_time)
+VALUES ('sms', '短信配置', '腾讯云 SecretId', 'sms_tencent_secret_id', '', 'text', NULL, NULL, 200, '', 0, 0, 0, 0, 0)
+ON CONFLICT (key) DO NOTHING;
+
+INSERT INTO xy_sys_config ("group", group_name, name, key, value, type, options, rules, sort, remark, allow_del, created_by, updated_by, create_time, update_time)
+VALUES ('sms', '短信配置', '腾讯云 SecretKey', 'sms_tencent_secret_key', '', 'password', NULL, NULL, 210, '', 0, 0, 0, 0, 0)
+ON CONFLICT (key) DO NOTHING;
+
+INSERT INTO xy_sys_config ("group", group_name, name, key, value, type, options, rules, sort, remark, allow_del, created_by, updated_by, create_time, update_time)
+VALUES ('sms', '短信配置', '腾讯云 AppId', 'sms_tencent_app_id', '', 'text', NULL, NULL, 220, '腾讯云短信应用 SDK AppID', 0, 0, 0, 0, 0)
+ON CONFLICT (key) DO NOTHING;
+
+INSERT INTO xy_sys_config ("group", group_name, name, key, value, type, options, rules, sort, remark, allow_del, created_by, updated_by, create_time, update_time)
+VALUES ('sms', '短信配置', '腾讯云短信签名', 'sms_tencent_sign_name', '', 'text', NULL, NULL, 230, '在腾讯云控制台申请的签名', 0, 0, 0, 0, 0)
+ON CONFLICT (key) DO NOTHING;
+
+
+-- ============================================================
+-- 短信模板初始数据
+-- ============================================================
+INSERT INTO xy_sms_template (title, code, content, provider_template_id, variables, status, sort, remark, created_by, updated_by, create_time, update_time)
+VALUES ('用户注册', 'user_register', '{1}为您的登录验证码，请于{2}分钟内填写，如非本人操作，请忽略本短信。', '2627353', '["code", "expire_minutes"]', 1, 10, '', 0, 0, EXTRACT(EPOCH FROM NOW())::bigint, EXTRACT(EPOCH FROM NOW())::bigint)
+ON CONFLICT (code) DO NOTHING;
+
+INSERT INTO xy_sms_template (title, code, content, provider_template_id, variables, status, sort, remark, created_by, updated_by, create_time, update_time)
+VALUES ('登录验证', 'user_login', '{1}为您的登录验证码，请于{2}分钟内填写，如非本人操作，请忽略本短信。', '2627353', '["code", "expire_minutes"]', 1, 20, '', 0, 0, EXTRACT(EPOCH FROM NOW())::bigint, EXTRACT(EPOCH FROM NOW())::bigint)
+ON CONFLICT (code) DO NOTHING;
+
+INSERT INTO xy_sms_template (title, code, content, provider_template_id, variables, status, sort, remark, created_by, updated_by, create_time, update_time)
+VALUES ('修改密码', 'reset_password', '【${site_name}】您正在修改密码，验证码为：${code}，有效期${expire_minutes}分钟。如非本人操作，请立即修改密码。', '', '["code", "expire_minutes", "site_name"]', 1, 30, '', 0, 0, EXTRACT(EPOCH FROM NOW())::bigint, EXTRACT(EPOCH FROM NOW())::bigint)
+ON CONFLICT (code) DO NOTHING;
+
+INSERT INTO xy_sms_template (title, code, content, provider_template_id, variables, status, sort, remark, created_by, updated_by, create_time, update_time)
+VALUES ('订单通知', 'order_notify', '【${site_name}】您的订单已提交成功，请保持手机畅通。', '', '["site_name"]', 1, 40, '', 0, 0, EXTRACT(EPOCH FROM NOW())::bigint, EXTRACT(EPOCH FROM NOW())::bigint)
+ON CONFLICT (code) DO NOTHING;
+
+
+-- ============================================================
+-- 短信变量初始数据
+-- ============================================================
+INSERT INTO xy_sms_variable (title, name, source_type, sql_query, method_name, shared_count, status, created_by, updated_by, create_time, update_time)
+VALUES ('验证码', 'code', 1, '', '', 0, 1, 0, 0, EXTRACT(EPOCH FROM NOW())::bigint, EXTRACT(EPOCH FROM NOW())::bigint)
+ON CONFLICT (name) DO NOTHING;
+
+INSERT INTO xy_sms_variable (title, name, source_type, sql_query, method_name, shared_count, status, created_by, updated_by, create_time, update_time)
+VALUES ('手机号', 'mobile', 1, '', '', 0, 1, 0, 0, EXTRACT(EPOCH FROM NOW())::bigint, EXTRACT(EPOCH FROM NOW())::bigint)
+ON CONFLICT (name) DO NOTHING;
+
+INSERT INTO xy_sms_variable (title, name, source_type, sql_query, method_name, shared_count, status, created_by, updated_by, create_time, update_time)
+VALUES ('平台名称', 'site_name', 1, '', '', 0, 1, 0, 0, EXTRACT(EPOCH FROM NOW())::bigint, EXTRACT(EPOCH FROM NOW())::bigint)
+ON CONFLICT (name) DO NOTHING;
+
+INSERT INTO xy_sms_variable (title, name, source_type, sql_query, method_name, shared_count, status, created_by, updated_by, create_time, update_time)
+VALUES ('过期时间(分钟)', 'expire_minutes', 1, '', '', 0, 1, 0, 0, EXTRACT(EPOCH FROM NOW())::bigint, EXTRACT(EPOCH FROM NOW())::bigint)
+ON CONFLICT (name) DO NOTHING;
+
+-- ============================================================
+-- 短信模块菜单 + 按钮权限（PostgreSQL）
+-- 挂在「系统管理」目录下，使用 INSERT ... WHERE NOT EXISTS 防重复
 -- ============================================================
 
-CREATE TABLE public.xy_tenant_admin (
-    id bigint NOT NULL,
-    tenant_id bigint NOT NULL,
-    username character varying(50) NOT NULL,
-    nickname character varying(50) DEFAULT ''::character varying NOT NULL,
-    real_name character varying(50),
-    password character varying(255) NOT NULL,
-    gender smallint DEFAULT 0 NOT NULL,
-    salt character varying(50) DEFAULT ''::character varying NOT NULL,
-    mobile character varying(20) DEFAULT ''::character varying NOT NULL,
-    email character varying(100) DEFAULT ''::character varying NOT NULL,
-    avatar character varying(255) DEFAULT ''::character varying NOT NULL,
-    dept_id bigint DEFAULT 0 NOT NULL,
-    is_super smallint DEFAULT 0 NOT NULL,
-    status smallint DEFAULT 1 NOT NULL,
-    last_login_at bigint,
-    last_login_ip character varying(50) DEFAULT ''::character varying NOT NULL,
-    remark character varying(500),
-    created_by bigint DEFAULT 0 NOT NULL,
-    updated_by bigint DEFAULT 0 NOT NULL,
-    create_time integer,
-    update_time integer
-);
+-- 查找系统管理目录的 ID（name='SystemSetting', type=1）
+-- 如果你的项目中系统管理目录 name 不同，请替换
 
-COMMENT ON TABLE public.xy_tenant_admin IS '租户管理员表';
-COMMENT ON COLUMN public.xy_tenant_admin.id IS '管理员ID';
-COMMENT ON COLUMN public.xy_tenant_admin.tenant_id IS '所属租户ID';
-COMMENT ON COLUMN public.xy_tenant_admin.username IS '登录账号';
-COMMENT ON COLUMN public.xy_tenant_admin.nickname IS '昵称';
-COMMENT ON COLUMN public.xy_tenant_admin.real_name IS '真实姓名';
-COMMENT ON COLUMN public.xy_tenant_admin.password IS '密码哈希';
-COMMENT ON COLUMN public.xy_tenant_admin.gender IS '性别0保密 1男 2女';
-COMMENT ON COLUMN public.xy_tenant_admin.salt IS '密码盐';
-COMMENT ON COLUMN public.xy_tenant_admin.mobile IS '手机号';
-COMMENT ON COLUMN public.xy_tenant_admin.email IS '邮箱';
-COMMENT ON COLUMN public.xy_tenant_admin.avatar IS '头像';
-COMMENT ON COLUMN public.xy_tenant_admin.dept_id IS '部门ID';
-COMMENT ON COLUMN public.xy_tenant_admin.is_super IS '是否租户超管:0=否,1=是';
-COMMENT ON COLUMN public.xy_tenant_admin.status IS '状态:0=禁用,1=启用';
-COMMENT ON COLUMN public.xy_tenant_admin.last_login_at IS '最后登录时间';
-COMMENT ON COLUMN public.xy_tenant_admin.last_login_ip IS '最后登录IP';
-COMMENT ON COLUMN public.xy_tenant_admin.remark IS '备注';
-COMMENT ON COLUMN public.xy_tenant_admin.created_by IS '创建人ID';
-COMMENT ON COLUMN public.xy_tenant_admin.updated_by IS '更新人ID';
-COMMENT ON COLUMN public.xy_tenant_admin.create_time IS '创建时间';
-COMMENT ON COLUMN public.xy_tenant_admin.update_time IS '更新时间';
+-- 1. 短信模板菜单（type=2）
+INSERT INTO xy_admin_menu (parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time)
+SELECT p.id, 2, '短信模板', 'SmsTemplate', 'sms-template', '/system/sms-template/index', 'sms_template', 'ri:message-2-line', 0, 1, '', '', '["GET /admin/sms/template/list"]', 0, 0, 0, '', '', 0, 0, 80, 1, '短信模板管理', 0, 0, EXTRACT(EPOCH FROM NOW())::bigint, EXTRACT(EPOCH FROM NOW())::bigint
+FROM xy_admin_menu p WHERE p.name = 'System' AND p.type = 1
+AND NOT EXISTS (SELECT 1 FROM xy_admin_menu WHERE name = 'SmsTemplate' AND type = 2);
 
-CREATE SEQUENCE public.xy_tenant_admin_id_seq AS bigint START WITH 1 INCREMENT BY 1 NO MINVALUE NO MAXVALUE CACHE 1;
-ALTER SEQUENCE public.xy_tenant_admin_id_seq OWNED BY public.xy_tenant_admin.id;
-ALTER TABLE ONLY public.xy_tenant_admin ALTER COLUMN id SET DEFAULT nextval('public.xy_tenant_admin_id_seq'::regclass);
-ALTER TABLE ONLY public.xy_tenant_admin ADD CONSTRAINT xy_tenant_admin_pkey PRIMARY KEY (id);
-CREATE INDEX idx_ta_tenant_id ON public.xy_tenant_admin USING btree (tenant_id);
-CREATE UNIQUE INDEX uk_ta_tenant_username ON public.xy_tenant_admin USING btree (tenant_id, username);
+-- 2. 短信变量菜单（type=2）
+INSERT INTO xy_admin_menu (parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time)
+SELECT p.id, 2, '短信变量', 'SmsVariable', 'sms-variable', '/system/sms-variable/index', 'sms_variable', 'ri:braces-line', 0, 1, '', '', '["GET /admin/sms/variable/list"]', 0, 0, 0, '', '', 0, 0, 81, 1, '短信模板变量', 0, 0, EXTRACT(EPOCH FROM NOW())::bigint, EXTRACT(EPOCH FROM NOW())::bigint
+FROM xy_admin_menu p WHERE p.name = 'System' AND p.type = 1
+AND NOT EXISTS (SELECT 1 FROM xy_admin_menu WHERE name = 'SmsVariable' AND type = 2);
 
-CREATE TABLE public.xy_tenant_role (
-    id bigint NOT NULL,
-    tenant_id bigint NOT NULL,
-    name character varying(50) NOT NULL,
-    key character varying(50) NOT NULL,
-    data_scope smallint DEFAULT 0 NOT NULL,
-    custom_depts text,
-    pid bigint DEFAULT 0 NOT NULL,
-    level bigint DEFAULT 1 NOT NULL,
-    tree character varying(255) DEFAULT '0'::character varying NOT NULL,
-    sort integer DEFAULT 0 NOT NULL,
-    status smallint DEFAULT 1 NOT NULL,
-    remark character varying(255) DEFAULT ''::character varying NOT NULL,
-    created_by bigint DEFAULT 0 NOT NULL,
-    updated_by bigint DEFAULT 0 NOT NULL,
-    create_time integer NOT NULL,
-    update_time integer NOT NULL
-);
+-- 3. 发送日志菜单（type=2）
+INSERT INTO xy_admin_menu (parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time)
+SELECT p.id, 2, '短信日志', 'SmsLog', 'sms-log', '/system/sms-log/index', 'sms_log', 'ri:file-list-3-line', 0, 1, '', '', '["GET /admin/sms/log/list"]', 0, 0, 0, '', '', 0, 0, 82, 1, '短信发送日志', 0, 0, EXTRACT(EPOCH FROM NOW())::bigint, EXTRACT(EPOCH FROM NOW())::bigint
+FROM xy_admin_menu p WHERE p.name = 'System' AND p.type = 1
+AND NOT EXISTS (SELECT 1 FROM xy_admin_menu WHERE name = 'SmsLog' AND type = 2);
 
-COMMENT ON TABLE public.xy_tenant_role IS '租户角色表';
-CREATE SEQUENCE public.xy_tenant_role_id_seq AS bigint START WITH 1 INCREMENT BY 1 NO MINVALUE NO MAXVALUE CACHE 1;
-ALTER SEQUENCE public.xy_tenant_role_id_seq OWNED BY public.xy_tenant_role.id;
-ALTER TABLE ONLY public.xy_tenant_role ALTER COLUMN id SET DEFAULT nextval('public.xy_tenant_role_id_seq'::regclass);
-ALTER TABLE ONLY public.xy_tenant_role ADD CONSTRAINT xy_tenant_role_pkey PRIMARY KEY (id);
-CREATE INDEX idx_tr_tenant_id ON public.xy_tenant_role USING btree (tenant_id);
-CREATE UNIQUE INDEX uk_tr_tenant_key ON public.xy_tenant_role USING btree (tenant_id, key);
 
-CREATE TABLE public.xy_tenant_menu (
-    id bigint NOT NULL,
-    tenant_id bigint NOT NULL,
-    source_menu_id bigint DEFAULT 0 NOT NULL,
-    parent_id bigint DEFAULT 0 NOT NULL,
-    type smallint DEFAULT 1 NOT NULL,
-    title character varying(50) NOT NULL,
-    name character varying(50) DEFAULT ''::character varying NOT NULL,
-    path character varying(100) DEFAULT ''::character varying NOT NULL,
-    component character varying(100) DEFAULT ''::character varying NOT NULL,
-    icon character varying(50) DEFAULT ''::character varying NOT NULL,
-    hidden smallint DEFAULT 0 NOT NULL,
-    keep_alive smallint DEFAULT 0 NOT NULL,
-    redirect character varying(100) DEFAULT ''::character varying NOT NULL,
-    frame_src character varying(255) DEFAULT ''::character varying NOT NULL,
-    perms text,
-    is_frame smallint DEFAULT 0 NOT NULL,
-    sort integer DEFAULT 0 NOT NULL,
-    status smallint DEFAULT 1 NOT NULL,
-    create_time integer NOT NULL,
-    update_time integer NOT NULL
-);
+-- ========== 按钮权限（type=3） ==========
 
-COMMENT ON TABLE public.xy_tenant_menu IS '租户菜单表';
-CREATE SEQUENCE public.xy_tenant_menu_id_seq AS bigint START WITH 1 INCREMENT BY 1 NO MINVALUE NO MAXVALUE CACHE 1;
-ALTER SEQUENCE public.xy_tenant_menu_id_seq OWNED BY public.xy_tenant_menu.id;
-ALTER TABLE ONLY public.xy_tenant_menu ALTER COLUMN id SET DEFAULT nextval('public.xy_tenant_menu_id_seq'::regclass);
-ALTER TABLE ONLY public.xy_tenant_menu ADD CONSTRAINT xy_tenant_menu_pkey PRIMARY KEY (id);
-CREATE INDEX idx_tm_tenant_id ON public.xy_tenant_menu USING btree (tenant_id);
-CREATE INDEX idx_tm_source_menu_id ON public.xy_tenant_menu USING btree (source_menu_id);
+-- 短信模板 - 新增/编辑
+INSERT INTO xy_admin_menu (parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time)
+SELECT p.id, 3, '新增/编辑', 'edit', '', '', 'sms_template', '', 0, 0, '', '', '["POST /admin/sms/template/save"]', 0, 0, 0, '', '', 0, 0, 1, 1, '', 0, 0, EXTRACT(EPOCH FROM NOW())::bigint, EXTRACT(EPOCH FROM NOW())::bigint
+FROM xy_admin_menu p WHERE p.name = 'SmsTemplate' AND p.type = 2
+AND NOT EXISTS (SELECT 1 FROM xy_admin_menu sub WHERE sub.parent_id = p.id AND sub.type = 3 AND sub.name = 'edit');
 
-CREATE TABLE public.xy_tenant_role_menu (
-    role_id bigint NOT NULL,
-    menu_id bigint NOT NULL
-);
-COMMENT ON TABLE public.xy_tenant_role_menu IS '租户角色-菜单关联表';
-ALTER TABLE ONLY public.xy_tenant_role_menu ADD CONSTRAINT xy_tenant_role_menu_pkey PRIMARY KEY (role_id, menu_id);
+-- 短信模板 - 删除
+INSERT INTO xy_admin_menu (parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time)
+SELECT p.id, 3, '删除', 'delete', '', '', 'sms_template', '', 0, 0, '', '', '["POST /admin/sms/template/delete"]', 0, 0, 0, '', '', 0, 0, 2, 1, '', 0, 0, EXTRACT(EPOCH FROM NOW())::bigint, EXTRACT(EPOCH FROM NOW())::bigint
+FROM xy_admin_menu p WHERE p.name = 'SmsTemplate' AND p.type = 2
+AND NOT EXISTS (SELECT 1 FROM xy_admin_menu sub WHERE sub.parent_id = p.id AND sub.type = 3 AND sub.name = 'delete');
 
-CREATE TABLE public.xy_tenant_admin_role (
-    admin_id bigint NOT NULL,
-    role_id bigint NOT NULL
-);
-COMMENT ON TABLE public.xy_tenant_admin_role IS '租户管理员-角色关联表';
-ALTER TABLE ONLY public.xy_tenant_admin_role ADD CONSTRAINT xy_tenant_admin_role_pkey PRIMARY KEY (admin_id, role_id);
+-- 短信模板 - 测试发送
+INSERT INTO xy_admin_menu (parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time)
+SELECT p.id, 3, '测试发送', 'test', '', '', 'sms_template', '', 0, 0, '', '', '["POST /admin/sms/template/test"]', 0, 0, 0, '', '', 0, 0, 3, 1, '', 0, 0, EXTRACT(EPOCH FROM NOW())::bigint, EXTRACT(EPOCH FROM NOW())::bigint
+FROM xy_admin_menu p WHERE p.name = 'SmsTemplate' AND p.type = 2
+AND NOT EXISTS (SELECT 1 FROM xy_admin_menu sub WHERE sub.parent_id = p.id AND sub.type = 3 AND sub.name = 'test');
 
-CREATE TABLE public.xy_tenant_dept (
-    id bigint NOT NULL,
-    tenant_id bigint NOT NULL,
-    parent_id bigint DEFAULT 0 NOT NULL,
-    name character varying(50) NOT NULL,
-    sort integer DEFAULT 0 NOT NULL,
-    status smallint DEFAULT 1 NOT NULL,
-    remark character varying(500),
-    create_by bigint DEFAULT 0,
-    create_time integer,
-    update_time integer
-);
+-- 短信变量 - 新增/编辑
+INSERT INTO xy_admin_menu (parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time)
+SELECT p.id, 3, '新增/编辑', 'edit', '', '', 'sms_variable', '', 0, 0, '', '', '["POST /admin/sms/variable/save"]', 0, 0, 0, '', '', 0, 0, 1, 1, '', 0, 0, EXTRACT(EPOCH FROM NOW())::bigint, EXTRACT(EPOCH FROM NOW())::bigint
+FROM xy_admin_menu p WHERE p.name = 'SmsVariable' AND p.type = 2
+AND NOT EXISTS (SELECT 1 FROM xy_admin_menu sub WHERE sub.parent_id = p.id AND sub.type = 3 AND sub.name = 'edit');
 
-COMMENT ON TABLE public.xy_tenant_dept IS '租户部门表';
-CREATE SEQUENCE public.xy_tenant_dept_id_seq AS bigint START WITH 1 INCREMENT BY 1 NO MINVALUE NO MAXVALUE CACHE 1;
-ALTER SEQUENCE public.xy_tenant_dept_id_seq OWNED BY public.xy_tenant_dept.id;
-ALTER TABLE ONLY public.xy_tenant_dept ALTER COLUMN id SET DEFAULT nextval('public.xy_tenant_dept_id_seq'::regclass);
-ALTER TABLE ONLY public.xy_tenant_dept ADD CONSTRAINT xy_tenant_dept_pkey PRIMARY KEY (id);
-CREATE INDEX idx_td_tenant_id ON public.xy_tenant_dept USING btree (tenant_id);
+-- 短信变量 - 删除
+INSERT INTO xy_admin_menu (parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time)
+SELECT p.id, 3, '删除', 'delete', '', '', 'sms_variable', '', 0, 0, '', '', '["POST /admin/sms/variable/delete"]', 0, 0, 0, '', '', 0, 0, 2, 1, '', 0, 0, EXTRACT(EPOCH FROM NOW())::bigint, EXTRACT(EPOCH FROM NOW())::bigint
+FROM xy_admin_menu p WHERE p.name = 'SmsVariable' AND p.type = 2
+AND NOT EXISTS (SELECT 1 FROM xy_admin_menu sub WHERE sub.parent_id = p.id AND sub.type = 3 AND sub.name = 'delete');
 
-CREATE TABLE public.xy_tenant_post (
-    id bigint NOT NULL,
-    tenant_id bigint NOT NULL,
-    code character varying(64) NOT NULL,
-    name character varying(50) NOT NULL,
-    sort integer DEFAULT 0 NOT NULL,
-    status smallint DEFAULT 1 NOT NULL,
-    remark character varying(500) DEFAULT ''::character varying,
-    created_by bigint DEFAULT 0,
-    updated_by bigint DEFAULT 0,
-    create_time integer DEFAULT 0,
-    update_time integer DEFAULT 0
-);
-
-COMMENT ON TABLE public.xy_tenant_post IS '租户岗位表';
-CREATE SEQUENCE public.xy_tenant_post_id_seq AS bigint START WITH 1 INCREMENT BY 1 NO MINVALUE NO MAXVALUE CACHE 1;
-ALTER SEQUENCE public.xy_tenant_post_id_seq OWNED BY public.xy_tenant_post.id;
-ALTER TABLE ONLY public.xy_tenant_post ALTER COLUMN id SET DEFAULT nextval('public.xy_tenant_post_id_seq'::regclass);
-ALTER TABLE ONLY public.xy_tenant_post ADD CONSTRAINT xy_tenant_post_pkey PRIMARY KEY (id);
-CREATE INDEX idx_tp_tenant_id ON public.xy_tenant_post USING btree (tenant_id);
-CREATE UNIQUE INDEX uk_tp_tenant_code ON public.xy_tenant_post USING btree (tenant_id, code);
-
-CREATE TABLE public.xy_tenant_config (
-    id bigint NOT NULL,
-    tenant_id bigint NOT NULL,
-    "group" character varying(64) DEFAULT ''::character varying NOT NULL,
-    group_name character varying(64) DEFAULT ''::character varying NOT NULL,
-    name character varying(128) DEFAULT ''::character varying NOT NULL,
-    key character varying(128) DEFAULT ''::character varying NOT NULL,
-    value text,
-    type character varying(32) DEFAULT 'text'::character varying NOT NULL,
-    options jsonb,
-    rules jsonb,
-    sort integer DEFAULT 0 NOT NULL,
-    remark character varying(255) DEFAULT ''::character varying NOT NULL,
-    allow_del smallint DEFAULT 0 NOT NULL,
-    created_by bigint,
-    updated_by bigint,
-    create_time integer NOT NULL,
-    update_time integer NOT NULL
-);
-
-COMMENT ON TABLE public.xy_tenant_config IS '租户配置表';
-CREATE SEQUENCE public.xy_tenant_config_id_seq AS bigint START WITH 1 INCREMENT BY 1 NO MINVALUE NO MAXVALUE CACHE 1;
-ALTER SEQUENCE public.xy_tenant_config_id_seq OWNED BY public.xy_tenant_config.id;
-ALTER TABLE ONLY public.xy_tenant_config ALTER COLUMN id SET DEFAULT nextval('public.xy_tenant_config_id_seq'::regclass);
-ALTER TABLE ONLY public.xy_tenant_config ADD CONSTRAINT xy_tenant_config_pkey PRIMARY KEY (id);
-CREATE INDEX idx_tc_tenant_id ON public.xy_tenant_config USING btree (tenant_id);
-CREATE UNIQUE INDEX uk_tc_tenant_key ON public.xy_tenant_config USING btree (tenant_id, key);
 
 --
 -- PostgreSQL database dump complete

@@ -415,9 +415,6 @@ INSERT INTO `xy_admin_menu` (`id`, `parent_id`, `type`, `title`, `name`, `path`,
 (620, 617, 3, '编辑会员通知', 'edit', '', '', '', '', 0, 0, '', '', '[\"POST /admin/member-notice/edit\",\"GET /admin/member-notice/view\"]', 0, 0, 0, '', '', 0, 0, 3, 1, '', 0, 0, 1770904531, 1770904531),
 (621, 617, 3, '删除会员通知', 'delete', '', '', '', '', 0, 0, '', '', '[\"POST /admin/member-notice/delete\"]', 0, 0, 0, '', '', 0, 0, 4, 1, '', 0, 0, 1770904531, 1770904531),
 (622, 617, 3, '导出会员通知', 'export', '', '', '', '', 0, 0, '', '', '[\"GET /admin/member-notice/export\"]', 0, 0, 0, '', '', 0, 0, 5, 1, '', 0, 0, 1770904531, 1770904531),
-(700, 0, 1, '租户管理', 'Tenant', '/tenant', '', '', 'ri:building-2-line', 0, 0, '', '', '', 0, 0, 0, '', '', 0, 0, 55, 1, '租户管理目录', 0, 0, 0, 0),
-(701, 700, 2, '套餐管理', 'TenantGroup', 'group', '/tenant/group/index', '', 'ri:gift-2-line', 0, 0, '', '', '', 0, 0, 0, '', '', 0, 0, 1, 1, '租户套餐管理', 0, 0, 0, 0),
-(702, 700, 2, '租户列表', 'TenantList', 'list', '/tenant/list/index', '', 'ri:home-office-line', 0, 0, '', '', '', 0, 0, 0, '', '', 0, 0, 2, 1, '租户列表管理', 0, 0, 0, 0),
 (750, 61, 3, '新增用户', 'add', '', '', 'admin_user', '', 0, 0, '', '', '["POST /admin/user/save"]', 0, 0, 0, '', '', 0, 0, 1, 1, '', 0, 0, 1746835200, 1746835200),
 (751, 61, 3, '编辑用户', 'edit', '', '', 'admin_user', '', 0, 0, '', '', '["POST /admin/user/save","GET /admin/user/detail"]', 0, 0, 0, '', '', 0, 0, 2, 1, '', 0, 0, 1746835200, 1746835200),
 (752, 61, 3, '删除用户', 'delete', '', '', 'admin_user', '', 0, 0, '', '', '["POST /admin/user/delete"]', 0, 0, 0, '', '', 0, 0, 3, 1, '', 0, 0, 1746835200, 1746835200),
@@ -2251,303 +2248,178 @@ ALTER TABLE `xy_cms_changelog`
 ALTER TABLE `xy_cms_changelog`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '日志ID';
 
--- --------------------------------------------------------
--- 租户套餐表
--- --------------------------------------------------------
-
-CREATE TABLE `xy_tenant_group` (
-  `id` bigint(20) UNSIGNED NOT NULL COMMENT '套餐ID',
-  `group_name` varchar(100) NOT NULL DEFAULT '' COMMENT '套餐名称',
-  `remark` varchar(255) DEFAULT '' COMMENT '描述',
-  `content` text COMMENT '套餐详情（富文本或JSON）',
-  `sort` int(11) NOT NULL DEFAULT '0' COMMENT '排序',
-  `status` tinyint(4) NOT NULL DEFAULT '1' COMMENT '状态:0停用,1启用',
-  `created_by` bigint(20) UNSIGNED NOT NULL DEFAULT '0' COMMENT '创建人ID',
-  `updated_by` bigint(20) UNSIGNED NOT NULL DEFAULT '0' COMMENT '更新人ID',
-  `create_time` int(10) UNSIGNED DEFAULT NULL COMMENT '创建时间',
-  `update_time` int(10) UNSIGNED DEFAULT NULL COMMENT '更新时间',
-  `delete_time` int(10) UNSIGNED DEFAULT '0' COMMENT '删除时间(软删除)'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='租户套餐表';
-
-INSERT INTO `xy_tenant_group` (`id`, `group_name`, `remark`, `sort`, `status`, `created_by`, `updated_by`, `create_time`, `update_time`, `delete_time`) VALUES
-(1, '基础版', '基础功能套餐', 1, 1, 1, 1, UNIX_TIMESTAMP(), UNIX_TIMESTAMP(), 0),
-(2, '专业版', '包含全部功能', 2, 1, 1, 1, UNIX_TIMESTAMP(), UNIX_TIMESTAMP(), 0);
-
-ALTER TABLE `xy_tenant_group`
-  ADD PRIMARY KEY (`id`);
-
-ALTER TABLE `xy_tenant_group`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '套餐ID', AUTO_INCREMENT=3;
-
--- --------------------------------------------------------
--- 套餐与菜单关联表
--- --------------------------------------------------------
-
-CREATE TABLE `xy_tenant_group_menu` (
-  `id` bigint(20) UNSIGNED NOT NULL COMMENT '主键',
-  `group_id` bigint(20) UNSIGNED NOT NULL COMMENT '套餐ID',
-  `menu_id` bigint(20) UNSIGNED NOT NULL COMMENT '菜单ID（关联 xy_admin_menu）'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='租户套餐与菜单关联表';
-
-ALTER TABLE `xy_tenant_group_menu`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `idx_group_id` (`group_id`),
-  ADD KEY `idx_menu_id` (`menu_id`);
-
-ALTER TABLE `xy_tenant_group_menu`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键';
-
--- --------------------------------------------------------
--- 租户信息表
--- --------------------------------------------------------
-
-CREATE TABLE `xy_tenant` (
-  `id` bigint(20) UNSIGNED NOT NULL COMMENT '租户ID',
-  `group_id` bigint(20) UNSIGNED DEFAULT NULL COMMENT '套餐ID',
-  `title` varchar(100) DEFAULT '' COMMENT '租户简称',
-  `logo` varchar(255) DEFAULT '' COMMENT '租户Logo',
-  `tenant_name` varchar(255) DEFAULT '' COMMENT '租户全称',
-  `domain` varchar(100) DEFAULT NULL COMMENT '绑定域名',
-  `sms_type` tinyint(4) NOT NULL DEFAULT '1' COMMENT '短信配置:1跟随平台,2独立配置',
-  `storage_type` tinyint(4) NOT NULL DEFAULT '1' COMMENT '存储配置:1跟随平台,2独立配置',
-  `contact_name` varchar(50) DEFAULT '' COMMENT '联系人',
-  `contact_phone` varchar(50) DEFAULT '' COMMENT '联系电话',
-  `contact_email` varchar(100) DEFAULT '' COMMENT '联系邮箱',
-  `status` tinyint(4) NOT NULL DEFAULT '1' COMMENT '状态:0停用,1启用',
-  `remark` varchar(255) DEFAULT '' COMMENT '备注',
-  `is_init` tinyint(4) NOT NULL DEFAULT '0' COMMENT '是否已初始化:0否,1是',
-  `money` decimal(10,2) NOT NULL DEFAULT '0.00' COMMENT '站内余额',
-  `expire_time` int(10) UNSIGNED DEFAULT NULL COMMENT '到期时间(时间戳)',
-  `created_by` bigint(20) UNSIGNED NOT NULL DEFAULT '0' COMMENT '创建人ID',
-  `updated_by` bigint(20) UNSIGNED NOT NULL DEFAULT '0' COMMENT '更新人ID',
-  `create_time` int(10) UNSIGNED DEFAULT NULL COMMENT '创建时间',
-  `update_time` int(10) UNSIGNED DEFAULT NULL COMMENT '更新时间',
-  `delete_time` int(10) UNSIGNED DEFAULT '0' COMMENT '删除时间(软删除)',
-  `admin_username` varchar(50) NOT NULL DEFAULT '' COMMENT '租户管理员账号',
-  `admin_password` varchar(100) NOT NULL DEFAULT '' COMMENT '租户管理员密码(加密)',
-  `salt` varchar(10) NOT NULL DEFAULT '' COMMENT '密码盐值'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='租户信息表';
-
-INSERT INTO `xy_tenant` (`id`, `group_id`, `title`, `tenant_name`, `status`, `is_init`, `admin_username`, `created_by`, `updated_by`, `create_time`, `update_time`, `delete_time`) VALUES
-(1, 2, '默认租户', '系统默认租户（平台自用）', 1, 1, 'admin', 1, 1, UNIX_TIMESTAMP(), UNIX_TIMESTAMP(), 0);
-
-ALTER TABLE `xy_tenant`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `idx_group_id` (`group_id`),
-  ADD UNIQUE KEY `uk_domain` (`domain`);
-
-ALTER TABLE `xy_tenant`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '租户ID', AUTO_INCREMENT=2;
-
--- --------------------------------------------------------
--- 租户账户流水表
--- --------------------------------------------------------
-
-CREATE TABLE `xy_tenant_account_log` (
-  `id` bigint(20) UNSIGNED NOT NULL COMMENT '流水ID',
-  `tenant_id` bigint(20) UNSIGNED NOT NULL COMMENT '租户ID',
-  `sn` varchar(32) NOT NULL DEFAULT '' COMMENT '流水号',
-  `change_object` tinyint(4) NOT NULL DEFAULT '1' COMMENT '变动对象:1余额',
-  `change_type` int(11) NOT NULL DEFAULT '0' COMMENT '变动类型',
-  `action` tinyint(4) NOT NULL DEFAULT '1' COMMENT '动作:1增加,2扣减',
-  `change_amount` decimal(10,2) NOT NULL DEFAULT '0.00' COMMENT '变动金额',
-  `left_amount` decimal(10,2) NOT NULL DEFAULT '0.00' COMMENT '变动后余额',
-  `association_sn` varchar(255) DEFAULT '' COMMENT '关联单号',
-  `remark` varchar(255) DEFAULT '' COMMENT '备注',
-  `admin_id` bigint(20) UNSIGNED DEFAULT '0' COMMENT '操作管理员ID',
-  `create_time` int(10) UNSIGNED DEFAULT NULL COMMENT '创建时间',
-  `update_time` int(10) UNSIGNED DEFAULT NULL COMMENT '更新时间',
-  `delete_time` int(10) UNSIGNED DEFAULT '0' COMMENT '删除时间(软删除)'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='租户账户流水表';
-
-ALTER TABLE `xy_tenant_account_log`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `idx_tenant_id` (`tenant_id`),
-  ADD KEY `idx_sn` (`sn`),
-  ADD KEY `idx_create_time` (`create_time`);
-
-ALTER TABLE `xy_tenant_account_log`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '流水ID';
-
 -- ============================================================
--- 租户核心镜像表（Phase 3: RBAC + 配置）
+-- 短信模块完整初始化（表、配置、菜单、种子数据）
 -- ============================================================
 
-CREATE TABLE `xy_tenant_admin` (
-  `id` bigint(20) UNSIGNED NOT NULL COMMENT '管理员ID',
-  `tenant_id` bigint(20) UNSIGNED NOT NULL COMMENT '所属租户ID',
-  `username` varchar(50) NOT NULL COMMENT '登录账号',
-  `nickname` varchar(50) NOT NULL DEFAULT '' COMMENT '昵称',
-  `real_name` varchar(50) DEFAULT NULL COMMENT '真实姓名',
-  `password` varchar(255) NOT NULL COMMENT '密码哈希',
-  `gender` tinyint(1) NOT NULL DEFAULT '0' COMMENT '性别0保密 1男 2女',
-  `salt` varchar(50) NOT NULL DEFAULT '' COMMENT '密码盐',
-  `mobile` varchar(20) NOT NULL DEFAULT '' COMMENT '手机号',
-  `email` varchar(100) NOT NULL DEFAULT '' COMMENT '邮箱',
-  `avatar` varchar(255) NOT NULL DEFAULT '' COMMENT '头像',
-  `dept_id` bigint(20) UNSIGNED NOT NULL DEFAULT '0' COMMENT '部门ID',
-  `is_super` tinyint(4) NOT NULL DEFAULT '0' COMMENT '是否租户超管:0=否,1=是',
-  `status` tinyint(4) NOT NULL DEFAULT '1' COMMENT '状态:0=禁用,1=启用',
-  `last_login_at` bigint(20) UNSIGNED DEFAULT NULL COMMENT '最后登录时间',
-  `last_login_ip` varchar(50) NOT NULL DEFAULT '' COMMENT '最后登录IP',
-  `remark` varchar(500) DEFAULT NULL COMMENT '备注',
-  `created_by` bigint(20) UNSIGNED NOT NULL DEFAULT '0' COMMENT '创建人ID',
-  `updated_by` bigint(20) UNSIGNED NOT NULL DEFAULT '0' COMMENT '更新人ID',
-  `create_time` int(10) UNSIGNED DEFAULT NULL COMMENT '创建时间',
-  `update_time` int(10) UNSIGNED DEFAULT NULL COMMENT '更新时间'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='租户管理员表';
+-- ============================================================
+-- 短信模块建表脚本（MySQL / MariaDB）
+-- 表前缀：xy_sms_
+-- ============================================================
 
-ALTER TABLE `xy_tenant_admin`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `idx_tenant_id` (`tenant_id`),
-  ADD UNIQUE KEY `uk_tenant_username` (`tenant_id`, `username`);
+-- 短信模板
+CREATE TABLE IF NOT EXISTS `xy_sms_template` (
+    `id`                   bigint unsigned NOT NULL AUTO_INCREMENT,
+    `title`                varchar(128) NOT NULL DEFAULT '' COMMENT '模板标题',
+    `code`                 varchar(64)  NOT NULL DEFAULT '' COMMENT '模板唯一标识（如 user_register）',
+    `content`              text          NOT NULL COMMENT '短信文案（含变量占位 ${var}）',
+    `provider_template_id` varchar(64)  NOT NULL DEFAULT '' COMMENT '服务商模板ID',
+    `variables`            json          DEFAULT NULL COMMENT '模板变量列表 JSON',
+    `related_variable_id`  bigint unsigned NOT NULL DEFAULT 0 COMMENT '关联文案变量ID',
+    `status`               tinyint       NOT NULL DEFAULT 1 COMMENT '状态：1=启用 0=禁用',
+    `sort`                 int           NOT NULL DEFAULT 0 COMMENT '排序',
+    `remark`               varchar(255)  NOT NULL DEFAULT '' COMMENT '备注',
+    `created_by`           bigint unsigned NOT NULL DEFAULT 0 COMMENT '创建人ID',
+    `updated_by`           bigint unsigned NOT NULL DEFAULT 0 COMMENT '更新人ID',
+    `create_time`          bigint unsigned NOT NULL DEFAULT 0 COMMENT '创建时间（Unix秒）',
+    `update_time`          bigint unsigned NOT NULL DEFAULT 0 COMMENT '更新时间（Unix秒）',
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `uk_sms_template_code` (`code`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='短信模板';
 
-ALTER TABLE `xy_tenant_admin`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '管理员ID';
 
-CREATE TABLE `xy_tenant_role` (
-  `id` bigint(20) UNSIGNED NOT NULL COMMENT '角色ID',
-  `tenant_id` bigint(20) UNSIGNED NOT NULL COMMENT '所属租户ID',
-  `name` varchar(50) NOT NULL COMMENT '角色名称',
-  `key` varchar(50) NOT NULL COMMENT '角色标识(英文)',
-  `data_scope` tinyint(4) NOT NULL DEFAULT '0' COMMENT '数据范围:0=全部,1=本部门,2=本部门及子,3=仅本人,4=自定义部门',
-  `custom_depts` text COMMENT '自定义数据范围部门ID列表(JSON数组)',
-  `pid` bigint(20) UNSIGNED NOT NULL DEFAULT '0' COMMENT '上级角色ID',
-  `level` bigint(20) NOT NULL DEFAULT '1' COMMENT '关系树等级',
-  `tree` varchar(255) NOT NULL DEFAULT '0' COMMENT '关系树路径',
-  `sort` int(11) NOT NULL DEFAULT '0' COMMENT '排序',
-  `status` tinyint(4) NOT NULL DEFAULT '1' COMMENT '状态:0=禁用,1=启用',
-  `remark` varchar(255) NOT NULL DEFAULT '' COMMENT '备注',
-  `created_by` bigint(20) UNSIGNED NOT NULL DEFAULT '0' COMMENT '创建人ID',
-  `updated_by` bigint(20) UNSIGNED NOT NULL DEFAULT '0' COMMENT '更新人ID',
-  `create_time` int(10) UNSIGNED NOT NULL COMMENT '创建时间',
-  `update_time` int(10) UNSIGNED NOT NULL COMMENT '更新时间'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='租户角色表';
+-- 短信变量
+CREATE TABLE IF NOT EXISTS `xy_sms_variable` (
+    `id`            bigint unsigned NOT NULL AUTO_INCREMENT,
+    `title`         varchar(128) NOT NULL DEFAULT '' COMMENT '变量标题',
+    `name`          varchar(64)  NOT NULL DEFAULT '' COMMENT '变量名（如 usermobile）',
+    `source_type`   tinyint      NOT NULL DEFAULT 1 COMMENT '来源类型：1=字段提取 2=SQL查询 3=内置Helper',
+    `sql_query`     text         NOT NULL COMMENT 'SQL查询语句（source_type=2 时）',
+    `method_name`   varchar(128) NOT NULL DEFAULT '' COMMENT 'Helper方法路径（source_type=3 时）',
+    `shared_count`  int          NOT NULL DEFAULT 0 COMMENT '共通数据数',
+    `status`        tinyint      NOT NULL DEFAULT 1 COMMENT '状态：1=启用 0=禁用',
+    `created_by`    bigint unsigned NOT NULL DEFAULT 0 COMMENT '创建人ID',
+    `updated_by`    bigint unsigned NOT NULL DEFAULT 0 COMMENT '更新人ID',
+    `create_time`   bigint unsigned NOT NULL DEFAULT 0 COMMENT '创建时间（Unix秒）',
+    `update_time`   bigint unsigned NOT NULL DEFAULT 0 COMMENT '更新时间（Unix秒）',
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `uk_sms_variable_name` (`name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='短信模板变量';
 
-ALTER TABLE `xy_tenant_role`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `idx_tenant_id` (`tenant_id`),
-  ADD UNIQUE KEY `uk_tenant_role_key` (`tenant_id`, `key`);
 
-ALTER TABLE `xy_tenant_role`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '角色ID';
+-- 短信发送日志
+CREATE TABLE IF NOT EXISTS `xy_sms_log` (
+    `id`             bigint unsigned NOT NULL AUTO_INCREMENT,
+    `phone`          varchar(20)  NOT NULL DEFAULT '' COMMENT '手机号',
+    `template_code`  varchar(64)  NOT NULL DEFAULT '' COMMENT '使用的模板标识',
+    `driver`         varchar(32)  NOT NULL DEFAULT '' COMMENT '驱动名（aliyun/tencent）',
+    `content`        text         NOT NULL COMMENT '实际发送内容',
+    `params`         json         DEFAULT NULL COMMENT '发送参数 JSON',
+    `status`         tinyint      NOT NULL DEFAULT 0 COMMENT '状态：1=成功 0=失败',
+    `request_id`     varchar(128) NOT NULL DEFAULT '' COMMENT '服务商返回请求ID',
+    `error_msg`      text         NOT NULL COMMENT '错误信息',
+    `create_time`    bigint unsigned NOT NULL DEFAULT 0 COMMENT '发送时间（Unix秒）',
+    PRIMARY KEY (`id`),
+    KEY `idx_sms_log_phone` (`phone`),
+    KEY `idx_sms_log_template_code` (`template_code`),
+    KEY `idx_sms_log_create_time` (`create_time`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='短信发送日志';
 
-CREATE TABLE `xy_tenant_menu` (
-  `id` bigint(20) UNSIGNED NOT NULL COMMENT '菜单ID',
-  `tenant_id` bigint(20) UNSIGNED NOT NULL COMMENT '所属租户ID',
-  `source_menu_id` bigint(20) UNSIGNED NOT NULL DEFAULT '0' COMMENT '来源平台菜单ID',
-  `parent_id` bigint(20) UNSIGNED NOT NULL DEFAULT '0' COMMENT '上级菜单ID',
-  `type` tinyint(4) NOT NULL DEFAULT '1' COMMENT '类型:1=目录,2=菜单,3=按钮',
-  `title` varchar(50) NOT NULL COMMENT '标题',
-  `name` varchar(50) NOT NULL DEFAULT '' COMMENT '前端路由name',
-  `path` varchar(100) NOT NULL DEFAULT '' COMMENT '路由路径',
-  `component` varchar(100) NOT NULL DEFAULT '' COMMENT '前端组件路径',
-  `icon` varchar(50) NOT NULL DEFAULT '' COMMENT '图标',
-  `hidden` tinyint(4) NOT NULL DEFAULT '0' COMMENT '是否隐藏:0=否,1=是',
-  `keep_alive` tinyint(4) NOT NULL DEFAULT '0' COMMENT '是否缓存:0=否,1=是',
-  `redirect` varchar(100) NOT NULL DEFAULT '' COMMENT '重定向地址',
-  `frame_src` varchar(255) NOT NULL DEFAULT '' COMMENT '内嵌iframe地址',
-  `perms` text COMMENT '权限点列表(JSON数组)',
-  `is_frame` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否内嵌:0=否,1=是',
-  `sort` int(11) NOT NULL DEFAULT '0' COMMENT '排序',
-  `status` tinyint(4) NOT NULL DEFAULT '1' COMMENT '状态:0=禁用,1=启用',
-  `create_time` int(11) NOT NULL COMMENT '创建时间',
-  `update_time` int(11) NOT NULL COMMENT '更新时间'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='租户菜单表';
 
-ALTER TABLE `xy_tenant_menu`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `idx_tenant_id` (`tenant_id`),
-  ADD KEY `idx_source_menu_id` (`source_menu_id`);
+-- ============================================================
+-- 将 sms 分组追加到 config_group JSON（如果尚未包含）
+-- ============================================================
+UPDATE xy_sys_config
+SET value = JSON_ARRAY_APPEND(value, '$', JSON_OBJECT('group','sms','groupName','短信配置','icon','ri:smartphone-line','description','配置短信接口','sort',40)),
+    update_time = UNIX_TIMESTAMP()
+WHERE `key` = 'config_group'
+  AND NOT JSON_CONTAINS(value, '{"group":"sms"}');
 
-ALTER TABLE `xy_tenant_menu`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '菜单ID';
 
-CREATE TABLE `xy_tenant_role_menu` (
-  `role_id` bigint(20) UNSIGNED NOT NULL COMMENT '角色ID',
-  `menu_id` bigint(20) UNSIGNED NOT NULL COMMENT '菜单ID'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='租户角色-菜单关联表';
+-- ============================================================
+-- sys_config 配置数据（短信配置组）
+-- ============================================================
+INSERT IGNORE INTO `xy_sys_config` (`group`, `group_name`, `name`, `key`, `value`, `type`, `options`, `rules`, `sort`, `remark`, `allow_del`, `created_by`, `updated_by`, `create_time`, `update_time`)
+VALUES
+('sms', '短信配置', '发送超时（秒）', 'sms_timeout', '5', 'number', NULL, '{"required": true}', 10, '短信发送超时时间', 0, 0, 0, 0, 0),
+('sms', '短信配置', '发送策略', 'sms_strategy', 'weight', 'select', '{"options": [{"label": "按权重", "value": "weight"}, {"label": "随机", "value": "random"}]}', '{"required": true}', 20, '多驱动时的选择策略', 0, 0, 0, 0, 0),
+('sms', '短信配置', '启用的服务商', 'sms_enabled_drivers', '', 'selects', '{"options": [{"label": "阿里云", "value": "aliyun"}, {"label": "腾讯云", "value": "tencent"}]}', NULL, 30, '可多选，逗号分隔', 0, 0, 0, 0, 0),
+('sms', '短信配置', '阿里云 AccessKey ID', 'sms_aliyun_access_key_id', '', 'text', NULL, NULL, 100, '', 0, 0, 0, 0, 0),
+('sms', '短信配置', '阿里云 AccessKey Secret', 'sms_aliyun_access_key_secret', '', 'password', NULL, NULL, 110, '', 0, 0, 0, 0, 0),
+('sms', '短信配置', '阿里云短信签名', 'sms_aliyun_sign_name', '', 'text', NULL, NULL, 120, '在阿里云控制台申请的签名', 0, 0, 0, 0, 0),
+('sms', '短信配置', '腾讯云 SecretId', 'sms_tencent_secret_id', '', 'text', NULL, NULL, 200, '', 0, 0, 0, 0, 0),
+('sms', '短信配置', '腾讯云 SecretKey', 'sms_tencent_secret_key', '', 'password', NULL, NULL, 210, '', 0, 0, 0, 0, 0),
+('sms', '短信配置', '腾讯云 AppId', 'sms_tencent_app_id', '', 'text', NULL, NULL, 220, '腾讯云短信应用 SDK AppID', 0, 0, 0, 0, 0),
+('sms', '短信配置', '腾讯云短信签名', 'sms_tencent_sign_name', '', 'text', NULL, NULL, 230, '在腾讯云控制台申请的签名', 0, 0, 0, 0, 0);
 
-ALTER TABLE `xy_tenant_role_menu`
-  ADD PRIMARY KEY (`role_id`, `menu_id`);
 
-CREATE TABLE `xy_tenant_admin_role` (
-  `admin_id` bigint(20) UNSIGNED NOT NULL COMMENT '管理员ID',
-  `role_id` bigint(20) UNSIGNED NOT NULL COMMENT '角色ID'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='租户管理员-角色关联表';
+-- ============================================================
+-- 短信模板初始数据
+-- ============================================================
+INSERT IGNORE INTO `xy_sms_template` (`title`, `code`, `content`, `provider_template_id`, `variables`, `status`, `sort`, `remark`, `created_by`, `updated_by`, `create_time`, `update_time`)
+VALUES
+('用户注册', 'user_register', '{1}为您的登录验证码，请于{2}分钟内填写，如非本人操作，请忽略本短信。', '2627353', '["code", "expire_minutes"]', 1, 10, '', 0, 0, UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+('登录验证', 'user_login', '{1}为您的登录验证码，请于{2}分钟内填写，如非本人操作，请忽略本短信。', '2627353', '["code", "expire_minutes"]', 1, 20, '', 0, 0, UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+('修改密码', 'reset_password', '【${site_name}】您正在修改密码，验证码为：${code}，有效期${expire_minutes}分钟。如非本人操作，请立即修改密码。', '', '["code", "expire_minutes", "site_name"]', 1, 30, '', 0, 0, UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+('订单通知', 'order_notify', '【${site_name}】您的订单已提交成功，请保持手机畅通。', '', '["site_name"]', 1, 40, '', 0, 0, UNIX_TIMESTAMP(), UNIX_TIMESTAMP());
 
-ALTER TABLE `xy_tenant_admin_role`
-  ADD PRIMARY KEY (`admin_id`, `role_id`);
 
-CREATE TABLE `xy_tenant_dept` (
-  `id` bigint(20) UNSIGNED NOT NULL COMMENT '部门ID',
-  `tenant_id` bigint(20) UNSIGNED NOT NULL COMMENT '所属租户ID',
-  `parent_id` bigint(20) UNSIGNED NOT NULL DEFAULT '0' COMMENT '上级部门ID',
-  `name` varchar(50) NOT NULL COMMENT '部门名称',
-  `sort` int(11) NOT NULL DEFAULT '0' COMMENT '排序',
-  `status` tinyint(4) NOT NULL DEFAULT '1' COMMENT '状态:0禁用,1启用',
-  `remark` varchar(500) DEFAULT NULL COMMENT '备注',
-  `create_by` bigint(20) UNSIGNED DEFAULT '0' COMMENT '创建人',
-  `create_time` int(10) UNSIGNED DEFAULT NULL COMMENT '创建时间',
-  `update_time` int(10) UNSIGNED DEFAULT NULL COMMENT '更新时间'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='租户部门表';
+-- ============================================================
+-- 短信变量初始数据
+-- ============================================================
+INSERT IGNORE INTO `xy_sms_variable` (`title`, `name`, `source_type`, `sql_query`, `method_name`, `shared_count`, `status`, `created_by`, `updated_by`, `create_time`, `update_time`)
+VALUES
+('验证码', 'code', 1, '', '', 0, 1, 0, 0, UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+('手机号', 'mobile', 1, '', '', 0, 1, 0, 0, UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+('平台名称', 'site_name', 1, '', '', 0, 1, 0, 0, UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+('过期时间(分钟)', 'expire_minutes', 1, '', '', 0, 1, 0, 0, UNIX_TIMESTAMP(), UNIX_TIMESTAMP());
 
-ALTER TABLE `xy_tenant_dept`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `idx_tenant_id` (`tenant_id`);
+-- ============================================================
+-- 短信模块菜单 + 按钮权限（MySQL）
+-- 挂在「系统管理」目录下，使用 INSERT ... SELECT ... WHERE NOT EXISTS 防重复
+-- ============================================================
 
-ALTER TABLE `xy_tenant_dept`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '部门ID';
+-- 1. 短信模板菜单（type=2）
+INSERT INTO xy_admin_menu (parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time)
+SELECT p.id, 2, '短信模板', 'SmsTemplate', 'sms-template', '/system/sms-template/index', 'sms_template', 'ri:message-2-line', 0, 1, '', '', '["GET /admin/sms/template/list"]', 0, 0, 0, '', '', 0, 0, 80, 1, '短信模板管理', 0, 0, UNIX_TIMESTAMP(), UNIX_TIMESTAMP()
+FROM xy_admin_menu p WHERE p.name = 'System' AND p.type = 1
+AND NOT EXISTS (SELECT 1 FROM xy_admin_menu t WHERE t.name = 'SmsTemplate' AND t.type = 2);
 
-CREATE TABLE `xy_tenant_post` (
-  `id` bigint(20) UNSIGNED NOT NULL COMMENT '岗位ID',
-  `tenant_id` bigint(20) UNSIGNED NOT NULL COMMENT '所属租户ID',
-  `code` varchar(64) NOT NULL COMMENT '岗位编码',
-  `name` varchar(50) NOT NULL COMMENT '岗位名称',
-  `sort` int(11) NOT NULL DEFAULT '0' COMMENT '排序',
-  `status` tinyint(4) NOT NULL DEFAULT '1' COMMENT '状态:0=禁用,1=启用',
-  `remark` varchar(500) DEFAULT '' COMMENT '备注',
-  `created_by` bigint(20) UNSIGNED DEFAULT '0' COMMENT '创建人ID',
-  `updated_by` bigint(20) UNSIGNED DEFAULT '0' COMMENT '更新人ID',
-  `create_time` int(10) UNSIGNED DEFAULT '0' COMMENT '创建时间',
-  `update_time` int(10) UNSIGNED DEFAULT '0' COMMENT '更新时间'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='租户岗位表';
+-- 2. 短信变量菜单（type=2）
+INSERT INTO xy_admin_menu (parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time)
+SELECT p.id, 2, '短信变量', 'SmsVariable', 'sms-variable', '/system/sms-variable/index', 'sms_variable', 'ri:braces-line', 0, 1, '', '', '["GET /admin/sms/variable/list"]', 0, 0, 0, '', '', 0, 0, 81, 1, '短信模板变量', 0, 0, UNIX_TIMESTAMP(), UNIX_TIMESTAMP()
+FROM xy_admin_menu p WHERE p.name = 'System' AND p.type = 1
+AND NOT EXISTS (SELECT 1 FROM xy_admin_menu t WHERE t.name = 'SmsVariable' AND t.type = 2);
 
-ALTER TABLE `xy_tenant_post`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `idx_tenant_id` (`tenant_id`),
-  ADD UNIQUE KEY `uk_tenant_post_code` (`tenant_id`, `code`);
+-- 3. 发送日志菜单（type=2）
+INSERT INTO xy_admin_menu (parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time)
+SELECT p.id, 2, '短信日志', 'SmsLog', 'sms-log', '/system/sms-log/index', 'sms_log', 'ri:file-list-3-line', 0, 1, '', '', '["GET /admin/sms/log/list"]', 0, 0, 0, '', '', 0, 0, 82, 1, '短信发送日志', 0, 0, UNIX_TIMESTAMP(), UNIX_TIMESTAMP()
+FROM xy_admin_menu p WHERE p.name = 'System' AND p.type = 1
+AND NOT EXISTS (SELECT 1 FROM xy_admin_menu t WHERE t.name = 'SmsLog' AND t.type = 2);
 
-ALTER TABLE `xy_tenant_post`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '岗位ID';
 
-CREATE TABLE `xy_tenant_config` (
-  `id` bigint(20) UNSIGNED NOT NULL COMMENT '主键',
-  `tenant_id` bigint(20) UNSIGNED NOT NULL COMMENT '所属租户ID',
-  `group` varchar(64) NOT NULL DEFAULT '' COMMENT '分组标识',
-  `group_name` varchar(64) NOT NULL DEFAULT '' COMMENT '分组名称',
-  `name` varchar(128) NOT NULL DEFAULT '' COMMENT '配置项显示名',
-  `key` varchar(128) NOT NULL DEFAULT '' COMMENT '配置键',
-  `value` text COMMENT '配置值',
-  `type` varchar(32) NOT NULL DEFAULT 'text' COMMENT '控件类型',
-  `options` json DEFAULT NULL COMMENT '组件参数/选项 JSON',
-  `rules` json DEFAULT NULL COMMENT '校验规则 JSON',
-  `sort` int(11) NOT NULL DEFAULT '0' COMMENT '排序',
-  `remark` varchar(255) NOT NULL DEFAULT '' COMMENT '备注',
-  `allow_del` tinyint(1) NOT NULL DEFAULT '0' COMMENT '允许删除:0=否,1=是',
-  `created_by` bigint(20) UNSIGNED DEFAULT NULL COMMENT '创建人',
-  `updated_by` bigint(20) UNSIGNED DEFAULT NULL COMMENT '更新人',
-  `create_time` int(10) UNSIGNED NOT NULL COMMENT '创建时间',
-  `update_time` int(10) UNSIGNED NOT NULL COMMENT '更新时间'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='租户配置表';
+-- ========== 按钮权限（type=3） ==========
 
-ALTER TABLE `xy_tenant_config`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `idx_tenant_id` (`tenant_id`),
-  ADD UNIQUE KEY `uk_tenant_config_key` (`tenant_id`, `key`);
+-- 短信模板 - 新增/编辑
+INSERT INTO xy_admin_menu (parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time)
+SELECT p.id, 3, '新增/编辑', 'edit', '', '', 'sms_template', '', 0, 0, '', '', '["POST /admin/sms/template/save"]', 0, 0, 0, '', '', 0, 0, 1, 1, '', 0, 0, UNIX_TIMESTAMP(), UNIX_TIMESTAMP()
+FROM xy_admin_menu p WHERE p.name = 'SmsTemplate' AND p.type = 2
+AND NOT EXISTS (SELECT 1 FROM xy_admin_menu sub WHERE sub.parent_id = p.id AND sub.type = 3 AND sub.name = 'edit');
 
-ALTER TABLE `xy_tenant_config`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键';
+-- 短信模板 - 删除
+INSERT INTO xy_admin_menu (parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time)
+SELECT p.id, 3, '删除', 'delete', '', '', 'sms_template', '', 0, 0, '', '', '["POST /admin/sms/template/delete"]', 0, 0, 0, '', '', 0, 0, 2, 1, '', 0, 0, UNIX_TIMESTAMP(), UNIX_TIMESTAMP()
+FROM xy_admin_menu p WHERE p.name = 'SmsTemplate' AND p.type = 2
+AND NOT EXISTS (SELECT 1 FROM xy_admin_menu sub WHERE sub.parent_id = p.id AND sub.type = 3 AND sub.name = 'delete');
+
+-- 短信模板 - 测试发送
+INSERT INTO xy_admin_menu (parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time)
+SELECT p.id, 3, '测试发送', 'test', '', '', 'sms_template', '', 0, 0, '', '', '["POST /admin/sms/template/test"]', 0, 0, 0, '', '', 0, 0, 3, 1, '', 0, 0, UNIX_TIMESTAMP(), UNIX_TIMESTAMP()
+FROM xy_admin_menu p WHERE p.name = 'SmsTemplate' AND p.type = 2
+AND NOT EXISTS (SELECT 1 FROM xy_admin_menu sub WHERE sub.parent_id = p.id AND sub.type = 3 AND sub.name = 'test');
+
+-- 短信变量 - 新增/编辑
+INSERT INTO xy_admin_menu (parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time)
+SELECT p.id, 3, '新增/编辑', 'edit', '', '', 'sms_variable', '', 0, 0, '', '', '["POST /admin/sms/variable/save"]', 0, 0, 0, '', '', 0, 0, 1, 1, '', 0, 0, UNIX_TIMESTAMP(), UNIX_TIMESTAMP()
+FROM xy_admin_menu p WHERE p.name = 'SmsVariable' AND p.type = 2
+AND NOT EXISTS (SELECT 1 FROM xy_admin_menu sub WHERE sub.parent_id = p.id AND sub.type = 3 AND sub.name = 'edit');
+
+-- 短信变量 - 删除
+INSERT INTO xy_admin_menu (parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time)
+SELECT p.id, 3, '删除', 'delete', '', '', 'sms_variable', '', 0, 0, '', '', '["POST /admin/sms/variable/delete"]', 0, 0, 0, '', '', 0, 0, 2, 1, '', 0, 0, UNIX_TIMESTAMP(), UNIX_TIMESTAMP()
+FROM xy_admin_menu p WHERE p.name = 'SmsVariable' AND p.type = 2
+AND NOT EXISTS (SELECT 1 FROM xy_admin_menu sub WHERE sub.parent_id = p.id AND sub.type = 3 AND sub.name = 'delete');
+
 
 COMMIT;
 
