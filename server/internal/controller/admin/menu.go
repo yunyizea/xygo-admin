@@ -2,9 +2,11 @@ package admin
 
 import (
 	"context"
+	"encoding/json"
 	"strings"
 
 	"github.com/gogf/gf/v2/errors/gerror"
+	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/net/ghttp"
 	"github.com/gogf/gf/v2/os/gtime"
 
@@ -265,6 +267,9 @@ func (c *ControllerV1) MenuSave(ctx context.Context, req *api.MenuSaveReq) (res 
 	if err = c.validateMenuSave(ctx, &req.MenuSaveInp); err != nil {
 		return nil, err
 	}
+	if err = c.prepareMenuPerms(ctx, &req.MenuSaveInp); err != nil {
+		return nil, err
+	}
 
 	now := gtime.Now().Timestamp()
 	data := do.AdminMenu{
@@ -346,6 +351,214 @@ func (c *ControllerV1) MenuDelete(ctx context.Context, req *api.MenuDeleteReq) (
 	middleware.RefreshPermCache(ctx)
 	logcache.RefreshMenuRouteCache(ctx)
 	return &api.MenuDeleteRes{}, nil
+}
+
+func (c *ControllerV1) prepareMenuPerms(ctx context.Context, inp *adminin.MenuSaveInp) error {
+	perms, err := normalizeMenuPerms(inp.Perms)
+	if err != nil {
+		return err
+	}
+	inp.Perms = perms
+
+	if inp.Perms != "" || inp.Type != 3 || inp.ParentId == 0 {
+		return nil
+	}
+
+	inferred, err := c.inferButtonPerms(ctx, inp.ParentId, inp.Name)
+	if err != nil {
+		return err
+	}
+	if inferred == "" {
+		g.Log().Warningf(ctx, "menu button perms infer failed: parentId=%d name=%s", inp.ParentId, inp.Name)
+		return nil
+	}
+
+	inp.Perms = inferred
+	return nil
+}
+
+func normalizeMenuPerms(raw string) (string, error) {
+	value := strings.TrimSpace(raw)
+	if value == "" {
+		return "", nil
+	}
+
+	var perms []string
+	if strings.HasPrefix(value, "[") {
+		if err := json.Unmarshal([]byte(value), &perms); err != nil {
+			return "", gerror.NewCode(consts.CodeInvalidParam, "接口权限点必须是 JSON 数组，或 METHOD /path 文本")
+		}
+	} else {
+		perms = splitMenuPermText(value)
+	}
+
+	normalized := make([]string, 0, len(perms))
+	seen := make(map[string]struct{}, len(perms))
+	for _, item := range perms {
+		perm, err := normalizeSinglePerm(item)
+		if err != nil {
+			return "", err
+		}
+		if perm == "" {
+			continue
+		}
+		if _, ok := seen[perm]; ok {
+			continue
+		}
+		seen[perm] = struct{}{}
+		normalized = append(normalized, perm)
+	}
+	if len(normalized) == 0 {
+		return "", nil
+	}
+
+	b, err := json.Marshal(normalized)
+	if err != nil {
+		return "", err
+	}
+	return string(b), nil
+}
+
+func splitMenuPermText(value string) []string {
+	fields := strings.FieldsFunc(value, func(r rune) bool {
+		return r == '\n' || r == '\r' || r == ',' || r == '，'
+	})
+	perms := make([]string, 0, len(fields))
+	for _, item := range fields {
+		if perm := strings.TrimSpace(item); perm != "" {
+			perms = append(perms, perm)
+		}
+	}
+	return perms
+}
+
+func normalizeSinglePerm(raw string) (string, error) {
+	fields := strings.Fields(strings.TrimSpace(raw))
+	if len(fields) != 2 {
+		return "", gerror.NewCode(consts.CodeInvalidParam, "接口权限点格式应为 METHOD /path")
+	}
+
+	method := strings.ToUpper(fields[0])
+	switch method {
+	case "GET", "POST", "PUT", "DELETE", "PATCH":
+	default:
+		return "", gerror.NewCode(consts.CodeInvalidParam, "接口权限点请求方法不支持")
+	}
+
+	path := strings.TrimSpace(fields[1])
+	if !strings.HasPrefix(path, "/") {
+		return "", gerror.NewCode(consts.CodeInvalidParam, "接口权限点路径必须以 / 开头")
+	}
+	return method + " " + path, nil
+}
+
+func (c *ControllerV1) inferButtonPerms(ctx context.Context, parentId uint64, name string) (string, error) {
+	var parent *entity.AdminMenu
+	if err := dao.AdminMenu.Ctx(ctx).
+		Fields(dao.AdminMenu.Columns().Perms).
+		Where(dao.AdminMenu.Columns().Id, parentId).
+		Scan(&parent); err != nil {
+		return "", err
+	}
+	if parent == nil {
+		return "", nil
+	}
+
+	prefix := extractPermPrefix(parent.Perms)
+	if prefix == "" {
+		return "", nil
+	}
+
+	perms := inferButtonPermsByName(prefix, name)
+	if len(perms) == 0 {
+		return "", nil
+	}
+	b, err := json.Marshal(perms)
+	if err != nil {
+		return "", err
+	}
+	return string(b), nil
+}
+
+func extractPermPrefix(raw string) string {
+	for _, item := range parsePermsForInference(raw) {
+		fields := strings.Fields(item)
+		if len(fields) != 2 || !strings.HasPrefix(fields[1], "/admin/") {
+			continue
+		}
+		return trimPermAction(fields[1])
+	}
+	return ""
+}
+
+func parsePermsForInference(raw string) []string {
+	value := strings.TrimSpace(raw)
+	if value == "" {
+		return nil
+	}
+
+	var perms []string
+	if strings.HasPrefix(value, "[") && json.Unmarshal([]byte(value), &perms) == nil {
+		return perms
+	}
+	return []string{value}
+}
+
+func trimPermAction(path string) string {
+	actions := []string{"/onlineExec", "/resetPassword", "/delete", "/export", "/detail", "/clear", "/view", "/edit", "/save", "/list"}
+	for _, action := range actions {
+		if strings.HasSuffix(path, action) {
+			return strings.TrimSuffix(path, action)
+		}
+	}
+	return path
+}
+
+func inferButtonPermsByName(prefix, name string) []string {
+	lowerName := strings.ToLower(strings.TrimSpace(name))
+	if prefix == "" || lowerName == "" {
+		return nil
+	}
+
+	saveAction := getMenuSaveAction(prefix)
+	switch {
+	case strings.Contains(lowerName, "add"):
+		return []string{"POST " + prefix + "/" + saveAction}
+	case strings.Contains(lowerName, "edit"):
+		return []string{"POST " + prefix + "/" + saveAction, "GET " + prefix + "/view"}
+	case strings.Contains(lowerName, "delete") || strings.Contains(lowerName, "batchdel"):
+		return []string{"POST " + prefix + "/delete"}
+	case strings.Contains(lowerName, "view") || strings.Contains(lowerName, "detail"):
+		return []string{"GET " + prefix + "/view"}
+	case strings.Contains(lowerName, "export"):
+		return []string{"GET " + prefix + "/export"}
+	case strings.Contains(lowerName, "resetpwd"):
+		return []string{"PUT " + prefix + "/resetPassword"}
+	case strings.Contains(lowerName, "kick"):
+		return []string{"POST " + prefix + "/kick"}
+	case strings.Contains(lowerName, "exec"):
+		return []string{"POST " + prefix + "/onlineExec"}
+	case strings.Contains(lowerName, "clear"):
+		return []string{"POST " + prefix + "/clear"}
+	default:
+		return nil
+	}
+}
+
+func getMenuSaveAction(prefix string) string {
+	savePrefixes := map[string]struct{}{
+		"/admin/member/group": {},
+		"/admin/member/menu":  {},
+		"/admin/user":         {},
+		"/admin/role":         {},
+		"/admin/dept":         {},
+		"/admin/post":         {},
+		"/admin/cron":         {},
+	}
+	if _, ok := savePrefixes[prefix]; ok {
+		return "save"
+	}
+	return "edit"
 }
 
 // validateMenuSave 业务校验

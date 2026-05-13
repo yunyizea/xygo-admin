@@ -374,6 +374,20 @@
             key: 'authSort',
             type: 'number',
             props: { min: 1, controlsPosition: 'right', style: { width: '100%' } }
+          },
+          {
+            label: createLabelTooltip(
+              '接口权限点',
+              '用于后端 API 权限校验，标准 CRUD 会自动推荐；特殊接口可手动修改，格式如：["POST /admin/demo/edit"]'
+            ),
+            key: 'perms',
+            type: 'input',
+            span: 24,
+            props: {
+              type: 'textarea',
+              rows: 2,
+              placeholder: '如：["POST /admin/member/group/save"]'
+            }
           }
         ]
       }
@@ -384,6 +398,97 @@
       const type = typeMap[form.menuType] || '菜单'
       return isEdit.value ? `编辑${type}` : `新建${type}`
     })
+
+    const lastInferredPerms = ref('')
+
+    const splitPermText = (value: string): string[] => {
+      return value
+        .split(/[\n,，]+/)
+        .map((item) => item.trim())
+        .filter(Boolean)
+    }
+
+    const parsePerms = (raw?: string): string[] => {
+      const value = (raw || '').trim()
+      if (!value) return []
+      try {
+        const parsed = JSON.parse(value)
+        return Array.isArray(parsed) ? parsed.filter(Boolean) : []
+      } catch {
+        return splitPermText(value)
+      }
+    }
+
+    const stringifyPermsForSubmit = (raw?: string): string => {
+      const perms = parsePerms(raw)
+      return perms.length ? JSON.stringify(perms) : ''
+    }
+
+    const getParentPermPrefix = (): string => {
+      const parentPerms = parsePerms(props.parentMenu?.perms || props.parentMenu?.meta?.perms)
+      const perm = parentPerms.find((item) => /^[A-Z]+\s+\/admin\//i.test(item))
+      if (!perm) return ''
+
+      const path = perm.split(/\s+/)[1] || ''
+      return path.replace(/\/(list|view|detail|edit|save|delete|export|clear|onlineExec|resetPassword)$/i, '')
+    }
+
+    const getSaveAction = (prefix: string): string => {
+      const savePrefixes = [
+        '/admin/member/group',
+        '/admin/member/menu',
+        '/admin/user',
+        '/admin/role',
+        '/admin/dept',
+        '/admin/post',
+        '/admin/cron'
+      ]
+      return savePrefixes.includes(prefix) ? 'save' : 'edit'
+    }
+
+    const inferButtonPerms = (): string => {
+      const prefix = getParentPermPrefix()
+      const name = (form.authLabel || '').trim()
+      if (!prefix || !name) return ''
+
+      const lowerName = name.toLowerCase()
+      const saveAction = getSaveAction(prefix)
+      let perms: string[] = []
+
+      if (lowerName.includes('add')) {
+        perms = [`POST ${prefix}/${saveAction}`]
+      } else if (lowerName.includes('edit')) {
+        perms = [`POST ${prefix}/${saveAction}`, `GET ${prefix}/view`]
+      } else if (lowerName.includes('delete') || lowerName.includes('batchdel')) {
+        perms = [`POST ${prefix}/delete`]
+      } else if (lowerName.includes('view') || lowerName.includes('detail')) {
+        perms = [`GET ${prefix}/view`]
+      } else if (lowerName.includes('export')) {
+        perms = [`GET ${prefix}/export`]
+      } else if (lowerName.includes('resetpwd')) {
+        perms = [`PUT ${prefix}/resetPassword`]
+      } else if (lowerName.includes('kick')) {
+        perms = [`POST ${prefix}/kick`]
+      } else if (lowerName.includes('exec')) {
+        perms = [`POST ${prefix}/onlineExec`]
+      } else if (lowerName.includes('clear')) {
+        perms = [`POST ${prefix}/clear`]
+      }
+
+      return perms.length ? JSON.stringify(perms) : ''
+    }
+
+    const refreshInferredPerms = () => {
+      if (form.menuType !== 'button' || isEdit.value) return
+
+      const inferred = inferButtonPerms()
+      if (!inferred) return
+
+      if (!form.perms || form.perms === lastInferredPerms.value) {
+        form.perms = inferred
+        lastInferredPerms.value = inferred
+      }
+    }
   
     /**
      * 是否禁用菜单类型切换
@@ -440,6 +545,7 @@
         form.isHideTab = row.meta?.isHideTab ?? false
         form.isEnable = row.meta?.isEnable ?? true
         form.link = row.meta?.link || ''
+        form.perms = row.perms || ''
         form.isIframe = row.meta?.isIframe ?? false
         form.showBadge = row.meta?.showBadge ?? false
         form.showTextBadge = row.meta?.showTextBadge || ''
@@ -455,7 +561,8 @@
         form.authSort = row.sort || 1
         form.id = row.id || 0
         form.parentId = row.parentId
-        form.perms = row.perms
+        form.perms = row.perms || ''
+        lastInferredPerms.value = ''
         form.sort = row.sort
         form.keepAlive = row.keepAlive
       }
@@ -469,7 +576,7 @@
   
       try {
         await formRef.value.validate()
-        emit('submit', { ...form })
+        emit('submit', { ...form, perms: stringifyPermsForSubmit(form.perms) })
         // 不关闭弹窗、不提示，完全由父组件控制
       } catch {
         // 表单校验失败
@@ -519,6 +626,9 @@
             form.id = 0
             form.parentId = props.parentMenu?.id || null
             form.resource = ''
+            form.perms = ''
+            lastInferredPerms.value = ''
+            refreshInferredPerms()
           }
         }
       }
@@ -534,6 +644,11 @@
           form.menuType = newType
         }
       }
+    )
+
+    watch(
+      () => [form.authLabel, props.parentMenu?.perms, props.parentMenu?.id],
+      () => refreshInferredPerms()
     )
   </script>
   
