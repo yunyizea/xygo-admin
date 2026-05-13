@@ -103,44 +103,28 @@ WHERE key = 'config_group'
   AND value IS NOT NULL
   AND NOT (value::jsonb @> '[{"group":"sms"}]'::jsonb);
 
-INSERT INTO xy_sys_config ("group", group_name, name, key, value, type, options, rules, sort, remark, allow_del, created_by, updated_by, create_time, update_time)
-VALUES ('sms', '短信配置', '发送超时（秒）', 'sms_timeout', '5', 'number', NULL, '{"required": true}', 10, '短信发送超时时间', 0, 0, 0, 0, 0)
-ON CONFLICT (key) DO NOTHING;
-
-INSERT INTO xy_sys_config ("group", group_name, name, key, value, type, options, rules, sort, remark, allow_del, created_by, updated_by, create_time, update_time)
-VALUES ('sms', '短信配置', '发送策略', 'sms_strategy', 'weight', 'select', '{"options": [{"label": "按权重", "value": "weight"}, {"label": "随机", "value": "random"}]}', '{"required": true}', 20, '多驱动时的选择策略', 0, 0, 0, 0, 0)
-ON CONFLICT (key) DO NOTHING;
-
-INSERT INTO xy_sys_config ("group", group_name, name, key, value, type, options, rules, sort, remark, allow_del, created_by, updated_by, create_time, update_time)
-VALUES ('sms', '短信配置', '启用的服务商', 'sms_enabled_drivers', '', 'selects', '{"options": [{"label": "阿里云", "value": "aliyun"}, {"label": "腾讯云", "value": "tencent"}]}', NULL, 30, '可多选，逗号分隔', 0, 0, 0, 0, 0)
-ON CONFLICT (key) DO NOTHING;
-
-INSERT INTO xy_sys_config ("group", group_name, name, key, value, type, options, rules, sort, remark, allow_del, created_by, updated_by, create_time, update_time)
-VALUES ('sms', '短信配置', '阿里云 AccessKey ID', 'sms_aliyun_access_key_id', '', 'text', NULL, NULL, 100, '', 0, 0, 0, 0, 0)
-ON CONFLICT (key) DO NOTHING;
-
-INSERT INTO xy_sys_config ("group", group_name, name, key, value, type, options, rules, sort, remark, allow_del, created_by, updated_by, create_time, update_time)
-VALUES ('sms', '短信配置', '阿里云 AccessKey Secret', 'sms_aliyun_access_key_secret', '', 'password', NULL, NULL, 110, '', 0, 0, 0, 0, 0)
-ON CONFLICT (key) DO NOTHING;
-
-INSERT INTO xy_sys_config ("group", group_name, name, key, value, type, options, rules, sort, remark, allow_del, created_by, updated_by, create_time, update_time)
-VALUES ('sms', '短信配置', '阿里云短信签名', 'sms_aliyun_sign_name', '', 'text', NULL, NULL, 120, '在阿里云控制台申请的签名', 0, 0, 0, 0, 0)
-ON CONFLICT (key) DO NOTHING;
-
-INSERT INTO xy_sys_config ("group", group_name, name, key, value, type, options, rules, sort, remark, allow_del, created_by, updated_by, create_time, update_time)
-VALUES ('sms', '短信配置', '腾讯云 SecretId', 'sms_tencent_secret_id', '', 'text', NULL, NULL, 200, '', 0, 0, 0, 0, 0)
-ON CONFLICT (key) DO NOTHING;
-
-INSERT INTO xy_sys_config ("group", group_name, name, key, value, type, options, rules, sort, remark, allow_del, created_by, updated_by, create_time, update_time)
-VALUES ('sms', '短信配置', '腾讯云 SecretKey', 'sms_tencent_secret_key', '', 'password', NULL, NULL, 210, '', 0, 0, 0, 0, 0)
-ON CONFLICT (key) DO NOTHING;
-
-INSERT INTO xy_sys_config ("group", group_name, name, key, value, type, options, rules, sort, remark, allow_del, created_by, updated_by, create_time, update_time)
-VALUES ('sms', '短信配置', '腾讯云 AppId', 'sms_tencent_app_id', '', 'text', NULL, NULL, 220, '腾讯云短信应用 SDK AppID', 0, 0, 0, 0, 0)
-ON CONFLICT (key) DO NOTHING;
-
-INSERT INTO xy_sys_config ("group", group_name, name, key, value, type, options, rules, sort, remark, allow_del, created_by, updated_by, create_time, update_time)
-VALUES ('sms', '短信配置', '腾讯云短信签名', 'sms_tencent_sign_name', '', 'text', NULL, NULL, 230, '在腾讯云控制台申请的签名', 0, 0, 0, 0, 0)
+WITH rows(group_name, name, key, value, type, options, rules, sort, remark) AS (
+    VALUES
+    ('短信配置', '发送超时（秒）', 'sms_timeout', '5', 'number', NULL::jsonb, '{"required": true}'::jsonb, 10, '短信发送超时时间'),
+    ('短信配置', '发送策略', 'sms_strategy', 'weight', 'select', '{"options": [{"label": "按权重", "value": "weight"}, {"label": "随机", "value": "random"}]}'::jsonb, '{"required": true}'::jsonb, 20, '多驱动时的选择策略'),
+    ('短信配置', '启用的服务商', 'sms_enabled_drivers', '', 'selects', '{"options": [{"label": "阿里云", "value": "aliyun"}, {"label": "腾讯云", "value": "tencent"}]}'::jsonb, NULL::jsonb, 30, '可多选，逗号分隔'),
+    ('短信配置', '阿里云 AccessKey ID', 'sms_aliyun_access_key_id', '', 'text', NULL::jsonb, NULL::jsonb, 100, ''),
+    ('短信配置', '阿里云 AccessKey Secret', 'sms_aliyun_access_key_secret', '', 'password', NULL::jsonb, NULL::jsonb, 110, ''),
+    ('短信配置', '阿里云短信签名', 'sms_aliyun_sign_name', '', 'text', NULL::jsonb, NULL::jsonb, 120, '在阿里云控制台申请的签名'),
+    ('短信配置', '腾讯云 SecretId', 'sms_tencent_secret_id', '', 'text', NULL::jsonb, NULL::jsonb, 200, ''),
+    ('短信配置', '腾讯云 SecretKey', 'sms_tencent_secret_key', '', 'password', NULL::jsonb, NULL::jsonb, 210, ''),
+    ('短信配置', '腾讯云 AppId', 'sms_tencent_app_id', '', 'text', NULL::jsonb, NULL::jsonb, 220, '腾讯云短信应用 SDK AppID'),
+    ('短信配置', '腾讯云短信签名', 'sms_tencent_sign_name', '', 'text', NULL::jsonb, NULL::jsonb, 230, '在腾讯云控制台申请的签名')
+),
+base AS (
+    SELECT COALESCE(MAX(id), 0) AS max_id FROM xy_sys_config
+),
+numbered AS (
+    SELECT row_number() OVER (ORDER BY sort, key) AS rn, rows.* FROM rows
+)
+INSERT INTO xy_sys_config (id, "group", group_name, name, key, value, type, options, rules, sort, remark, allow_del, created_by, updated_by, create_time, update_time)
+SELECT base.max_id + numbered.rn, 'sms', numbered.group_name, numbered.name, numbered.key, numbered.value, numbered.type, numbered.options, numbered.rules, numbered.sort, numbered.remark, 0, 0, 0, 0, 0
+FROM numbered CROSS JOIN base
 ON CONFLICT (key) DO NOTHING;
 
 INSERT INTO xy_sms_template (title, code, content, provider_template_id, variables, status, sort, remark, created_by, updated_by, create_time, update_time)
