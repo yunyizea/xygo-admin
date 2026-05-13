@@ -63,6 +63,16 @@ CREATE TABLE IF NOT EXISTS `xy_sms_log` (
 
 
 -- ============================================================
+-- 将 sms 分组追加到 config_group JSON（如果尚未包含）
+-- ============================================================
+UPDATE xy_sys_config
+SET value = JSON_ARRAY_APPEND(value, '$', JSON_OBJECT('group','sms','groupName','短信配置','icon','ri:smartphone-line','description','配置短信接口','sort',40)),
+    update_time = UNIX_TIMESTAMP()
+WHERE `key` = 'config_group'
+  AND NOT JSON_CONTAINS(value, '{"group":"sms"}');
+
+
+-- ============================================================
 -- sys_config 配置数据（短信配置组）
 -- ============================================================
 INSERT IGNORE INTO `xy_sys_config` (`group`, `group_name`, `name`, `key`, `value`, `type`, `options`, `rules`, `sort`, `remark`, `allow_del`, `created_by`, `updated_by`, `create_time`, `update_time`)

@@ -105,6 +105,16 @@ CREATE INDEX IF NOT EXISTS idx_sms_log_create_time ON xy_sms_log (create_time);
 
 
 -- ============================================================
+-- 将 sms 分组追加到 config_group JSON（如果尚未包含）
+-- ============================================================
+UPDATE xy_sys_config
+SET value = value::jsonb || '[{"group":"sms","groupName":"短信配置","icon":"ri:smartphone-line","description":"配置短信接口","sort":40}]'::jsonb,
+    update_time = EXTRACT(EPOCH FROM NOW())::bigint
+WHERE key = 'config_group'
+  AND NOT (value::jsonb @> '[{"group":"sms"}]'::jsonb);
+
+
+-- ============================================================
 -- sys_config 配置数据（短信配置组）
 -- 逐条 INSERT，ON CONFLICT (key) DO NOTHING 防重复
 -- ============================================================

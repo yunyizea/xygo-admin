@@ -240,6 +240,9 @@ func (s *sSms) VariableList(ctx context.Context, in *adminin.SmsVariableListInp)
 	if in.Name != "" {
 		m = m.WhereLike("name", "%"+in.Name+"%")
 	}
+	if in.Status >= 0 {
+		m = m.Where("status", in.Status)
+	}
 
 	total, err := m.Count()
 	if err != nil {

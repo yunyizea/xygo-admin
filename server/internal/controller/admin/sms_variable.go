@@ -10,7 +10,7 @@ import (
 
 func (c *ControllerV1) SmsVariableList(ctx context.Context, req *api.SmsVariableListReq) (res *api.SmsVariableListRes, err error) {
 	model, err := service.Sms().VariableList(ctx, &adminin.SmsVariableListInp{
-		Page: req.Page, Size: req.Size, Name: req.Name,
+		Page: req.Page, Size: req.Size, Name: req.Name, Status: req.Status,
 	})
 	if err != nil {
 		return nil, err

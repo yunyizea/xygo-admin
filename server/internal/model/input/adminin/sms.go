@@ -59,9 +59,10 @@ type SmsTemplateTestModel struct {
 // ==================== 短信变量 ====================
 
 type SmsVariableListInp struct {
-	Page int
-	Size int
-	Name string
+	Page   int
+	Size   int
+	Name   string
+	Status int
 }
 
 type SmsVariableListModel struct {

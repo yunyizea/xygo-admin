@@ -13,6 +13,7 @@ type SmsVariableListReq struct {
 	Page   int    `p:"page" json:"page" d:"1"`
 	Size   int    `p:"size" json:"size" d:"20"`
 	Name   string `p:"name" json:"name" dc:"变量名关键词"`
+	Status int    `p:"status" json:"status" d:"-1" dc:"状态：-1=全部 0=禁用 1=启用"`
 }
 
 type SmsVariableListRes struct {
