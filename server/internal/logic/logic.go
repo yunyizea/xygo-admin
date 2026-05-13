@@ -20,6 +20,7 @@ import (
 	_ "xygo/internal/logic/monitor"
 	_ "xygo/internal/logic/notice"
 	_ "xygo/internal/logic/post"
+	_ "xygo/internal/logic/sms"
 	_ "xygo/internal/logic/sysconfig"
 	_ "xygo/internal/logic/user"
 	_ "xygo/internal/logic/wm"

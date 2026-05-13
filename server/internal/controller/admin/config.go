@@ -22,6 +22,7 @@ import (
 	api "xygo/api/admin"
 	"xygo/internal/consts"
 	"xygo/internal/dao"
+	smsLogic "xygo/internal/logic/sms"
 	"xygo/internal/model/do"
 	"xygo/internal/model/entity"
 	"xygo/internal/model/input/adminin"
@@ -161,6 +162,9 @@ func (c *ControllerV1) ConfigSave(ctx context.Context, req *api.ConfigSaveReq) (
 
 	// 刷新缓存
 	// 无缓存模式，保存后无需清理，后续读取直接查库
+
+	// 通知各模块配置变更（如 sms 分组变更后重置驱动单例）
+	smsLogic.OnConfigChanged(req.Group)
 
 	res = &api.ConfigSaveRes{}
 	return
