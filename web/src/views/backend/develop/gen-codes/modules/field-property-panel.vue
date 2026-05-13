@@ -312,13 +312,31 @@
   }
 
   // 从注释解析字典选项（如 "状态:0=成功,1=失败" -> [{key:'0',label:'成功'},{key:'1',label:'失败'}]）
+  // 兼容空格分隔写法："状态:1=待审核 2=审核通过" -> 自动转逗号，与后端 parseRadioOptions 对齐
   const parseCommentOptions = (comment: string): { key: string; label: string }[] => {
     if (!comment) return []
-    const normalized = comment.replace(/，/g, ',').replace(/：/g, ':').replace(/；/g, ';')
-    if (!normalized.includes(':') || !normalized.includes(',') || !normalized.includes('=')) return []
-    const idx = normalized.indexOf(':')
-    if (idx < 0 || idx + 1 >= normalized.length) return []
-    const items = normalized.substring(idx + 1).split(',')
+    let normalized = comment.replace(/，/g, ',').replace(/：/g, ':').replace(/；/g, ';')
+    if (!normalized.includes(':') || !normalized.includes('=')) return []
+    const ci = normalized.indexOf(':')
+    if (ci < 0 || ci + 1 >= normalized.length) return []
+    const before = normalized.substring(0, ci + 1)
+    const after = normalized.substring(ci + 1)
+    let result = ''
+    for (let i = 0; i < after.length; i++) {
+      if (after[i] === ' ') {
+        let j = i + 1
+        while (j < after.length && after[j] === ' ') j++
+        if (j < after.length && after[j] !== '=') {
+          result += ','
+          i = j - 1
+          continue
+        }
+      }
+      result += after[i]
+    }
+    normalized = before + result
+    if (!normalized.includes(',')) return []
+    const items = normalized.substring(ci + 1).split(',')
     const opts: { key: string; label: string }[] = []
     for (const item of items) {
       const eqIdx = item.trim().indexOf('=')

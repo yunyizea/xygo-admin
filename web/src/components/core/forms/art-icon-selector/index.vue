@@ -61,11 +61,25 @@
           </div>
           
           <ElRadioGroup v-if="!showCustomInput" v-model="currentCategory" class="category-tabs" size="default">
-            <ElRadioButton label="all">全部</ElRadioButton>
-            <ElRadioButton label="awe">Awesome</ElRadioButton>
-            <ElRadioButton label="ali">Ali</ElRadioButton>
-            <ElRadioButton label="local">本地</ElRadioButton>
+            <ElRadioButton value="local">Remix</ElRadioButton>
+            <ElRadioButton value="mdi">Material</ElRadioButton>
+            <ElRadioButton value="awe">Awesome</ElRadioButton>
+            <ElRadioButton value="ali">Ant Design</ElRadioButton>
           </ElRadioGroup>
+
+          <div v-if="!showCustomInput" class="sub-category-bar">
+            <ElSelect v-if="subCategories.length > 1" v-model="currentSubCategory" size="small" placeholder="全部分类" style="width: 180px;">
+              <ElOption label="全部分类" value="all" />
+              <ElOption v-for="cat in subCategories" :key="cat" :label="cat" :value="cat" />
+            </ElSelect>
+            <span v-else />
+            <span class="icon-stats">
+              <span class="icon-count">共 {{ filteredIcons.length }} 个</span>
+              <ElButton v-if="hasMore" type="primary" link size="small" @click="displayLimit = filteredIcons.length">
+                显示全部（当前 {{ displayLimit }}）
+              </ElButton>
+            </span>
+          </div>
 
           <!-- 自定义输入区域 -->
           <div v-if="showCustomInput" class="custom-input-area">
@@ -91,20 +105,27 @@
 
         <!-- 图标列表 -->
         <div v-if="!showCustomInput" class="icon-list-wrapper">
-          <ElScrollbar height="500px">
-            <div v-if="filteredIcons.length > 0" class="icon-list">
+          <div v-if="iconLoading" class="loading-state">
+            <ArtSvgIcon icon="svg-spinners:3-dots-fade" :size="32" class="text-theme" />
+            <span>正在加载图标库...</span>
+          </div>
+          <ElScrollbar v-else height="420px">
+            <div v-if="displayIcons.length > 0" class="icon-list">
               <div
-                v-for="icon in filteredIcons"
+                v-for="icon in displayIcons"
                 :key="icon"
                 class="icon-item"
                 :class="{ active: tempSelectedIcon === icon }"
                 @click="handleSelectIcon(icon)"
               >
                 <ArtSvgIcon :icon="icon" :size="24" />
-                <div class="icon-name">{{ icon }}</div>
+                <div class="icon-name">{{ formatIconName(icon) }}</div>
               </div>
             </div>
-            <ElEmpty v-else description="未找到匹配的图标" :image-size="120" />
+            <div v-if="hasMore" class="load-more" @click="displayLimit += 500">
+              点击加载更多（剩余 {{ filteredIcons.length - displayLimit }} 个）
+            </div>
+            <ElEmpty v-if="!iconLoading && displayIcons.length === 0" description="未找到匹配的图标" :image-size="120" />
           </ElScrollbar>
         </div>
 
@@ -154,6 +175,11 @@
 
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
+import { addCollection } from '@iconify/vue'
+import riData from '@iconify-json/ri/icons.json'
+import fa6Data from '@iconify-json/fa6-solid/icons.json'
+import antData from '@iconify-json/ant-design/icons.json'
+import mdiData from '@iconify-json/mdi/icons.json'
 
 defineOptions({ name: 'ArtIconSelector' })
 
@@ -174,279 +200,102 @@ const emit = defineEmits<{
 
 const showDialog = ref(false)
 const searchText = ref('')
-const currentCategory = ref('all')
+const currentCategory = ref('local')
 const tempSelectedIcon = ref('')
 const showCustomInput = ref(false)
 const customIconName = ref('')
+const currentSubCategory = ref('all')
+const displayLimit = ref(500)
 
-// 图标库数据 - Remix Icon 常用图标
-const remixIcons = [
-  // 系统图标
-  'ri:home-line',
-  'ri:home-fill',
-  'ri:dashboard-line',
-  'ri:dashboard-fill',
-  'ri:settings-3-line',
-  'ri:settings-3-fill',
-  'ri:menu-line',
-  'ri:menu-fill',
-  'ri:close-line',
-  'ri:close-fill',
-  'ri:search-line',
-  'ri:search-fill',
-  'ri:add-line',
-  'ri:add-fill',
-  'ri:subtract-line',
-  'ri:subtract-fill',
-  'ri:delete-bin-line',
-  'ri:delete-bin-fill',
-  'ri:edit-line',
-  'ri:edit-fill',
-  'ri:save-line',
-  'ri:save-fill',
-  'ri:download-line',
-  'ri:download-fill',
-  'ri:upload-line',
-  'ri:upload-fill',
-  'ri:refresh-line',
-  'ri:refresh-fill',
-  'ri:loader-line',
-  'ri:loader-fill',
-  
-  // 箭头图标
-  'ri:arrow-up-line',
-  'ri:arrow-down-line',
-  'ri:arrow-left-line',
-  'ri:arrow-right-line',
-  'ri:arrow-up-circle-line',
-  'ri:arrow-down-circle-line',
-  'ri:arrow-left-circle-line',
-  'ri:arrow-right-circle-line',
-  
-  // 用户相关
-  'ri:user-line',
-  'ri:user-fill',
-  'ri:user-add-line',
-  'ri:user-add-fill',
-  'ri:user-settings-line',
-  'ri:user-settings-fill',
-  'ri:team-line',
-  'ri:team-fill',
-  'ri:account-circle-line',
-  'ri:account-circle-fill',
-  'ri:admin-line',
-  'ri:admin-fill',
-  
-  // 文件图标
-  'ri:file-line',
-  'ri:file-fill',
-  'ri:file-text-line',
-  'ri:file-text-fill',
-  'ri:file-list-line',
-  'ri:file-list-fill',
-  'ri:folder-line',
-  'ri:folder-fill',
-  'ri:folder-open-line',
-  'ri:folder-open-fill',
-  'ri:file-copy-line',
-  'ri:file-copy-fill',
-  
-  // 消息通知
-  'ri:notification-line',
-  'ri:notification-fill',
-  'ri:message-line',
-  'ri:message-fill',
-  'ri:mail-line',
-  'ri:mail-fill',
-  'ri:chat-1-line',
-  'ri:chat-1-fill',
-  'ri:chat-3-line',
-  'ri:chat-3-fill',
-  'ri:feedback-line',
-  'ri:feedback-fill',
-  
-  // 状态图标
-  'ri:checkbox-circle-line',
-  'ri:checkbox-circle-fill',
-  'ri:close-circle-line',
-  'ri:close-circle-fill',
-  'ri:error-warning-line',
-  'ri:error-warning-fill',
-  'ri:information-line',
-  'ri:information-fill',
-  'ri:question-line',
-  'ri:question-fill',
-  'ri:alert-line',
-  'ri:alert-fill',
-  
-  // 媒体图标
-  'ri:image-line',
-  'ri:image-fill',
-  'ri:image-add-line',
-  'ri:image-add-fill',
-  'ri:video-line',
-  'ri:video-fill',
-  'ri:camera-line',
-  'ri:camera-fill',
-  'ri:play-line',
-  'ri:play-fill',
-  'ri:pause-line',
-  'ri:pause-fill',
-  
-  // 商业图标
-  'ri:shopping-cart-line',
-  'ri:shopping-cart-fill',
-  'ri:shopping-bag-line',
-  'ri:shopping-bag-fill',
-  'ri:store-line',
-  'ri:store-fill',
-  'ri:bank-card-line',
-  'ri:bank-card-fill',
-  'ri:money-dollar-circle-line',
-  'ri:money-dollar-circle-fill',
-  'ri:wallet-line',
-  'ri:wallet-fill',
-  
-  // 工具图标
-  'ri:lock-line',
-  'ri:lock-fill',
-  'ri:lock-unlock-line',
-  'ri:lock-unlock-fill',
-  'ri:key-line',
-  'ri:key-fill',
-  'ri:shield-line',
-  'ri:shield-fill',
-  'ri:eye-line',
-  'ri:eye-fill',
-  'ri:eye-off-line',
-  'ri:eye-off-fill',
-  
-  // 时间日期
-  'ri:calendar-line',
-  'ri:calendar-fill',
-  'ri:calendar-event-line',
-  'ri:calendar-event-fill',
-  'ri:time-line',
-  'ri:time-fill',
-  'ri:timer-line',
-  'ri:timer-fill',
-  
-  // 社交图标
-  'ri:wechat-line',
-  'ri:wechat-fill',
-  'ri:qq-line',
-  'ri:qq-fill',
-  'ri:github-line',
-  'ri:github-fill',
-  'ri:twitter-line',
-  'ri:twitter-fill',
-  'ri:facebook-line',
-  'ri:facebook-fill',
-  
-  // 其他
-  'ri:star-line',
-  'ri:star-fill',
-  'ri:heart-line',
-  'ri:heart-fill',
-  'ri:thumb-up-line',
-  'ri:thumb-up-fill',
-  'ri:bookmark-line',
-  'ri:bookmark-fill',
-  'ri:flag-line',
-  'ri:flag-fill',
-  'ri:link-line',
-  'ri:link-fill',
-  'ri:external-link-line',
-  'ri:external-link-fill',
-  'ri:code-line',
-  'ri:code-fill',
-  'ri:terminal-line',
-  'ri:terminal-fill',
-  'ri:bug-line',
-  'ri:bug-fill',
-  'ri:copyright-line',
-  'ri:copyright-fill',
-  'ri:gift-line',
-  'ri:gift-fill',
-  'ri:trophy-line',
-  'ri:trophy-fill',
-  'ri:fire-line',
-  'ri:fire-fill',
-  'ri:flashlight-line',
-  'ri:flashlight-fill',
-  'ri:lightbulb-line',
-  'ri:lightbulb-fill',
-  
-  // 地图导航
-  'ri:map-pin-line',
-  'ri:map-pin-fill',
-  'ri:map-line',
-  'ri:map-fill',
-  'ri:navigation-line',
-  'ri:navigation-fill',
-  'ri:compass-line',
-  'ri:compass-fill',
-  'ri:global-line',
-  'ri:global-fill',
-  
-  // 设备
-  'ri:smartphone-line',
-  'ri:smartphone-fill',
-  'ri:computer-line',
-  'ri:computer-fill',
-  'ri:tablet-line',
-  'ri:tablet-fill',
-  'ri:tv-line',
-  'ri:tv-fill',
-  'ri:printer-line',
-  'ri:printer-fill',
-  
-  // 网络
-  'ri:wifi-line',
-  'ri:wifi-fill',
-  'ri:signal-wifi-line',
-  'ri:signal-wifi-fill',
-  'ri:cloud-line',
-  'ri:cloud-fill',
-  'ri:upload-cloud-line',
-  'ri:upload-cloud-fill',
-  'ri:download-cloud-line',
-  'ri:download-cloud-fill',
-  
-  // 编辑器
-  'ri:bold',
-  'ri:italic',
-  'ri:underline',
-  'ri:font-size',
-  'ri:font-color',
-  'ri:align-left',
-  'ri:align-center',
-  'ri:align-right',
-  'ri:list-unordered',
-  'ri:list-ordered',
-  'ri:indent-increase',
-  'ri:indent-decrease',
-  'ri:table-line',
-  'ri:table-fill'
-]
+// 注册图标集到本地（离线可用）
+addCollection(riData as any)
+addCollection(fa6Data as any)
+addCollection(antData as any)
+addCollection(mdiData as any)
 
-// 根据分类过滤图标
+interface IconSetData {
+  prefix: string
+  categories: Record<string, string[]>
+  allIcons: string[]
+}
+
+function parseIconSet(data: any): IconSetData {
+  const prefix = data.prefix as string
+  const names = Object.keys(data.icons)
+  const result: IconSetData = { prefix, categories: {}, allIcons: [] }
+
+  if (data.categories) {
+    const categorized = new Set<string>()
+    for (const [cat, items] of Object.entries(data.categories)) {
+      const prefixed = (items as string[]).map(n => `${prefix}:${n}`)
+      result.categories[cat] = prefixed
+      ;(items as string[]).forEach(n => categorized.add(n))
+    }
+    result.allIcons = names.map(n => `${prefix}:${n}`)
+  } else {
+    result.allIcons = names.map(n => `${prefix}:${n}`)
+  }
+  return result
+}
+
+const iconSetsMap: Record<string, IconSetData> = {
+  local: parseIconSet(riData),
+  mdi: parseIconSet(mdiData),
+  awe: parseIconSet(fa6Data),
+  ali: parseIconSet(antData),
+}
+
+const subCategories = computed(() => {
+  const data = iconSetsMap[currentCategory.value]
+  return data ? Object.keys(data.categories) : []
+})
+
 const filteredIcons = computed(() => {
-  let icons = remixIcons
-  
-  // 根据搜索文本过滤
+  const data = iconSetsMap[currentCategory.value]
+  if (!data) return []
+  let icons: string[]
+  if (currentSubCategory.value !== 'all' && data.categories[currentSubCategory.value]) {
+    icons = data.categories[currentSubCategory.value]
+  } else {
+    icons = data.allIcons
+  }
   if (searchText.value) {
-    const search = searchText.value.toLowerCase()
-    icons = icons.filter(icon => icon.toLowerCase().includes(search))
+    const s = searchText.value.toLowerCase()
+    icons = icons.filter(i => i.toLowerCase().includes(s))
   }
-  
-  // 根据分类过滤
-  if (currentCategory.value !== 'all') {
-    // 这里可以根据实际情况添加分类过滤逻辑
-    // 目前所有图标都是 remix icon
-  }
-  
   return icons
+})
+
+const displayIcons = computed(() => filteredIcons.value.slice(0, displayLimit.value))
+const hasMore = computed(() => filteredIcons.value.length > displayLimit.value)
+const iconLoading = ref(false)
+
+function formatIconName(icon: string): string {
+  const idx = icon.indexOf(':')
+  return idx >= 0 ? icon.substring(idx + 1) : icon
+}
+
+// 根据图标集大小决定初始显示量
+function getDefaultLimit(key: string): number {
+  const total = iconSetsMap[key]?.allIcons.length || 0
+  return total <= 1000 ? total : 500
+}
+
+// 切换 Tab 时重置分类和分页
+watch(currentCategory, (val) => {
+  currentSubCategory.value = 'all'
+  displayLimit.value = getDefaultLimit(val)
+  searchText.value = ''
+})
+
+// 切换子分类时重置分页
+watch(currentSubCategory, () => {
+  displayLimit.value = getDefaultLimit(currentCategory.value)
+})
+
+// 搜索时显示全部匹配结果
+watch(searchText, () => {
+  displayLimit.value = 9999
 })
 
 // 监听弹窗打开，同步当前值
@@ -455,6 +304,7 @@ watch(showDialog, (val) => {
     tempSelectedIcon.value = props.modelValue
     customIconName.value = props.modelValue
     showCustomInput.value = false
+    displayLimit.value = getDefaultLimit(currentCategory.value)
   }
 })
 
@@ -526,7 +376,8 @@ const handleClear = () => {
 .icon-selector-content {
   display: flex;
   flex-direction: column;
-  height: 600px;
+  max-height: 600px;
+  overflow: hidden;
 }
 
 .selector-header {
@@ -553,6 +404,24 @@ const handleClear = () => {
     }
   }
 
+  .sub-category-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 12px;
+
+    .icon-stats {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .icon-count {
+      font-size: 12px;
+      color: var(--art-gray-500);
+    }
+  }
+
   .custom-input-area {
     margin-top: 16px;
     
@@ -571,6 +440,36 @@ const handleClear = () => {
         }
       }
     }
+  }
+}
+
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 300px;
+  gap: 16px;
+  color: var(--art-gray-500);
+  font-size: 14px;
+}
+
+.load-more {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  margin-top: 12px;
+  font-size: 13px;
+  color: var(--theme-color);
+  cursor: pointer;
+  border: 1px dashed var(--art-gray-300);
+  border-radius: 8px;
+  transition: all 0.2s;
+
+  &:hover {
+    background: var(--theme-color-alpha-5);
+    border-color: var(--theme-color);
   }
 }
 
