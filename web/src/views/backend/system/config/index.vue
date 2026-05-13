@@ -554,6 +554,11 @@ const subTabDefs: Record<string, Array<{ key: string; label: string; prefixes: s
     { key: 'tencent', label: '腾讯云 COS', prefixes: ['oss_cos_'] },
     { key: 'qiniu', label: '七牛云', prefixes: ['oss_qiniu_'] },
   ],
+  sms: [
+    { key: 'general', label: '基础配置', prefixes: ['sms_timeout', 'sms_strategy', 'sms_enabled_drivers'] },
+    { key: 'aliyun', label: '阿里云短信', prefixes: ['sms_aliyun_'] },
+    { key: 'tencent', label: '腾讯云短信', prefixes: ['sms_tencent_'] },
+  ],
 }
 
 const hasSubTabs = computed(() => !!subTabDefs[selectedGroup.value])

@@ -5,7 +5,7 @@
     <ElCard class="art-table-card" shadow="never">
       <ArtTableHeader v-model:columns="columnChecks" :loading="loading" @refresh="refreshData">
         <template #left>
-          <ElButton type="primary" @click="showDialog('add')" v-ripple>
+          <ElButton type="primary" @click="showDialog('add')" v-ripple v-auth="'edit'">
             <ArtSvgIcon icon="ri:add-line" class="text-sm mr-1" />
             新增变量
           </ElButton>
@@ -58,12 +58,15 @@
 
 <script setup lang="ts">
   import { useTable } from '@/hooks/core/useTable'
+  import { useAuth } from '@/hooks/core/useAuth'
   import { fetchSmsVariableList, fetchSmsVariableSave, fetchSmsVariableDelete } from '@/api/backend/system/sms'
   import ArtButtonTable from '@/components/core/forms/art-button-table/index.vue'
   import ArtSvgIcon from '@/components/core/base/art-svg-icon/index.vue'
   import { ElTag, ElMessageBox } from 'element-plus'
   import type { FormInstance, FormRules } from 'element-plus'
   import { formatTimestamp } from '@/utils/time'
+
+  const { hasAuth } = useAuth()
 
   defineOptions({ name: 'SmsVariableManage' })
 
@@ -97,8 +100,8 @@
         {
           prop: 'operation', label: '操作', width: 140, fixed: 'right',
           formatter: (row: any) => h('div', { class: 'flex items-center gap-1' }, [
-            h(ArtButtonTable, { type: 'edit', onClick: () => showDialog('edit', row) }),
-            h(ArtButtonTable, { type: 'delete', onClick: () => handleDelete(row) })
+            hasAuth('edit') ? h(ArtButtonTable, { type: 'edit', onClick: () => showDialog('edit', row) }) : null,
+            hasAuth('delete') ? h(ArtButtonTable, { type: 'delete', onClick: () => handleDelete(row) }) : null
           ])
         }
       ]

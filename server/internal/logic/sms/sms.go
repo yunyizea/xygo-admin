@@ -182,17 +182,36 @@ func (s *sSms) buildTestParams(tpl entity.SmsTemplate) (map[string]string, []str
 	}
 
 	for i, name := range varNames {
-		testVal := fmt.Sprintf("test%d", i+1)
+		testVal := guessTestValue(name, i)
 		params[name] = testVal
 		paramList = append(paramList, testVal)
 	}
 
-	// 如果完全没有变量，也给一个空 map（避免 nil）
 	if len(params) == 0 {
 		params = nil
 	}
 
 	return params, paramList
+}
+
+// guessTestValue 根据变量名猜测合理的测试值
+// 腾讯云验证码模板要求参数为纯数字，不能传 "test1" 这样的字符串
+func guessTestValue(name string, idx int) string {
+	n := strings.ToLower(name)
+	switch {
+	case strings.Contains(n, "code") || strings.Contains(n, "captcha"):
+		return "888666"
+	case strings.Contains(n, "minute") || strings.Contains(n, "expire") || strings.Contains(n, "time"):
+		return "5"
+	case strings.Contains(n, "amount") || strings.Contains(n, "money") || strings.Contains(n, "price"):
+		return "100"
+	case strings.Contains(n, "name") || strings.Contains(n, "site"):
+		return "XYGo"
+	case strings.Contains(n, "phone") || strings.Contains(n, "mobile"):
+		return "13800138000"
+	default:
+		return fmt.Sprintf("%d", idx+1)
+	}
 }
 
 func (s *sSms) saveLog(ctx context.Context, phone, code, content string, result *smsDrv.SendResult) {

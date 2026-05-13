@@ -71,9 +71,31 @@ VALUES
 ('sms', '短信配置', '发送策略', 'sms_strategy', 'weight', 'select', '{"options": [{"label": "按权重", "value": "weight"}, {"label": "随机", "value": "random"}]}', '{"required": true}', 20, '多驱动时的选择策略', 0, 0, 0, 0, 0),
 ('sms', '短信配置', '启用的服务商', 'sms_enabled_drivers', '', 'selects', '{"options": [{"label": "阿里云", "value": "aliyun"}, {"label": "腾讯云", "value": "tencent"}]}', NULL, 30, '可多选，逗号分隔', 0, 0, 0, 0, 0),
 ('sms', '短信配置', '阿里云 AccessKey ID', 'sms_aliyun_access_key_id', '', 'text', NULL, NULL, 100, '', 0, 0, 0, 0, 0),
-('sms', '短信配置', '阿里云 AccessKey Secret', 'sms_aliyun_access_key_secret', '', 'text', NULL, NULL, 110, '', 0, 0, 0, 0, 0),
+('sms', '短信配置', '阿里云 AccessKey Secret', 'sms_aliyun_access_key_secret', '', 'password', NULL, NULL, 110, '', 0, 0, 0, 0, 0),
 ('sms', '短信配置', '阿里云短信签名', 'sms_aliyun_sign_name', '', 'text', NULL, NULL, 120, '在阿里云控制台申请的签名', 0, 0, 0, 0, 0),
 ('sms', '短信配置', '腾讯云 SecretId', 'sms_tencent_secret_id', '', 'text', NULL, NULL, 200, '', 0, 0, 0, 0, 0),
-('sms', '短信配置', '腾讯云 SecretKey', 'sms_tencent_secret_key', '', 'text', NULL, NULL, 210, '', 0, 0, 0, 0, 0),
+('sms', '短信配置', '腾讯云 SecretKey', 'sms_tencent_secret_key', '', 'password', NULL, NULL, 210, '', 0, 0, 0, 0, 0),
 ('sms', '短信配置', '腾讯云 AppId', 'sms_tencent_app_id', '', 'text', NULL, NULL, 220, '腾讯云短信应用 SDK AppID', 0, 0, 0, 0, 0),
 ('sms', '短信配置', '腾讯云短信签名', 'sms_tencent_sign_name', '', 'text', NULL, NULL, 230, '在腾讯云控制台申请的签名', 0, 0, 0, 0, 0);
+
+
+-- ============================================================
+-- 短信模板初始数据
+-- ============================================================
+INSERT IGNORE INTO `xy_sms_template` (`title`, `code`, `content`, `provider_template_id`, `variables`, `status`, `sort`, `remark`, `created_by`, `updated_by`, `create_time`, `update_time`)
+VALUES
+('用户注册', 'user_register', '{1}为您的登录验证码，请于{2}分钟内填写，如非本人操作，请忽略本短信。', '2627353', '["code", "expire_minutes"]', 1, 10, '', 0, 0, UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+('登录验证', 'user_login', '{1}为您的登录验证码，请于{2}分钟内填写，如非本人操作，请忽略本短信。', '2627353', '["code", "expire_minutes"]', 1, 20, '', 0, 0, UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+('修改密码', 'reset_password', '【${site_name}】您正在修改密码，验证码为：${code}，有效期${expire_minutes}分钟。如非本人操作，请立即修改密码。', '', '["code", "expire_minutes", "site_name"]', 1, 30, '', 0, 0, UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+('订单通知', 'order_notify', '【${site_name}】您的订单已提交成功，请保持手机畅通。', '', '["site_name"]', 1, 40, '', 0, 0, UNIX_TIMESTAMP(), UNIX_TIMESTAMP());
+
+
+-- ============================================================
+-- 短信变量初始数据
+-- ============================================================
+INSERT IGNORE INTO `xy_sms_variable` (`title`, `name`, `source_type`, `sql_query`, `method_name`, `shared_count`, `status`, `created_by`, `updated_by`, `create_time`, `update_time`)
+VALUES
+('验证码', 'code', 1, '', '', 0, 1, 0, 0, UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+('手机号', 'mobile', 1, '', '', 0, 1, 0, 0, UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+('平台名称', 'site_name', 1, '', '', 0, 1, 0, 0, UNIX_TIMESTAMP(), UNIX_TIMESTAMP()),
+('过期时间(分钟)', 'expire_minutes', 1, '', '', 0, 1, 0, 0, UNIX_TIMESTAMP(), UNIX_TIMESTAMP());

@@ -6,19 +6,19 @@
 -- 1. 短信模板菜单（type=2）
 INSERT INTO xy_admin_menu (parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time)
 SELECT p.id, 2, '短信模板', 'SmsTemplate', 'sms-template', '/system/sms-template/index', '', 'ri:message-2-line', 0, 1, '', '', '["GET /admin/sms/template/list"]', 0, 0, 0, '', '', 0, 0, 80, 1, '短信模板管理', 0, 0, UNIX_TIMESTAMP(), UNIX_TIMESTAMP()
-FROM xy_admin_menu p WHERE p.name = 'SystemSetting' AND p.type = 1
+FROM xy_admin_menu p WHERE p.name = 'System' AND p.type = 1
 AND NOT EXISTS (SELECT 1 FROM xy_admin_menu t WHERE t.name = 'SmsTemplate' AND t.type = 2);
 
 -- 2. 短信变量菜单（type=2）
 INSERT INTO xy_admin_menu (parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time)
 SELECT p.id, 2, '短信变量', 'SmsVariable', 'sms-variable', '/system/sms-variable/index', '', 'ri:braces-line', 0, 1, '', '', '["GET /admin/sms/variable/list"]', 0, 0, 0, '', '', 0, 0, 81, 1, '短信模板变量', 0, 0, UNIX_TIMESTAMP(), UNIX_TIMESTAMP()
-FROM xy_admin_menu p WHERE p.name = 'SystemSetting' AND p.type = 1
+FROM xy_admin_menu p WHERE p.name = 'System' AND p.type = 1
 AND NOT EXISTS (SELECT 1 FROM xy_admin_menu t WHERE t.name = 'SmsVariable' AND t.type = 2);
 
 -- 3. 发送日志菜单（type=2）
 INSERT INTO xy_admin_menu (parent_id, type, title, name, path, component, resource, icon, hidden, keep_alive, redirect, frame_src, perms, is_frame, affix, show_badge, badge_text, active_path, hide_tab, is_full_page, sort, status, remark, created_by, updated_by, create_time, update_time)
 SELECT p.id, 2, '短信日志', 'SmsLog', 'sms-log', '/system/sms-log/index', '', 'ri:file-list-3-line', 0, 1, '', '', '["GET /admin/sms/log/list"]', 0, 0, 0, '', '', 0, 0, 82, 1, '短信发送日志', 0, 0, UNIX_TIMESTAMP(), UNIX_TIMESTAMP()
-FROM xy_admin_menu p WHERE p.name = 'SystemSetting' AND p.type = 1
+FROM xy_admin_menu p WHERE p.name = 'System' AND p.type = 1
 AND NOT EXISTS (SELECT 1 FROM xy_admin_menu t WHERE t.name = 'SmsLog' AND t.type = 2);
 
 
