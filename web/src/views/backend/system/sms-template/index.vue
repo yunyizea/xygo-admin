@@ -95,7 +95,7 @@
   import type { SmsVariableItem } from '@/api/backend/system/sms'
   import ArtButtonTable from '@/components/core/forms/art-button-table/index.vue'
   import ArtSvgIcon from '@/components/core/base/art-svg-icon/index.vue'
-  import { ElTag, ElMessageBox } from 'element-plus'
+  import { ElButton, ElTag, ElMessageBox } from 'element-plus'
   import type { FormInstance, FormRules } from 'element-plus'
   import { formatTimestamp } from '@/utils/time'
 
