@@ -2,6 +2,8 @@ package admin
 
 import (
 	"github.com/gogf/gf/v2/frame/g"
+
+	"xygo/internal/model/input/adminin"
 )
 
 // ===================== 短信发送日志 =====================
@@ -16,22 +18,9 @@ type SmsLogListReq struct {
 	Driver       string `p:"driver" json:"driver" dc:"驱动名"`
 }
 
-type SmsLogListItem struct {
-	Id           uint64      `json:"id"`
-	Phone        string      `json:"phone"`
-	TemplateCode string      `json:"templateCode"`
-	Driver       string      `json:"driver"`
-	Content      string      `json:"content"`
-	Params       interface{} `json:"params"`
-	Status       int         `json:"status"`
-	RequestId    string      `json:"requestId"`
-	ErrorMsg     string      `json:"errorMsg"`
-	CreateTime   uint64      `json:"createTime"`
-}
-
 type SmsLogListRes struct {
-	List  []SmsLogListItem `json:"list"`
-	Total int              `json:"total"`
-	Page  int              `json:"page"`
-	Size  int              `json:"size"`
+	List  []adminin.SmsLogListItem `json:"list"`
+	Total int                      `json:"total"`
+	Page  int                      `json:"page"`
+	Size  int                      `json:"size"`
 }

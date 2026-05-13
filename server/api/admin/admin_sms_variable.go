@@ -2,6 +2,8 @@ package admin
 
 import (
 	"github.com/gogf/gf/v2/frame/g"
+
+	"xygo/internal/model/input/adminin"
 )
 
 // ===================== 短信变量列表 =====================
@@ -13,24 +15,11 @@ type SmsVariableListReq struct {
 	Name   string `p:"name" json:"name" dc:"变量名关键词"`
 }
 
-type SmsVariableListItem struct {
-	Id          uint64 `json:"id"`
-	Title       string `json:"title"`
-	Name        string `json:"name"`
-	SourceType  int    `json:"sourceType"`
-	SqlQuery    string `json:"sqlQuery"`
-	MethodName  string `json:"methodName"`
-	SharedCount int    `json:"sharedCount"`
-	Status      int    `json:"status"`
-	CreateTime  uint64 `json:"createTime"`
-	UpdateTime  uint64 `json:"updateTime"`
-}
-
 type SmsVariableListRes struct {
-	List  []SmsVariableListItem `json:"list"`
-	Total int                   `json:"total"`
-	Page  int                   `json:"page"`
-	Size  int                   `json:"size"`
+	List  []adminin.SmsVariableListItem `json:"list"`
+	Total int                           `json:"total"`
+	Page  int                           `json:"page"`
+	Size  int                           `json:"size"`
 }
 
 // ===================== 保存短信变量 =====================

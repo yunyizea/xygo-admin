@@ -2,6 +2,8 @@ package admin
 
 import (
 	"github.com/gogf/gf/v2/frame/g"
+
+	"xygo/internal/model/input/adminin"
 )
 
 // ===================== 短信模板列表 =====================
@@ -15,26 +17,11 @@ type SmsTemplateListReq struct {
 	Title  string `p:"title" json:"title" dc:"模板标题关键词"`
 }
 
-type SmsTemplateListItem struct {
-	Id                 uint64      `json:"id"`
-	Title              string      `json:"title"`
-	Code               string      `json:"code"`
-	Content            string      `json:"content"`
-	ProviderTemplateId string      `json:"providerTemplateId"`
-	Variables          interface{} `json:"variables"`
-	RelatedVariableId  uint64      `json:"relatedVariableId"`
-	Status             int         `json:"status"`
-	Sort               int         `json:"sort"`
-	Remark             string      `json:"remark"`
-	CreateTime         uint64      `json:"createTime"`
-	UpdateTime         uint64      `json:"updateTime"`
-}
-
 type SmsTemplateListRes struct {
-	List  []SmsTemplateListItem `json:"list"`
-	Total int                   `json:"total"`
-	Page  int                   `json:"page"`
-	Size  int                   `json:"size"`
+	List  []adminin.SmsTemplateListItem `json:"list"`
+	Total int                           `json:"total"`
+	Page  int                           `json:"page"`
+	Size  int                           `json:"size"`
 }
 
 // ===================== 保存短信模板 =====================
