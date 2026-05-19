@@ -5838,7 +5838,7 @@ SELECT pg_catalog.setval('public.xy_sys_attachment_id_seq', 8, true);
 -- Name: xy_sys_config_id_seq; Type: SEQUENCE SET; Schema: xygonew; Owner: -
 --
 
-SELECT pg_catalog.setval('public.xy_sys_config_id_seq', 57, true);
+SELECT pg_catalog.setval('public.xy_sys_config_id_seq', 62, true);
 
 
 --

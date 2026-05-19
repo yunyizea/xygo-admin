@@ -2077,7 +2077,7 @@ ALTER TABLE `xy_sys_attachment`
 -- 使用表AUTO_INCREMENT `xy_sys_config`
 --
 ALTER TABLE `xy_sys_config`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键', AUTO_INCREMENT=58;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键', AUTO_INCREMENT=63;
 
 --
 -- 使用表AUTO_INCREMENT `xy_sys_cron`
