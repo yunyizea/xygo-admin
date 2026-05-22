@@ -131,56 +131,14 @@ func userHasMenuPermission(ctx context.Context, userId uint64, menuIds []uint64)
 		}
 	}
 
-	allRoleIds, err := collectParentRoleIds(ctx, roleIds)
-	if err != nil {
-		return false, err
-	}
-
 	count, err := dao.AdminRoleMenu.Ctx(ctx).
-		Where(dao.AdminRoleMenu.Columns().RoleId, allRoleIds).
+		Where(dao.AdminRoleMenu.Columns().RoleId, roleIds).
 		Where(dao.AdminRoleMenu.Columns().MenuId, menuIds).
 		Count()
 	if err != nil {
 		return false, err
 	}
 	return count > 0, nil
-}
-
-// collectParentRoleIds 递归收集角色及其所有父角色 ID
-func collectParentRoleIds(ctx context.Context, roleIds []uint64) ([]uint64, error) {
-	if len(roleIds) == 0 {
-		return roleIds, nil
-	}
-
-	allIds := make(map[uint64]struct{})
-	for _, id := range roleIds {
-		allIds[id] = struct{}{}
-	}
-
-	pending := make([]uint64, len(roleIds))
-	copy(pending, roleIds)
-
-	for len(pending) > 0 {
-		var roles []entity.AdminRole
-		if err := dao.AdminRole.Ctx(ctx).WhereIn("id", pending).Scan(&roles); err != nil {
-			return nil, err
-		}
-		pending = pending[:0]
-		for _, role := range roles {
-			if role.Pid > 0 {
-				if _, exists := allIds[role.Pid]; !exists {
-					allIds[role.Pid] = struct{}{}
-					pending = append(pending, role.Pid)
-				}
-			}
-		}
-	}
-
-	result := make([]uint64, 0, len(allIds))
-	for id := range allIds {
-		result = append(result, id)
-	}
-	return result, nil
 }
 
 // ==================== 缓存管理 ====================

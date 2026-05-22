@@ -36,6 +36,20 @@ func (c *ControllerV1) MenuTree(ctx context.Context, req *api.MenuTreeReq) (res 
 		return nil, err
 	}
 
+	allowedIds, isSuper, err := getAssignableMenuIds(ctx)
+	if err != nil {
+		return nil, err
+	}
+	if !isSuper {
+		filtered := make([]adminin.MenuTreeItem, 0, len(list))
+		for _, item := range list {
+			if _, ok := allowedIds[uint64(item.Id)]; ok {
+				filtered = append(filtered, item)
+			}
+		}
+		list = filtered
+	}
+
 	// 使用通用树工具按 parentId 组装 children
 	nodes := make([]*adminin.MenuTreeItem, 0, len(list))
 	for i := range list {
@@ -106,21 +120,16 @@ func (c *ControllerV1) MenuRoutes(ctx context.Context, req *api.MenuRoutesReq) (
 		return res, nil
 	}
 
-	// ✅ 计算允许的菜单ID（非超管）+ 递归继承父角色权限
+	// 计算允许的菜单ID（非超管）：只按用户直接绑定角色授权。
+	// 角色上下级仅表达管理关系，不让下级角色继承父级/高级角色权限。
 	allowedMenuIds := map[uint]struct{}{}
 	if !isSuper {
-		// ✅ 递归获取所有父角色（实现权限继承）
-		allRoleIds, err := getAllParentRoleIds(ctx, allowedRoleIds)
-		if err != nil {
-			return nil, err
-		}
-
 		var menuRows []struct {
 			MenuId uint `json:"menuId"`
 		}
 		if err = dao.AdminRoleMenu.Ctx(ctx).
 			Fields("menu_id AS menuId").
-			WhereIn("role_id", allRoleIds). // ✅ 使用包含父角色的完整列表
+			WhereIn("role_id", allowedRoleIds).
 			Scan(&menuRows); err != nil {
 			return nil, err
 		}
@@ -559,56 +568,6 @@ func getMenuSaveAction(prefix string) string {
 		return "save"
 	}
 	return "edit"
-}
-
-// validateMenuSave 业务校验
-// getAllParentRoleIds 递归获取角色及其所有父角色的ID（实现菜单权限继承）
-func getAllParentRoleIds(ctx context.Context, roleIds []uint) ([]uint, error) {
-	if len(roleIds) == 0 {
-		return roleIds, nil
-	}
-
-	allIds := make(map[uint]struct{})
-	for _, id := range roleIds {
-		allIds[id] = struct{}{}
-	}
-
-	// 查询这些角色的详细信息（包含pid）
-	var roles []entity.AdminRole
-	if err := dao.AdminRole.Ctx(ctx).
-		WhereIn("id", roleIds).
-		Scan(&roles); err != nil {
-		return nil, err
-	}
-
-	// 收集父角色ID
-	parentIds := make([]uint, 0)
-	for _, role := range roles {
-		if role.Pid > 0 {
-			if _, exists := allIds[uint(role.Pid)]; !exists {
-				parentIds = append(parentIds, uint(role.Pid))
-				allIds[uint(role.Pid)] = struct{}{}
-			}
-		}
-	}
-
-	// 递归查询父角色的父角色
-	if len(parentIds) > 0 {
-		ancestorIds, err := getAllParentRoleIds(ctx, parentIds)
-		if err != nil {
-			return nil, err
-		}
-		for _, id := range ancestorIds {
-			allIds[id] = struct{}{}
-		}
-	}
-
-	// 转换为切片
-	result := make([]uint, 0, len(allIds))
-	for id := range allIds {
-		result = append(result, id)
-	}
-	return result, nil
 }
 
 func (c *ControllerV1) validateMenuSave(ctx context.Context, inp *adminin.MenuSaveInp) error {

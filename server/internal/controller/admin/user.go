@@ -44,6 +44,12 @@ func (c *ControllerV1) UserDetail(ctx context.Context, req *api.UserDetailReq) (
 
 // UserSave 保存用户（新增/编辑）
 func (c *ControllerV1) UserSave(ctx context.Context, req *api.UserSaveReq) (res *api.UserSaveRes, err error) {
+	if req.RoleIds != nil {
+		if err = ensureAssignableRoleIds(ctx, req.RoleIds); err != nil {
+			return nil, err
+		}
+	}
+
 	id, err := service.AdminUser().Save(ctx, &req.UserSaveInp)
 	if err != nil {
 		return nil, err
