@@ -26,7 +26,21 @@ func (c *ControllerV1) FieldPermList(ctx context.Context, req *api.FieldPermList
 	)
 
 	if req.RoleId > 0 {
+		if _, err = getManageableRole(ctx, req.RoleId); err != nil {
+			return nil, err
+		}
 		m = m.Where(dao.AdminFieldPerm.Columns().RoleId, req.RoleId)
+	} else {
+		manageableIds, isSuper, err := getManageableRoleIds(ctx)
+		if err != nil {
+			return nil, err
+		}
+		if !isSuper {
+			if len(manageableIds) == 0 {
+				return &api.FieldPermListRes{List: []api.FieldPermItem{}}, nil
+			}
+			m = m.WhereIn(dao.AdminFieldPerm.Columns().RoleId, manageableIds)
+		}
 	}
 	if req.Module != "" {
 		m = m.Where(dao.AdminFieldPerm.Columns().Module, req.Module)
@@ -63,13 +77,9 @@ func (c *ControllerV1) FieldPermList(ctx context.Context, req *api.FieldPermList
 
 // FieldPermBatchSave 批量保存字段权限
 func (c *ControllerV1) FieldPermBatchSave(ctx context.Context, req *api.FieldPermBatchSaveReq) (res *api.FieldPermBatchSaveRes, err error) {
-	// ✅ 查询角色并检查是否为超管
-	var role *entity.AdminRole
-	if err = dao.AdminRole.Ctx(ctx).Where("id", req.RoleId).Scan(&role); err != nil {
+	role, err := getManageableRole(ctx, req.RoleId)
+	if err != nil {
 		return nil, err
-	}
-	if role == nil {
-		return nil, gerror.NewCode(consts.CodeDataNotFound, "角色不存在")
 	}
 	if consts.IsSuperRole(role.Key) {
 		return nil, gerror.NewCode(consts.CodeInvalidParam, "超级管理员角色不允许编辑字段权限")
@@ -110,6 +120,10 @@ func (c *ControllerV1) FieldPermBatchSave(ctx context.Context, req *api.FieldPer
 
 // FieldPermGetByRole 获取角色的字段权限映射（用于前端一次性加载）
 func (c *ControllerV1) FieldPermGetByRole(ctx context.Context, req *api.FieldPermGetByRoleReq) (res *api.FieldPermGetByRoleRes, err error) {
+	if _, err = getManageableRole(ctx, req.RoleId); err != nil {
+		return nil, err
+	}
+
 	var (
 		items []entity.AdminFieldPerm
 		m     = dao.AdminFieldPerm.Ctx(ctx).Where(dao.AdminFieldPerm.Columns().RoleId, req.RoleId)
