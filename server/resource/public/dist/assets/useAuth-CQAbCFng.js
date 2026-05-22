@@ -1,1 +1,0 @@
-import{aH as a,aC as s}from"./vendor-vue-CPJjB-Pn.js";import{ac as t,a as o}from"./index-Bv0uwiJv.js";const r=o(),u=()=>{var o,u;const e=a(),{isFrontendMode:n}=t(),{info:i}=s(r),l=null!=(u=null==(o=i.value)?void 0:o.buttons)?u:[],d=Array.isArray(e.meta.authList)?e.meta.authList:[];return{hasAuth:a=>n.value?l.includes(a):d.some(s=>(null==s?void 0:s.authMark)===a)}};export{u};

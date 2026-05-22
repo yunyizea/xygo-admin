@@ -1,1 +1,0 @@
-import{O as a}from"./index-Bv0uwiJv.js";const e=e=>{const r=new FormData;return r.append("file",e),a.post({url:"/upload/file",data:r,headers:{"Content-Type":"multipart/form-data"},showErrorMessage:!0})},r=e=>{const r=new FormData;return r.append("file",e),a.post({url:"/upload/file",data:r,headers:{"Content-Type":"multipart/form-data"},showErrorMessage:!0})};export{e as a,r as u};
