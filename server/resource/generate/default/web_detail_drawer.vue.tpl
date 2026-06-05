@@ -18,8 +18,8 @@
       </ElDescriptionsItem>
 {{- else if or (eq .DesignType "images") (eq .Render "images")}}
       <ElDescriptionsItem label="{{.Label}}">
-        <div v-if="detail.{{.TsName}}" style="display:flex;gap:4px;flex-wrap:wrap">
-          <ElImage v-for="(img, i) in (Array.isArray(detail.{{.TsName}}) ? detail.{{.TsName}} : String(detail.{{.TsName}} || '').split(',').filter(Boolean))" :key="i" :src="img" style="width:60px;height:60px" fit="cover" :preview-src-list="Array.isArray(detail.{{.TsName}}) ? detail.{{.TsName}} : String(detail.{{.TsName}} || '').split(',').filter(Boolean)" />
+        <div v-if="toUrlList(detail.{{.TsName}}).length" style="display:flex;gap:4px;flex-wrap:wrap">
+          <ElImage v-for="(img, i) in toUrlList(detail.{{.TsName}})" :key="i" :src="img" style="width:60px;height:60px" fit="cover" :preview-src-list="toUrlList(detail.{{.TsName}})" />
         </div>
         <span v-else>-</span>
       </ElDescriptionsItem>
@@ -68,8 +68,8 @@
       </ElDescriptionsItem>
 {{- else if and (eq .Render "") (eq .DesignType "files")}}
       <ElDescriptionsItem label="{{.Label}}">
-        <div v-if="detail.{{.TsName}}" style="display:flex;flex-direction:column;gap:4px">
-          <a v-for="(f, i) in (Array.isArray(detail.{{.TsName}}) ? detail.{{.TsName}} : String(detail.{{.TsName}} || '').split(',').filter(Boolean))" :key="i" :href="f" target="_blank" style="color:var(--el-color-primary);font-size:13px">文件 {{"{{"}} i + 1 {{"}}"}}</a>
+        <div v-if="toUrlList(detail.{{.TsName}}).length" style="display:flex;flex-direction:column;gap:4px">
+          <a v-for="(f, i) in toUrlList(detail.{{.TsName}})" :key="i" :href="f" target="_blank" style="color:var(--el-color-primary);font-size:13px">文件 {{"{{"}} i + 1 {{"}}"}}</a>
         </div>
         <span v-else>-</span>
       </ElDescriptionsItem>
@@ -85,6 +85,11 @@
   import { Loading } from '@element-plus/icons-vue'
   import { fetch{{.VarName}}View } from '{{.WebApiImportPath}}'
   import { formatTimestamp } from '@/utils/time'
+{{- $hasMulti := false}}
+{{- range .ListColumns}}{{if or (eq .DesignType "images") (eq .DesignType "files") (eq .Render "images")}}{{$hasMulti = true}}{{end}}{{end}}
+{{- if $hasMulti}}
+  import { toUrlList } from '@/utils/format'
+{{- end}}
 
   const visible = defineModel<boolean>({ default: false })
 

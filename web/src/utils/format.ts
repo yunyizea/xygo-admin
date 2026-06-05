@@ -22,6 +22,35 @@ export function formatFileSize(bytes: number): string {
 }
 
 /**
+ * 将多图/多文件字段值标准化为 URL 字符串数组。
+ * 兼容多种历史存储格式：
+ * - 数组：['/a.png', '/b.png']
+ * - 逗号分隔字符串：'/a.png,/b.png'
+ * - JSON 数组字符串：'["/a.png","/b.png"]'
+ * - 含多余引号的字符串：'"/a.png"'
+ * @param val 字段值
+ * @returns 干净的 URL 数组
+ */
+export function toUrlList(val: unknown): string[] {
+  if (Array.isArray(val)) return val.map((v) => String(v)).filter(Boolean)
+  const raw = String(val ?? '').trim()
+  if (!raw) return []
+  if (raw.startsWith('[')) {
+    try {
+      const arr = JSON.parse(raw)
+      if (Array.isArray(arr)) return arr.map((v) => String(v)).filter(Boolean)
+    } catch {
+      /* 不是合法 JSON，走逗号分隔回退 */
+    }
+  }
+  return raw
+    .replace(/^\[|\]$/g, '')
+    .split(',')
+    .map((s) => s.trim().replace(/^["']+|["']+$/g, ''))
+    .filter(Boolean)
+}
+
+/**
  * 格式化时间戳
  * @param timestamp Unix时间戳（秒）
  * @returns 格式化后的时间字符串

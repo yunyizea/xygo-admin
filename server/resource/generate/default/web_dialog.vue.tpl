@@ -194,7 +194,13 @@
 
   const defaultForm = (): Record<string, any> => ({
 {{- range .EditColumns}}
+{{- if eq .DesignType "remoteSelect"}}
+    {{.TsName}}: undefined,
+{{- else if eq .DesignType "remoteSelects"}}
+    {{.TsName}}: [],
+{{- else}}
     {{.TsName}}: {{.DefaultValue}},
+{{- end}}
 {{- end}}
   })
 

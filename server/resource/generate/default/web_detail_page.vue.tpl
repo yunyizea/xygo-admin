@@ -25,8 +25,8 @@
         </ElDescriptionsItem>
 {{- else if or (eq .DesignType "images") (eq .Render "images")}}
         <ElDescriptionsItem label="{{.Label}}" :span="2">
-          <div v-if="detail.{{.TsName}}" style="display:flex;gap:8px;flex-wrap:wrap">
-            <ElImage v-for="(img, i) in (Array.isArray(detail.{{.TsName}}) ? detail.{{.TsName}} : String(detail.{{.TsName}} || '').split(',').filter(Boolean))" :key="i" :src="img" style="width:80px;height:80px" fit="cover" :preview-src-list="Array.isArray(detail.{{.TsName}}) ? detail.{{.TsName}} : String(detail.{{.TsName}} || '').split(',').filter(Boolean)" />
+          <div v-if="toUrlList(detail.{{.TsName}}).length" style="display:flex;gap:8px;flex-wrap:wrap">
+            <ElImage v-for="(img, i) in toUrlList(detail.{{.TsName}})" :key="i" :src="img" style="width:80px;height:80px" fit="cover" :preview-src-list="toUrlList(detail.{{.TsName}})" />
           </div>
           <span v-else>-</span>
         </ElDescriptionsItem>
@@ -98,6 +98,11 @@
   import ArtSvgIcon from '@/components/core/base/art-svg-icon/index.vue'
   import { fetch{{.VarName}}View } from '{{.WebApiImportPath}}'
   import { formatTimestamp } from '@/utils/time'
+{{- $hasMulti := false}}
+{{- range .ListColumns}}{{if or (eq .DesignType "images") (eq .DesignType "files") (eq .Render "images")}}{{$hasMulti = true}}{{end}}{{end}}
+{{- if $hasMulti}}
+  import { toUrlList } from '@/utils/format'
+{{- end}}
   import { useRoute, useRouter } from 'vue-router'
 
   defineOptions({ name: '{{.VarName}}Detail' })

@@ -53,6 +53,11 @@
   import { useTableColumns } from '@/hooks/core/useTableColumns'
   import { useAuth } from '@/hooks/core/useAuth'
   import { formatTimestamp } from '@/utils/time'
+{{- $hasMulti := false}}
+{{- range .ListColumns}}{{if or (eq .DesignType "images") (eq .Render "images")}}{{$hasMulti = true}}{{end}}{{end}}
+{{- if $hasMulti}}
+  import { toUrlList } from '@/utils/format'
+{{- end}}
   import { fetch{{.VarName}}List, fetch{{.VarName}}Edit, fetch{{.VarName}}Delete } from '{{.WebApiImportPath}}'
 {{- if .QueryColumns}}
   import {{.VarName}}Search from './modules/{{.FilePrefix}}-search.vue'
@@ -118,7 +123,7 @@
       width: 100,
       align: 'center',
       formatter: (row: any) => {
-        const imgs = Array.isArray(row.{{.TsName}}) ? row.{{.TsName}} : (row.{{.TsName}} || '').split(',').filter(Boolean)
+        const imgs = toUrlList(row.{{.TsName}})
         if (!imgs.length) return '-'
         return h('div', { style: 'display:flex;align-items:center;gap:2px' }, [
           h(ElImage, { src: imgs[0], style: 'width:40px;height:40px', fit: 'cover', previewSrcList: imgs, previewTeleported: true }),

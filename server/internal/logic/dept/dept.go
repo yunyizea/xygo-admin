@@ -22,6 +22,7 @@ import (
 	"xygo/internal/model/entity"
 	"xygo/internal/model/input/adminin"
 	"xygo/internal/service"
+	"xygo/utility"
 )
 
 type sAdminDept struct{}
@@ -140,16 +141,19 @@ func (s *sAdminDept) Save(ctx context.Context, in *adminin.DeptSaveInp) (uint, e
 		return 0, gerror.NewCode(consts.CodeInvalidParam, "同级已存在相同名称的部门")
 	}
 
+	now := utility.NowUnix()
 	data := do.AdminDept{
-		ParentId: in.ParentId,
-		Name:     in.Name,
-		Sort:     in.Sort,
-		Status:   in.Status,
-		Remark:   in.Remark,
+		ParentId:   in.ParentId,
+		Name:       in.Name,
+		Sort:       in.Sort,
+		Status:     in.Status,
+		Remark:     in.Remark,
+		UpdateTime: now,
 	}
 
 	if in.Id == 0 {
 		// 新增
+		data.CreateTime = now
 		r, err := dao.AdminDept.Ctx(ctx).Data(data).OmitNil().Insert()
 		if err != nil {
 			return 0, err

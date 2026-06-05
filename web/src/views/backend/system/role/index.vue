@@ -90,6 +90,7 @@
   import RoleDataScopeDialog from './modules/role-data-scope-dialog.vue'
   import RoleFieldPermDialog from './modules/role-field-perm-dialog.vue'
   import { ElTag, ElMessageBox } from 'element-plus'
+  import { formatTimestamp } from '@/utils/time'
 
   defineOptions({ name: 'Role' })
   const { hasAuth } = useAuth()
@@ -176,7 +177,7 @@
           label: '创建时间',
           width: 180,
           sortable: true,
-          formatter: (row: RoleListItem) => row.createdAt || '-'
+          formatter: (row: RoleListItem) => formatTimestamp(row.createdAt)
         },
         {
           prop: 'operation',

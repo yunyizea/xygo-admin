@@ -296,7 +296,8 @@ func pathFromBase(base, full string) string {
 
 // saveAttachmentRecord 写入附件记录
 func saveAttachmentRecord(ctx context.Context, res *api.UploadFileRes, originalName string, sha1sum string, topic string, userId uint, width, height int) (int64, error) {
-	result, err := dao.SysAttachment.Ctx(ctx).Data(do.SysAttachment{
+	// PostgreSQL 驱动不支持 LastInsertId()，这里先 Insert，再通过 sha1+storage+topic 回查 ID
+	_, err := dao.SysAttachment.Ctx(ctx).Data(do.SysAttachment{
 		Topic:      topic,
 		UserId:     uint64(userId),
 		Url:        "/" + strings.TrimLeft(res.Path, "/"),
@@ -316,8 +317,18 @@ func saveAttachmentRecord(ctx context.Context, res *api.UploadFileRes, originalN
 		return 0, err
 	}
 
-	// 返回新插入的附件ID
-	return result.LastInsertId()
+	// 回查新插入的附件记录 ID（兼容 PostgreSQL）
+	var record entity.SysAttachment
+	err = dao.SysAttachment.Ctx(ctx).
+		Where(dao.SysAttachment.Columns().Sha1, sha1sum).
+		Where(dao.SysAttachment.Columns().Storage, res.Drive).
+		Where(dao.SysAttachment.Columns().Topic, topic).
+		OrderDesc(dao.SysAttachment.Columns().Id).
+		Scan(&record)
+	if err != nil {
+		return 0, err
+	}
+	return int64(record.Id), nil
 }
 
 // tryReuseAttachment 通过 sha1 + storage + topic 查找附件，存在且文件存在则复用

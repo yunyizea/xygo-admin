@@ -117,7 +117,13 @@
     {{.TreePidTsColumn}}: 0,
 {{- range .EditColumns}}
 {{- if ne .Name $.TreePidColumn}}
+{{- if eq .DesignType "remoteSelect"}}
+    {{.TsName}}: undefined,
+{{- else if eq .DesignType "remoteSelects"}}
+    {{.TsName}}: [],
+{{- else}}
     {{.TsName}}: {{.DefaultValue}},
+{{- end}}
 {{- end}}
 {{- end}}
   })

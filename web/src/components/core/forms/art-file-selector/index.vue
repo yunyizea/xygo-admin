@@ -31,8 +31,8 @@
           <ArtSvgIcon :icon="getFileTypeIcon(url)" class="text-2xl" />
           <span class="preview-ext">{{ getExt(url) }}</span>
         </div>
-        <div class="preview-actions">
-          <ArtSvgIcon icon="ri:delete-bin-line" class="action-icon" @click.stop="removeFile(idx)" />
+        <div class="preview-actions" @click.stop="removeFile(idx)">
+          <ArtSvgIcon icon="ri:delete-bin-line" class="action-icon" />
         </div>
       </div>
     </div>
@@ -283,7 +283,7 @@
     if (props.maxNumber === 1) {
       emit('update:modelValue', merged[0] || '')
     } else {
-      emit('update:modelValue', merged)
+      emit('update:modelValue', merged.join(','))
     }
     dialogVisible.value = false
   }
@@ -294,7 +294,7 @@
     if (props.maxNumber === 1) {
       emit('update:modelValue', '')
     } else {
-      emit('update:modelValue', list)
+      emit('update:modelValue', list.join(','))
     }
   }
 
