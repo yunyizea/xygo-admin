@@ -47,7 +47,18 @@
 #noop {
   display: none;
 }
+// 富文本内容统一渲染样式，用于 v-html 预览 wangEditor 等富文本内容
+.rich-text-content {
+  strong,
+  b {
+    font-weight: 700;
+  }
 
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+}
 // 语言切换选中样式
 .langDropDownStyle {
   // 选中项背景颜色

@@ -30,7 +30,7 @@
   import '@wangeditor/editor/dist/css/style.css'
   import { onBeforeUnmount, onMounted, shallowRef, computed } from 'vue'
   import { Editor, Toolbar } from '@wangeditor/editor-for-vue'
-  import { useUserStore } from '@/store/modules/user'
+  import { uploadImageApi } from '@/api/backend/common/upload'
   import EmojiText from '@/utils/ui/emojo'
   import { IDomEditor, IToolbarConfig, IEditorConfig } from '@wangeditor/editor'
 
@@ -69,7 +69,7 @@
 
   // 编辑器实例
   const editorRef = shallowRef<IDomEditor>()
-  const userStore = useUserStore()
+  
 
   // 常量配置
   const DEFAULT_UPLOAD_CONFIG = {
@@ -79,11 +79,7 @@
     allowedFileTypes: ['image/*']
   } as const
 
-  // 计算属性：上传服务器地址
-  const uploadServer = computed(
-    () =>
-      props.uploadConfig?.server || `${import.meta.env.VITE_API_URL}/api/common/upload/wangeditor`
-  )
+
 
   // 合并上传配置
   const mergedUploadConfig = computed(() => ({
@@ -122,12 +118,18 @@
         maxFileSize: mergedUploadConfig.value.maxFileSize,
         maxNumberOfFiles: mergedUploadConfig.value.maxNumberOfFiles,
         allowedFileTypes: mergedUploadConfig.value.allowedFileTypes,
-        server: uploadServer.value,
-        headers: {
-          Authorization: userStore.accessToken
-        },
-        onSuccess() {
-          ElMessage.success(`图片上传成功 ${EmojiText[200]}`)
+        async customUpload(file: File, insertFn: (url: string, alt?: string, href?: string) => void) {
+          try {
+            const res = await uploadImageApi(file)
+            if (!res?.url) {
+              throw new Error('上传接口未返回图片地址')
+            }
+            insertFn(res.url, file.name, res.url)
+            ElMessage.success(`图片上传成功 ${EmojiText[200]}`)
+          } catch (err) {
+            console.error('图片上传失败:', err)
+            ElMessage.error(`图片上传失败 ${EmojiText[500]}`)
+          }
         },
         onError(file: File, err: any, res: any) {
           console.error('图片上传失败:', err, res)
