@@ -60,7 +60,7 @@ type AddonMeta struct {
 
 func Install(ctx context.Context, name string) error {
 	if name == "" {
-		name = gcmd.Scan("  请输入扩展包名称（如 tenant）: ")
+		name = gcmd.Scan("  请输入扩展包名称（如 tenant 或 tenant-1.0.0）: ")
 		name = strings.TrimSpace(name)
 		if name == "" {
 			fmt.Println("  取消安装")
@@ -68,17 +68,18 @@ func Install(ctx context.Context, name string) error {
 		}
 	}
 
-	zipPath := filepath.Join("addons", name+".zip")
-	if !gfile.Exists(zipPath) {
-		return fmt.Errorf("扩展包不存在: %s", zipPath)
+	zipPath, err := resolveAddonZipPath("addons", name)
+	if err != nil {
+		return err
 	}
+	zipStem := strings.TrimSuffix(filepath.Base(zipPath), ".zip")
 
 	fmt.Println()
-	fmt.Printf("  正在安装扩展: %s\n", name)
+	fmt.Printf("  正在安装扩展包: %s\n", zipStem)
 	fmt.Println("  ────────────────────────────────")
 
 	// [1/9] 解压到临时目录
-	tmpDir := filepath.Join("addons", ".tmp", name)
+	tmpDir := filepath.Join("addons", ".tmp", zipStem)
 	os.RemoveAll(tmpDir)
 	fmt.Print("  [1/9] 解压扩展包 ... ")
 	if err := unzip(zipPath, tmpDir); err != nil {
@@ -89,7 +90,7 @@ func Install(ctx context.Context, name string) error {
 	defer os.RemoveAll(filepath.Join("addons", ".tmp"))
 
 	// 确定解压根目录（可能有一层包装目录）
-	extractRoot := resolveExtractRoot(tmpDir, name)
+	extractRoot := resolveExtractRoot(tmpDir, zipStem)
 
 	// [2/9] 读取 addon.yaml
 	fmt.Print("  [2/9] 读取扩展信息 ... ")
@@ -104,15 +105,27 @@ func Install(ctx context.Context, name string) error {
 		fmt.Println("FAILED")
 		return fmt.Errorf("addon.yaml 解析失败: %v", err)
 	}
-	if meta.Name == "" {
-		meta.Name = name
+
+	// 扩展身份以 addon.yaml 的 name 为准，避免 qrcode-0.1.0 被当成扩展名
+	addonName := strings.TrimSpace(meta.Name)
+	if addonName == "" {
+		addonName = stripVersionZipStem(zipStem)
 	}
-	fmt.Printf("OK (%s v%s)\n", meta.Title, meta.Version)
+	if addonName == "" {
+		addonName = name
+	}
+	meta.Name = addonName
+
+	if zipStem != addonName {
+		fmt.Printf("OK (%s v%s, 扩展标识: %s)\n", meta.Title, meta.Version, addonName)
+	} else {
+		fmt.Printf("OK (%s v%s)\n", meta.Title, meta.Version)
+	}
 
 	// [3/9] 检查安装状态
 	db := initDB(ctx)
 	ensureAddonTable(ctx, db)
-	installed, _ := db.GetOne(ctx, "SELECT * FROM "+addonTable+" WHERE name=$1 AND status=1", name)
+	installed, _ := db.GetOne(ctx, "SELECT * FROM "+addonTable+" WHERE name=$1 AND status=1", addonName)
 
 	isUpgrade := false
 	oldVersion := ""
@@ -133,7 +146,7 @@ func Install(ctx context.Context, name string) error {
 			}
 			isUpgrade = true
 		} else if cmp == 0 {
-			confirm := gcmd.Scan(fmt.Sprintf("  [3/9] 扩展 %s 已是 v%s，是否覆盖重装？[y/N] ", name, installedVer))
+			confirm := gcmd.Scan(fmt.Sprintf("  [3/9] 扩展 %s 已是 v%s，是否覆盖重装？[y/N] ", addonName, installedVer))
 			if strings.ToLower(strings.TrimSpace(confirm)) != "y" {
 				fmt.Println("  取消安装")
 				return nil
@@ -177,7 +190,7 @@ func Install(ctx context.Context, name string) error {
 	totalMenuCount := adminMenuCount + tenantMenuCount
 	if totalMenuCount > 0 {
 		fmt.Printf("  [5/9] 安装扩展菜单 (%d 项) ... ", totalMenuCount)
-		if err := installMenus(ctx, db, name, meta.Menus); err != nil {
+		if err := installMenus(ctx, db, addonName, meta.Menus); err != nil {
 			fmt.Println("FAILED")
 			return fmt.Errorf("菜单安装失败: %v", err)
 		}
@@ -190,11 +203,11 @@ func Install(ctx context.Context, name string) error {
 	projectRoot := getProjectRoot()
 	if isUpgrade && oldVersion != "" {
 		fmt.Print("  [6/9] 备份旧版本文件 ... ")
-		backupBase := filepath.Join(projectRoot, "server", "addons", ".backup", fmt.Sprintf("%s-%s", name, oldVersion))
+		backupBase := filepath.Join(projectRoot, "server", "addons", ".backup", fmt.Sprintf("%s-%s", addonName, oldVersion))
 		os.MkdirAll(backupBase, 0755)
 		backupCount := 0
 
-		serverOld := filepath.Join(projectRoot, "server", "addons", name)
+		serverOld := filepath.Join(projectRoot, "server", "addons", addonName)
 		if gfile.Exists(serverOld) {
 			serverBackup := filepath.Join(backupBase, "server")
 			os.MkdirAll(serverBackup, 0755)
@@ -202,7 +215,7 @@ func Install(ctx context.Context, name string) error {
 			backupCount += n
 		}
 
-		webOld := filepath.Join(projectRoot, "web", "src", "addons", name)
+		webOld := filepath.Join(projectRoot, "web", "src", "addons", addonName)
 		if gfile.Exists(webOld) {
 			webBackup := filepath.Join(backupBase, "web")
 			os.MkdirAll(webBackup, 0755)
@@ -221,7 +234,7 @@ func Install(ctx context.Context, name string) error {
 	// server/ → server/addons/{name}/
 	serverSrc := filepath.Join(extractRoot, "server")
 	if gfile.Exists(serverSrc) {
-		serverDest := filepath.Join(projectRoot, "server", "addons", name)
+		serverDest := filepath.Join(projectRoot, "server", "addons", addonName)
 		os.MkdirAll(serverDest, 0755)
 		n, err := copyDir(serverSrc, serverDest)
 		if err != nil {
@@ -232,14 +245,14 @@ func Install(ctx context.Context, name string) error {
 	}
 
 	// 复制 addon.yaml 到 server/addons/{name}/addon.yaml
-	addonYamlDest := filepath.Join(projectRoot, "server", "addons", name, "addon.yaml")
+	addonYamlDest := filepath.Join(projectRoot, "server", "addons", addonName, "addon.yaml")
 	os.MkdirAll(filepath.Dir(addonYamlDest), 0755)
 	_ = copyFile(metaPath, addonYamlDest)
 
 	// web/ → web/src/addons/{name}/
 	webSrc := filepath.Join(extractRoot, "web")
 	if gfile.Exists(webSrc) {
-		webDest := filepath.Join(projectRoot, "web", "src", "addons", name)
+		webDest := filepath.Join(projectRoot, "web", "src", "addons", addonName)
 		os.MkdirAll(webDest, 0755)
 		n, err := copyDir(webSrc, webDest)
 		if err != nil {
@@ -250,14 +263,14 @@ func Install(ctx context.Context, name string) error {
 	}
 
 	// web-{name}/ → web-{name}/（独立前端，可选）
-	webIndepSrc := filepath.Join(extractRoot, "web-"+name)
+	webIndepSrc := filepath.Join(extractRoot, "web-"+addonName)
 	if gfile.Exists(webIndepSrc) {
-		webIndepDest := filepath.Join(projectRoot, "web-"+name)
+		webIndepDest := filepath.Join(projectRoot, "web-"+addonName)
 		os.MkdirAll(webIndepDest, 0755)
 		n, err := copyDir(webIndepSrc, webIndepDest)
 		if err != nil {
 			fmt.Println("FAILED")
-			return fmt.Errorf("复制 web-%s/ 失败: %v", name, err)
+			return fmt.Errorf("复制 web-%s/ 失败: %v", addonName, err)
 		}
 		copiedCount += n
 	}
@@ -275,10 +288,10 @@ func Install(ctx context.Context, name string) error {
 
 	// [9/9] 记录安装信息
 	fmt.Print("  [9/9] 记录安装信息 ... ")
-	_, _ = db.Exec(ctx, "DELETE FROM "+addonTable+" WHERE name=$1", name)
-	_, err := db.Exec(ctx,
+	_, _ = db.Exec(ctx, "DELETE FROM "+addonTable+" WHERE name=$1", addonName)
+	_, err = db.Exec(ctx,
 		"INSERT INTO "+addonTable+" (name, version, title, status, installed_at) VALUES ($1, $2, $3, 1, $4)",
-		name, meta.Version, meta.Title, time.Now().Unix(),
+		addonName, meta.Version, meta.Title, time.Now().Unix(),
 	)
 	if err != nil {
 		fmt.Println("FAILED")
@@ -306,8 +319,8 @@ func Install(ctx context.Context, name string) error {
 
 	fmt.Println()
 	fmt.Println("  扩展文件已安装到隔离目录：")
-	fmt.Printf("    后端: server/addons/%s/\n", name)
-	fmt.Printf("    前端: web/src/addons/%s/\n", name)
+	fmt.Printf("    后端: server/addons/%s/\n", addonName)
+	fmt.Printf("    前端: web/src/addons/%s/\n", addonName)
 	fmt.Println()
 	fmt.Println("  请依次执行以下操作：")
 	fmt.Println("    1. gf gen dao        (重新生成数据模型)")
@@ -360,9 +373,8 @@ func Uninstall(ctx context.Context, name string) error {
 		data, _ := os.ReadFile(sqlFile)
 		uninstallSQL = string(data)
 	} else {
-		// 回退：从 ZIP 包中提取
-		zipPath := filepath.Join("addons", name+".zip")
-		if gfile.Exists(zipPath) {
+		// 回退：从 ZIP 包中提取（支持 name.zip 与 name-version.zip）
+		if zipPath, err := resolveAddonZipPath("addons", name); err == nil {
 			uninstallSQL = extractSQLFromZip(zipPath, name, "uninstall/"+dbType+".sql")
 		}
 	}
@@ -843,6 +855,64 @@ func execSQLFile(ctx context.Context, db gdb.DB, sqlFile string) error {
 		}
 	}
 	return nil
+}
+
+// resolveAddonZipPath 解析扩展 ZIP 路径，支持 name.zip 与 name-version.zip。
+func resolveAddonZipPath(addonsDir, input string) (string, error) {
+	direct := filepath.Join(addonsDir, input+".zip")
+	if gfile.Exists(direct) {
+		return direct, nil
+	}
+
+	pattern := filepath.Join(addonsDir, input+"-*.zip")
+	matches, err := filepath.Glob(pattern)
+	if err != nil {
+		return "", fmt.Errorf("查找扩展包失败: %v", err)
+	}
+	if len(matches) == 1 {
+		return matches[0], nil
+	}
+	if len(matches) > 1 {
+		names := make([]string, 0, len(matches))
+		for _, m := range matches {
+			names = append(names, filepath.Base(m))
+		}
+		sort.Strings(names)
+		return "", fmt.Errorf("扩展包 %q 存在多个版本: %s，请指定完整包名（如 %s）",
+			input, strings.Join(names, ", "), strings.TrimSuffix(names[len(names)-1], ".zip"))
+	}
+
+	return "", fmt.Errorf("扩展包不存在: 已查找 %s 和 %s",
+		filepath.Join(addonsDir, input+".zip"),
+		filepath.Join(addonsDir, input+"-*.zip"))
+}
+
+// stripVersionZipStem 从 ZIP 文件名推断扩展名，如 qrcode-0.1.0 -> qrcode。
+func stripVersionZipStem(zipStem string) string {
+	if i := strings.LastIndex(zipStem, "-"); i > 0 {
+		suffix := zipStem[i+1:]
+		if isVersionLike(suffix) {
+			return zipStem[:i]
+		}
+	}
+	return zipStem
+}
+
+func isVersionLike(s string) bool {
+	if s == "" {
+		return false
+	}
+	for _, p := range strings.Split(s, ".") {
+		if p == "" {
+			return false
+		}
+		for _, ch := range p {
+			if ch < '0' || ch > '9' {
+				return false
+			}
+		}
+	}
+	return true
 }
 
 func compareVersion(a, b string) int {
