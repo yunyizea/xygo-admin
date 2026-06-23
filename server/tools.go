@@ -17,6 +17,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"strings"
@@ -28,6 +29,7 @@ import (
 
 	"xygo/internal/cmdtools/addon"
 	"xygo/internal/cmdtools/checktpl"
+	"xygo/internal/cmdtools/gencli"
 	"xygo/internal/cmdtools/migrate"
 	"xygo/internal/cmdtools/updater"
 )
@@ -38,6 +40,13 @@ func main() {
 	// 如果有命令行参数，直接执行对应命令
 	if len(os.Args) > 1 {
 		cmd := os.Args[1]
+		// gen 命令参数较多，整体交给 gencli 解析
+		if cmd == "gen" {
+			if err := gencli.Run(ctx, os.Args[2:]); err != nil {
+				fmt.Printf("  错误: %v\n", err)
+			}
+			return
+		}
 		sub := ""
 		if len(os.Args) > 2 {
 			sub = os.Args[2]
@@ -71,12 +80,13 @@ func main() {
 		fmt.Println("  ║  [7] addon create      创建扩展骨架                        ║")
 		fmt.Println("  ║  [8] addon pack        打包扩展为ZIP                       ║")
 		fmt.Println("  ║  [9] update            在线更新                            ║")
+		fmt.Println("  ║  [10] gen              代码生成（命令行 CRUD）             ║")
 		fmt.Println("  ║  [0] exit              退出                                ║")
 		fmt.Println("  ║                                                            ║")
 		fmt.Println("  ╚════════════════════════════════════════════════════════════╝")
 		fmt.Println()
 
-		choice := gcmd.Scan("  请选择命令 [0-9]: ")
+		choice := gcmd.Scan("  请选择命令 [0-10]: ")
 		choice = strings.TrimSpace(choice)
 
 		switch choice {
@@ -113,6 +123,8 @@ func main() {
 			if applied {
 				return
 			}
+		case "10", "gen":
+			runGenInteractive(ctx)
 		case "0", "exit", "quit", "q":
 			fmt.Println("  Bye!")
 			return
@@ -179,8 +191,48 @@ func runCommand(cmd, sub string) {
 		}
 	case "update":
 		_, _ = updater.RunUpdate(ctx)
+	case "gen":
+		if err := gencli.Run(ctx, os.Args[2:]); err != nil {
+			fmt.Printf("  错误: %v\n", err)
+		}
 	default:
 		fmt.Printf("  未知命令: %s\n", cmd)
-		fmt.Println("  可用: migrate / check-tpl / addon / update")
+		fmt.Println("  可用: migrate / check-tpl / addon / update / gen")
+	}
+}
+
+// runGenInteractive 交互式代码生成：先列出可生成的表，再输入表名与基本选项。
+func runGenInteractive(ctx context.Context) {
+	// 先列出可生成的表
+	if err := gencli.Run(ctx, []string{"--list-tables"}); err != nil {
+		fmt.Printf("  错误: %v\n", err)
+		return
+	}
+
+	table := strings.TrimSpace(gcmd.Scan("  请输入要生成的表名(留空取消): "))
+	if table == "" {
+		fmt.Println("  已取消。")
+		return
+	}
+
+	args := []string{table}
+
+	genType := strings.TrimSpace(gcmd.Scan("  生成类型 [10=普通列表(默认) 11=树表]: "))
+	if genType == "11" {
+		args = append(args, "--type", "11")
+	}
+
+	varName := strings.TrimSpace(gcmd.Scan("  实体名(PascalCase，留空自动推导): "))
+	if varName != "" {
+		args = append(args, "--var", varName)
+	}
+
+	menuPid := strings.TrimSpace(gcmd.Scan("  挂载父菜单ID(留空=新建顶级目录+页面): "))
+	if menuPid != "" {
+		args = append(args, "--menu-pid", menuPid)
+	}
+
+	if err := gencli.Run(ctx, args); err != nil {
+		fmt.Printf("  错误: %v\n", err)
 	}
 }

@@ -2,9 +2,8 @@
 -- 短信模块建表脚本（PostgreSQL）
 -- 表前缀：xy_sms_
 -- ============================================================
-
 -- 短信模板
-CREATE TABLE IF NOT EXISTS xy_sms_template (
+CREATE TABLE IF NOT EXISTS public.xy_sms_template (
     id                   bigserial PRIMARY KEY,
     title                character varying(128) DEFAULT '' NOT NULL,
     code                 character varying(64) DEFAULT '' NOT NULL,
@@ -21,27 +20,27 @@ CREATE TABLE IF NOT EXISTS xy_sms_template (
     update_time          bigint DEFAULT 0 NOT NULL
 );
 
-COMMENT ON TABLE  xy_sms_template IS '短信模板';
-COMMENT ON COLUMN xy_sms_template.id IS '主键';
-COMMENT ON COLUMN xy_sms_template.title IS '模板标题';
-COMMENT ON COLUMN xy_sms_template.code IS '模板唯一标识（如 user_register）';
-COMMENT ON COLUMN xy_sms_template.content IS '短信文案（含变量占位 ${var}）';
-COMMENT ON COLUMN xy_sms_template.provider_template_id IS '服务商模板ID';
-COMMENT ON COLUMN xy_sms_template.variables IS '模板变量列表 JSON';
-COMMENT ON COLUMN xy_sms_template.related_variable_id IS '关联文案变量ID';
-COMMENT ON COLUMN xy_sms_template.status IS '状态：1=启用 0=禁用';
-COMMENT ON COLUMN xy_sms_template.sort IS '排序';
-COMMENT ON COLUMN xy_sms_template.remark IS '备注';
-COMMENT ON COLUMN xy_sms_template.created_by IS '创建人ID';
-COMMENT ON COLUMN xy_sms_template.updated_by IS '更新人ID';
-COMMENT ON COLUMN xy_sms_template.create_time IS '创建时间（Unix秒）';
-COMMENT ON COLUMN xy_sms_template.update_time IS '更新时间（Unix秒）';
+COMMENT ON TABLE public.xy_sms_template IS '短信模板';
+COMMENT ON COLUMN public.xy_sms_template.id IS '主键';
+COMMENT ON COLUMN public.xy_sms_template.title IS '模板标题';
+COMMENT ON COLUMN public.xy_sms_template.code IS '模板唯一标识（如 user_register）';
+COMMENT ON COLUMN public.xy_sms_template.content IS '短信文案（含变量占位 ${var}）';
+COMMENT ON COLUMN public.xy_sms_template.provider_template_id IS '服务商模板ID';
+COMMENT ON COLUMN public.xy_sms_template.variables IS '模板变量列表 JSON';
+COMMENT ON COLUMN public.xy_sms_template.related_variable_id IS '关联文案变量ID';
+COMMENT ON COLUMN public.xy_sms_template.status IS '状态：1=启用 0=禁用';
+COMMENT ON COLUMN public.xy_sms_template.sort IS '排序';
+COMMENT ON COLUMN public.xy_sms_template.remark IS '备注';
+COMMENT ON COLUMN public.xy_sms_template.created_by IS '创建人ID';
+COMMENT ON COLUMN public.xy_sms_template.updated_by IS '更新人ID';
+COMMENT ON COLUMN public.xy_sms_template.create_time IS '创建时间（Unix秒）';
+COMMENT ON COLUMN public.xy_sms_template.update_time IS '更新时间（Unix秒）';
 
-CREATE UNIQUE INDEX IF NOT EXISTS uk_sms_template_code ON xy_sms_template (code);
+CREATE UNIQUE INDEX IF NOT EXISTS uk_sms_template_code ON public.xy_sms_template (code);
 
 
 -- 短信变量
-CREATE TABLE IF NOT EXISTS xy_sms_variable (
+CREATE TABLE IF NOT EXISTS public.xy_sms_variable (
     id            bigserial PRIMARY KEY,
     title         character varying(128) DEFAULT '' NOT NULL,
     name          character varying(64) DEFAULT '' NOT NULL,
@@ -56,25 +55,25 @@ CREATE TABLE IF NOT EXISTS xy_sms_variable (
     update_time   bigint DEFAULT 0 NOT NULL
 );
 
-COMMENT ON TABLE  xy_sms_variable IS '短信模板变量';
-COMMENT ON COLUMN xy_sms_variable.id IS '主键';
-COMMENT ON COLUMN xy_sms_variable.title IS '变量标题';
-COMMENT ON COLUMN xy_sms_variable.name IS '变量名（如 usermobile）';
-COMMENT ON COLUMN xy_sms_variable.source_type IS '来源类型：1=字段提取 2=SQL查询 3=内置Helper';
-COMMENT ON COLUMN xy_sms_variable.sql_query IS 'SQL查询语句（source_type=2 时）';
-COMMENT ON COLUMN xy_sms_variable.method_name IS 'Helper方法路径（source_type=3 时）';
-COMMENT ON COLUMN xy_sms_variable.shared_count IS '共通数据数';
-COMMENT ON COLUMN xy_sms_variable.status IS '状态：1=启用 0=禁用';
-COMMENT ON COLUMN xy_sms_variable.created_by IS '创建人ID';
-COMMENT ON COLUMN xy_sms_variable.updated_by IS '更新人ID';
-COMMENT ON COLUMN xy_sms_variable.create_time IS '创建时间（Unix秒）';
-COMMENT ON COLUMN xy_sms_variable.update_time IS '更新时间（Unix秒）';
+COMMENT ON TABLE public.xy_sms_variable IS '短信模板变量';
+COMMENT ON COLUMN public.xy_sms_variable.id IS '主键';
+COMMENT ON COLUMN public.xy_sms_variable.title IS '变量标题';
+COMMENT ON COLUMN public.xy_sms_variable.name IS '变量名（如 usermobile）';
+COMMENT ON COLUMN public.xy_sms_variable.source_type IS '来源类型：1=字段提取 2=SQL查询 3=内置Helper';
+COMMENT ON COLUMN public.xy_sms_variable.sql_query IS 'SQL查询语句（source_type=2 时）';
+COMMENT ON COLUMN public.xy_sms_variable.method_name IS 'Helper方法路径（source_type=3 时）';
+COMMENT ON COLUMN public.xy_sms_variable.shared_count IS '共通数据数';
+COMMENT ON COLUMN public.xy_sms_variable.status IS '状态：1=启用 0=禁用';
+COMMENT ON COLUMN public.xy_sms_variable.created_by IS '创建人ID';
+COMMENT ON COLUMN public.xy_sms_variable.updated_by IS '更新人ID';
+COMMENT ON COLUMN public.xy_sms_variable.create_time IS '创建时间（Unix秒）';
+COMMENT ON COLUMN public.xy_sms_variable.update_time IS '更新时间（Unix秒）';
 
-CREATE UNIQUE INDEX IF NOT EXISTS uk_sms_variable_name ON xy_sms_variable (name);
+CREATE UNIQUE INDEX IF NOT EXISTS uk_sms_variable_name ON public.xy_sms_variable (name);
 
 
 -- 短信发送日志
-CREATE TABLE IF NOT EXISTS xy_sms_log (
+CREATE TABLE IF NOT EXISTS public.xy_sms_log (
     id             bigserial PRIMARY KEY,
     phone          character varying(20) DEFAULT '' NOT NULL,
     template_code  character varying(64) DEFAULT '' NOT NULL,
@@ -87,27 +86,27 @@ CREATE TABLE IF NOT EXISTS xy_sms_log (
     create_time    bigint DEFAULT 0 NOT NULL
 );
 
-COMMENT ON TABLE  xy_sms_log IS '短信发送日志';
-COMMENT ON COLUMN xy_sms_log.id IS '主键';
-COMMENT ON COLUMN xy_sms_log.phone IS '手机号';
-COMMENT ON COLUMN xy_sms_log.template_code IS '使用的模板标识';
-COMMENT ON COLUMN xy_sms_log.driver IS '驱动名（aliyun/tencent）';
-COMMENT ON COLUMN xy_sms_log.content IS '实际发送内容';
-COMMENT ON COLUMN xy_sms_log.params IS '发送参数 JSON';
-COMMENT ON COLUMN xy_sms_log.status IS '状态：1=成功 0=失败';
-COMMENT ON COLUMN xy_sms_log.request_id IS '服务商返回请求ID';
-COMMENT ON COLUMN xy_sms_log.error_msg IS '错误信息';
-COMMENT ON COLUMN xy_sms_log.create_time IS '发送时间（Unix秒）';
+COMMENT ON TABLE public.xy_sms_log IS '短信发送日志';
+COMMENT ON COLUMN public.xy_sms_log.id IS '主键';
+COMMENT ON COLUMN public.xy_sms_log.phone IS '手机号';
+COMMENT ON COLUMN public.xy_sms_log.template_code IS '使用的模板标识';
+COMMENT ON COLUMN public.xy_sms_log.driver IS '驱动名（aliyun/tencent）';
+COMMENT ON COLUMN public.xy_sms_log.content IS '实际发送内容';
+COMMENT ON COLUMN public.xy_sms_log.params IS '发送参数 JSON';
+COMMENT ON COLUMN public.xy_sms_log.status IS '状态：1=成功 0=失败';
+COMMENT ON COLUMN public.xy_sms_log.request_id IS '服务商返回请求ID';
+COMMENT ON COLUMN public.xy_sms_log.error_msg IS '错误信息';
+COMMENT ON COLUMN public.xy_sms_log.create_time IS '发送时间（Unix秒）';
 
-CREATE INDEX IF NOT EXISTS idx_sms_log_phone ON xy_sms_log (phone);
-CREATE INDEX IF NOT EXISTS idx_sms_log_template_code ON xy_sms_log (template_code);
-CREATE INDEX IF NOT EXISTS idx_sms_log_create_time ON xy_sms_log (create_time);
+CREATE INDEX IF NOT EXISTS idx_sms_log_phone ON public.xy_sms_log (phone);
+CREATE INDEX IF NOT EXISTS idx_sms_log_template_code ON public.xy_sms_log (template_code);
+CREATE INDEX IF NOT EXISTS idx_sms_log_create_time ON public.xy_sms_log (create_time);
 
 
 -- ============================================================
 -- 将 sms 分组追加到 config_group JSON（如果尚未包含）
 -- ============================================================
-UPDATE xy_sys_config
+UPDATE public.xy_sys_config
 SET value = value::jsonb || '[{"group":"sms","groupName":"短信配置","icon":"ri:smartphone-line","description":"配置短信接口","sort":40}]'::jsonb,
     update_time = EXTRACT(EPOCH FROM NOW())::bigint
 WHERE key = 'config_group'
@@ -118,43 +117,43 @@ WHERE key = 'config_group'
 -- sys_config 配置数据（短信配置组）
 -- 逐条 INSERT，ON CONFLICT (key) DO NOTHING 防重复
 -- ============================================================
-INSERT INTO xy_sys_config ("group", group_name, name, key, value, type, options, rules, sort, remark, allow_del, created_by, updated_by, create_time, update_time)
+INSERT INTO public.xy_sys_config ("group", group_name, name, key, value, type, options, rules, sort, remark, allow_del, created_by, updated_by, create_time, update_time)
 VALUES ('sms', '短信配置', '发送超时（秒）', 'sms_timeout', '5', 'number', NULL, '{"required": true}', 10, '短信发送超时时间', 0, 0, 0, 0, 0)
 ON CONFLICT (key) DO NOTHING;
 
-INSERT INTO xy_sys_config ("group", group_name, name, key, value, type, options, rules, sort, remark, allow_del, created_by, updated_by, create_time, update_time)
+INSERT INTO public.xy_sys_config ("group", group_name, name, key, value, type, options, rules, sort, remark, allow_del, created_by, updated_by, create_time, update_time)
 VALUES ('sms', '短信配置', '发送策略', 'sms_strategy', 'weight', 'select', '{"options": [{"label": "按权重", "value": "weight"}, {"label": "随机", "value": "random"}]}', '{"required": true}', 20, '多驱动时的选择策略', 0, 0, 0, 0, 0)
 ON CONFLICT (key) DO NOTHING;
 
-INSERT INTO xy_sys_config ("group", group_name, name, key, value, type, options, rules, sort, remark, allow_del, created_by, updated_by, create_time, update_time)
+INSERT INTO public.xy_sys_config ("group", group_name, name, key, value, type, options, rules, sort, remark, allow_del, created_by, updated_by, create_time, update_time)
 VALUES ('sms', '短信配置', '启用的服务商', 'sms_enabled_drivers', '', 'selects', '{"options": [{"label": "阿里云", "value": "aliyun"}, {"label": "腾讯云", "value": "tencent"}]}', NULL, 30, '可多选，逗号分隔', 0, 0, 0, 0, 0)
 ON CONFLICT (key) DO NOTHING;
 
-INSERT INTO xy_sys_config ("group", group_name, name, key, value, type, options, rules, sort, remark, allow_del, created_by, updated_by, create_time, update_time)
+INSERT INTO public.xy_sys_config ("group", group_name, name, key, value, type, options, rules, sort, remark, allow_del, created_by, updated_by, create_time, update_time)
 VALUES ('sms', '短信配置', '阿里云 AccessKey ID', 'sms_aliyun_access_key_id', '', 'text', NULL, NULL, 100, '', 0, 0, 0, 0, 0)
 ON CONFLICT (key) DO NOTHING;
 
-INSERT INTO xy_sys_config ("group", group_name, name, key, value, type, options, rules, sort, remark, allow_del, created_by, updated_by, create_time, update_time)
+INSERT INTO public.xy_sys_config ("group", group_name, name, key, value, type, options, rules, sort, remark, allow_del, created_by, updated_by, create_time, update_time)
 VALUES ('sms', '短信配置', '阿里云 AccessKey Secret', 'sms_aliyun_access_key_secret', '', 'password', NULL, NULL, 110, '', 0, 0, 0, 0, 0)
 ON CONFLICT (key) DO NOTHING;
 
-INSERT INTO xy_sys_config ("group", group_name, name, key, value, type, options, rules, sort, remark, allow_del, created_by, updated_by, create_time, update_time)
+INSERT INTO public.xy_sys_config ("group", group_name, name, key, value, type, options, rules, sort, remark, allow_del, created_by, updated_by, create_time, update_time)
 VALUES ('sms', '短信配置', '阿里云短信签名', 'sms_aliyun_sign_name', '', 'text', NULL, NULL, 120, '在阿里云控制台申请的签名', 0, 0, 0, 0, 0)
 ON CONFLICT (key) DO NOTHING;
 
-INSERT INTO xy_sys_config ("group", group_name, name, key, value, type, options, rules, sort, remark, allow_del, created_by, updated_by, create_time, update_time)
+INSERT INTO public.xy_sys_config ("group", group_name, name, key, value, type, options, rules, sort, remark, allow_del, created_by, updated_by, create_time, update_time)
 VALUES ('sms', '短信配置', '腾讯云 SecretId', 'sms_tencent_secret_id', '', 'text', NULL, NULL, 200, '', 0, 0, 0, 0, 0)
 ON CONFLICT (key) DO NOTHING;
 
-INSERT INTO xy_sys_config ("group", group_name, name, key, value, type, options, rules, sort, remark, allow_del, created_by, updated_by, create_time, update_time)
+INSERT INTO public.xy_sys_config ("group", group_name, name, key, value, type, options, rules, sort, remark, allow_del, created_by, updated_by, create_time, update_time)
 VALUES ('sms', '短信配置', '腾讯云 SecretKey', 'sms_tencent_secret_key', '', 'password', NULL, NULL, 210, '', 0, 0, 0, 0, 0)
 ON CONFLICT (key) DO NOTHING;
 
-INSERT INTO xy_sys_config ("group", group_name, name, key, value, type, options, rules, sort, remark, allow_del, created_by, updated_by, create_time, update_time)
+INSERT INTO public.xy_sys_config ("group", group_name, name, key, value, type, options, rules, sort, remark, allow_del, created_by, updated_by, create_time, update_time)
 VALUES ('sms', '短信配置', '腾讯云 AppId', 'sms_tencent_app_id', '', 'text', NULL, NULL, 220, '腾讯云短信应用 SDK AppID', 0, 0, 0, 0, 0)
 ON CONFLICT (key) DO NOTHING;
 
-INSERT INTO xy_sys_config ("group", group_name, name, key, value, type, options, rules, sort, remark, allow_del, created_by, updated_by, create_time, update_time)
+INSERT INTO public.xy_sys_config ("group", group_name, name, key, value, type, options, rules, sort, remark, allow_del, created_by, updated_by, create_time, update_time)
 VALUES ('sms', '短信配置', '腾讯云短信签名', 'sms_tencent_sign_name', '', 'text', NULL, NULL, 230, '在腾讯云控制台申请的签名', 0, 0, 0, 0, 0)
 ON CONFLICT (key) DO NOTHING;
 
@@ -162,19 +161,19 @@ ON CONFLICT (key) DO NOTHING;
 -- ============================================================
 -- 短信模板初始数据
 -- ============================================================
-INSERT INTO xy_sms_template (title, code, content, provider_template_id, variables, status, sort, remark, created_by, updated_by, create_time, update_time)
+INSERT INTO public.xy_sms_template (title, code, content, provider_template_id, variables, status, sort, remark, created_by, updated_by, create_time, update_time)
 VALUES ('用户注册', 'user_register', '{1}为您的登录验证码，请于{2}分钟内填写，如非本人操作，请忽略本短信。', '2627353', '["code", "expire_minutes"]', 1, 10, '', 0, 0, EXTRACT(EPOCH FROM NOW())::bigint, EXTRACT(EPOCH FROM NOW())::bigint)
 ON CONFLICT (code) DO NOTHING;
 
-INSERT INTO xy_sms_template (title, code, content, provider_template_id, variables, status, sort, remark, created_by, updated_by, create_time, update_time)
+INSERT INTO public.xy_sms_template (title, code, content, provider_template_id, variables, status, sort, remark, created_by, updated_by, create_time, update_time)
 VALUES ('登录验证', 'user_login', '{1}为您的登录验证码，请于{2}分钟内填写，如非本人操作，请忽略本短信。', '2627353', '["code", "expire_minutes"]', 1, 20, '', 0, 0, EXTRACT(EPOCH FROM NOW())::bigint, EXTRACT(EPOCH FROM NOW())::bigint)
 ON CONFLICT (code) DO NOTHING;
 
-INSERT INTO xy_sms_template (title, code, content, provider_template_id, variables, status, sort, remark, created_by, updated_by, create_time, update_time)
+INSERT INTO public.xy_sms_template (title, code, content, provider_template_id, variables, status, sort, remark, created_by, updated_by, create_time, update_time)
 VALUES ('修改密码', 'reset_password', '【${site_name}】您正在修改密码，验证码为：${code}，有效期${expire_minutes}分钟。如非本人操作，请立即修改密码。', '', '["code", "expire_minutes", "site_name"]', 1, 30, '', 0, 0, EXTRACT(EPOCH FROM NOW())::bigint, EXTRACT(EPOCH FROM NOW())::bigint)
 ON CONFLICT (code) DO NOTHING;
 
-INSERT INTO xy_sms_template (title, code, content, provider_template_id, variables, status, sort, remark, created_by, updated_by, create_time, update_time)
+INSERT INTO public.xy_sms_template (title, code, content, provider_template_id, variables, status, sort, remark, created_by, updated_by, create_time, update_time)
 VALUES ('订单通知', 'order_notify', '【${site_name}】您的订单已提交成功，请保持手机畅通。', '', '["site_name"]', 1, 40, '', 0, 0, EXTRACT(EPOCH FROM NOW())::bigint, EXTRACT(EPOCH FROM NOW())::bigint)
 ON CONFLICT (code) DO NOTHING;
 
@@ -182,18 +181,18 @@ ON CONFLICT (code) DO NOTHING;
 -- ============================================================
 -- 短信变量初始数据
 -- ============================================================
-INSERT INTO xy_sms_variable (title, name, source_type, sql_query, method_name, shared_count, status, created_by, updated_by, create_time, update_time)
+INSERT INTO public.xy_sms_variable (title, name, source_type, sql_query, method_name, shared_count, status, created_by, updated_by, create_time, update_time)
 VALUES ('验证码', 'code', 1, '', '', 0, 1, 0, 0, EXTRACT(EPOCH FROM NOW())::bigint, EXTRACT(EPOCH FROM NOW())::bigint)
 ON CONFLICT (name) DO NOTHING;
 
-INSERT INTO xy_sms_variable (title, name, source_type, sql_query, method_name, shared_count, status, created_by, updated_by, create_time, update_time)
+INSERT INTO public.xy_sms_variable (title, name, source_type, sql_query, method_name, shared_count, status, created_by, updated_by, create_time, update_time)
 VALUES ('手机号', 'mobile', 1, '', '', 0, 1, 0, 0, EXTRACT(EPOCH FROM NOW())::bigint, EXTRACT(EPOCH FROM NOW())::bigint)
 ON CONFLICT (name) DO NOTHING;
 
-INSERT INTO xy_sms_variable (title, name, source_type, sql_query, method_name, shared_count, status, created_by, updated_by, create_time, update_time)
+INSERT INTO public.xy_sms_variable (title, name, source_type, sql_query, method_name, shared_count, status, created_by, updated_by, create_time, update_time)
 VALUES ('平台名称', 'site_name', 1, '', '', 0, 1, 0, 0, EXTRACT(EPOCH FROM NOW())::bigint, EXTRACT(EPOCH FROM NOW())::bigint)
 ON CONFLICT (name) DO NOTHING;
 
-INSERT INTO xy_sms_variable (title, name, source_type, sql_query, method_name, shared_count, status, created_by, updated_by, create_time, update_time)
+INSERT INTO public.xy_sms_variable (title, name, source_type, sql_query, method_name, shared_count, status, created_by, updated_by, create_time, update_time)
 VALUES ('过期时间(分钟)', 'expire_minutes', 1, '', '', 0, 1, 0, 0, EXTRACT(EPOCH FROM NOW())::bigint, EXTRACT(EPOCH FROM NOW())::bigint)
 ON CONFLICT (name) DO NOTHING;

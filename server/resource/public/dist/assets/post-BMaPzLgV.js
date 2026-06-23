@@ -1,1 +1,0 @@
-import{O as t}from"./index-jTOg2_po.js";function r(r){return t.get({url:"/post/list",params:r})}function s(r){return t.post({url:"/post/save",params:r})}function a(r){return t.post({url:"/post/delete",params:{id:r}})}export{r as a,a as b,s as f};
