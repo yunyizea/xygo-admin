@@ -13,6 +13,7 @@ package cmd
 import (
 	"context"
 	"net/http"
+	"strings"
 
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/net/ghttp"
@@ -74,7 +75,7 @@ var (
 			// SPA 回退：/admin 下的子路由返回后台前端入口，让 Vue Router 接管
 			s.BindStatusHandler(http.StatusNotFound, func(r *ghttp.Request) {
 				path := r.RequestURI
-				if len(path) >= 6 && path[:6] == "/admin" {
+				if strings.HasPrefix(path, "/admin") {
 					indexPath := "resource/public/dist/index.html"
 					r.Response.ClearBuffer()
 					r.Response.Header().Set("Content-Type", "text/html; charset=utf-8")
